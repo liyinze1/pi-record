@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.button {
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.record {background-color: #4CAF50;} /* Green */
+.stop {background-color: #800000;} /* Red */
+.connect {background-color: #000080;} /* Blue */
+.check {background-color: #800080;} /* Pruple */
+
+</style>
+</head>
+<body>
+
+<button onclick='run(0)' class='button record'>Record</button><br/>
+<button onclick='run(1)' class='button stop'>Stop</button><br/>
+<button onclick='run(2)' class='button connect'>Connect VPN</button><br/>
+<button onclick='run(3)' class='button check'>Check VPN</button><br/>
+<p id='message'></p>
+
+<script>
+    const cmds = ["record", "stop", "connect-vpn", "check-vpn"];
+    function run(i) {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/" + cmds[i]);
+        xhttp.onload = function() {
+            document.getElementById("message").innerHTML = this.responseText;
+        }
+        xhttp.send();
+    }
+</script>
+
+</body>
+</html>
