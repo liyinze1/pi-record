@@ -34,8 +34,8 @@ class record:
     def record(self):
         if self.record_thread is not None and self.record_thread.poll() is None:
             return 'it\'s already recording'
-        self.record_thread = subprocess.Popen(self.record_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        self.stream_thread = subprocess.Popen(self.stream_args, stdin=self.record_thread.stdout, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)
+        self.record_thread = subprocess.Popen(self.record_args, stdout=subprocess.PIPE)
+        self.stream_thread = subprocess.Popen(self.stream_args, stdin=self.record_thread.stdout)
         time.sleep(2)
         if self.record_thread.poll() is None:
             return 'recording...'
