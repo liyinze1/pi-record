@@ -40,7 +40,7 @@ class record:
         if self.record_thread.poll() is None:
             return 'recording...'
         else:
-            return  'Failed\nlog:\t' + self.record_thread.stderr + self.stream_thread.stderr
+            return  'Failed\nlog:\t'
     
     def stop(self):
         if self.record_thread is None or self.record_thread.poll() is not None:
