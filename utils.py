@@ -12,10 +12,12 @@ class vpn:
         if self.check():
             return 'It\'s already connected'
         self.vpn_thread = subprocess.Popen(self.args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if self.check():
-            return 'connected!'
-        else:
-            return 'Failed\nlog:\t' + self.vpn_thread.stderr
+        for i in range(5):
+            time.sleep(2)
+            if self.check():
+                return 'Connected'
+        self.vpn_thread.kill()
+        return 'Failed, please try again later..'
         
     
     def check(self):
