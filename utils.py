@@ -18,9 +18,6 @@ class vpn:
         
     
     def check(self):
-        if self.vpn_thread is None:
-            return False
-        # return_code = self.vpn_thread.poll()
         process = subprocess.run(["ifconfig"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
         return '10.94.0.' in process.stdout
         
