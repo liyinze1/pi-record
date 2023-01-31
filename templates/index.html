@@ -9,8 +9,8 @@
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 60px;
-  margin: 4px 2px;
+  font-size: 30px;
+  margin: 10px 10px;
   cursor: pointer;
 }
 
@@ -19,16 +19,21 @@
 .connect {background-color: #000080;} /* Blue */
 .check {background-color: #800080;} /* Pruple */
 
+p {
+    font-size: 20px
+}
+
 </style>
 </head>
 <body>
+    <div id="qr-reader" style="width: 600px"></div>
+    <button onclick='run(0)' class='button record'>Record</button>
+    <button onclick='run(1)' class='button stop'>Stop</button></br>
+    <button onclick='run(2)' class='button connect'>Connect VPN</button>
+    <button onclick='run(3)' class='button check'>Check VPN</button></br>
+    <p id='message'></p>
 
-<button onclick='run(0)' class='button record'>Record</button><br/>
-<button onclick='run(1)' class='button stop'>Stop</button><br/>
-<button onclick='run(2)' class='button connect'>Connect VPN</button><br/>
-<button onclick='run(3)' class='button check'>Check VPN</button><br/>
-<p id='message'></p>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.2.0/html5-qrcode.min.js"></script>
 <script>
     const cmds = ["record", "stop", "connect-vpn", "check-vpn"];
     function run(i) {
@@ -39,6 +44,15 @@
         }
         xhttp.send();
     }
+
+
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log(`Code scanned = ${decodedText}`, decodedResult);
+        document.getElementById("message").innerHTML = decodedText;
+   }
+    var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
+
 </script>
 
 </body>
