@@ -1,9 +1,93 @@
 import subprocess
 import time
 import shlex
+import yaml
+from datetime import datetime
+import os
+import socket
+import requests
 
-server_ip = '10.94.0.31'
-vpn_network = '10.94.0'
+f = open('config.yaml')
+d = yaml.load(f)
+f.close()
+vpn_network = d['vpn_network']
+server_ip = d['server_ip']
+save_local = d['save_local']
+audio_folder = d['audio_folder']
+
+
+if not os.path.exists(audio_folder):
+    os.makedirs(audio_folder)
+    
+def get_audio_filename(vin):
+    now = datetime.now()
+    file_name = 'vin-' + vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
+    return os.path.join(audio_folder, file_name)
+
+def report(vin, status):
+    requests.post(url=server_ip + ':8000/' + vin + '/' + status)
+
+class port_controll:
+    
+    def __init__(self):
+        self.port_list = [i for i in range(23000, 24000, 2)]
+        
+    def get_port(self):
+        for port in self.port_list:
+            if self.check_port(port):
+                self.port_list.remove(port)
+                return port
+        return -1
+    
+    def return_port(self, port):
+        self.port_list.append(port)
+    
+    def check_port(self, port):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = False
+        try:
+            sock.bind((server_ip, port))
+            result = True
+        except:
+            print("Port is in use")
+        sock.close()
+        return result
+
+port_controller = port_controll()
+class receive:
+    
+    def __init__(self, vin):
+        
+        # port
+        self.port = port_controller.get_port()
+    
+        # sdp
+        sdp = 'SDP:\n' + \
+        'v=0\n' + \
+        'o=- 0 0 IN IP4 127.0.0.1\n' + \
+        's=No Name\n' + \
+        'c=IN IP4 %s\n'%server_ip + \
+        't=0 0\n' + \
+        'a=tool:libavformat 58.20.100\n' + \
+        'm=audio %s RTP/AVP 97\n'%self.port + \
+        'b=AS:4608\n' + \
+        'a=rtpmap:97 L24/48000/4\n'
+        
+        filename = 'vin-' + vin + '.sdp'
+        self.sdp_filename = os.path.join(audio_folder, filename)
+        f = open(self.sdp_filename, 'w')
+        f.write(sdp)
+        f.close()
+        
+        # thread for receiving
+        cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s'%(self.sdp_filename, get_audio_filename(vin))
+        self.receive_thread = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+    def stop(self):
+        self.receive_thread.kill()
+        port_controller.return_port(self.port)
+    
+        
 
 class vpn:
     
@@ -21,7 +105,6 @@ class vpn:
                 return 'Connected'
         self.vpn_thread.kill()
         return 'Failed, please try again later..'
-        
     
     def check(self):
         process = subprocess.run(["ifconfig"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
@@ -34,23 +117,38 @@ class record:
         self.record_thread = None
         self.stream_thread = None
         self.record_args = shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
-        self.stream_args = shlex.split('/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s:23000 -sdp_file /home/pi/24.sdp'%server_ip)
     
-    def record(self):
+    def record(self, vin):
         if self.record_thread is not None and self.record_thread.poll() is None:
             return 'it\'s already recording'
-        self.record_thread = subprocess.Popen(self.record_args, stdout=subprocess.PIPE)
-        self.stream_thread = subprocess.Popen(self.stream_args, stdin=self.record_thread.stdout)
+        
+        r = requests.get(url=server_ip + ':8000/receive/' + vin)
+        self.port = r.text
+        print('got port:', self.port)
+        
+        self.record_thread = subprocess.Popen(self.record_cmd(), stdout=subprocess.PIPE)
+        self.stream_thread = subprocess.Popen(self.stream_cmd(vin), stdin=self.record_thread.stdout)
         time.sleep(2)
         if self.record_thread.poll() is None:
             return 'recording...'
         else:
             return  'Failed\nlog:\t'
     
-    def stop(self):
+    def stop(self, vin):
         if self.record_thread is None or self.record_thread.poll() is not None:
             return 'nothing to stop'
         else:
+            requests.post(url=server_ip + ':8000/stop/' + vin)
             self.stream_thread.kill()
             self.record_thread.kill()
             return 'stopped'
+        
+    def record_cmd(self):
+        return shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
+    
+    def stream_cmd(self, vin):
+        addr = server_ip + ':' + self.port
+        if save_local:
+            return shlex.split('/usr/bin/ffmpeg -re -i -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%(get_audio_filename(vin), addr))
+        else:
+            return shlex.split('/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%addr)

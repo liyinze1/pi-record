@@ -26,29 +26,46 @@ p {
 </style>
 </head>
 <body>
-    <div id="qr-reader" style="width: 600px"></div>
+    <p id='vin'>VIN: empty</p>
+    <div id="qr-reader" style="width: 500px"></div>
     <button onclick='run(0)' class='button record'>Record</button>
     <button onclick='run(1)' class='button stop'>Stop</button></br>
-    <button onclick='run(2)' class='button connect'>Connect VPN</button>
-    <button onclick='run(3)' class='button check'>Check VPN</button></br>
+    <button onclick='vpn(0)' class='button connect'>Connect VPN</button>
+    <button onclick='vpn(1)' class='button check'>Check VPN</button></br>
     <p id='message'></p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.2.0/html5-qrcode.min.js"></script>
 <script>
-    const cmds = ["record", "stop", "connect-vpn", "check-vpn"];
+    var vin = '';
+
+    const cmds = ["record", "stop"];
     function run(i) {
         const xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "/" + cmds[i]);
+        if (vin == '') {
+            document.getElementById("message").innerHTML = 'Please scan to get a VIN at first';
+        } else {
+            xhttp.open("GET", "/" + cmds[i] + "/" + vin);
+            xhttp.onload = function() {
+                document.getElementById("message").innerHTML = this.responseText;
+            }
+            xhttp.send();
+        }
+    }
+
+    const vpn_cmds = ["connect-vpn", "check-vpn"];
+    function vpn(i) {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/" + vpn_cmds[i]);
         xhttp.onload = function() {
             document.getElementById("message").innerHTML = this.responseText;
         }
         xhttp.send();
     }
 
-
     function onScanSuccess(decodedText, decodedResult) {
         console.log(`Code scanned = ${decodedText}`, decodedResult);
-        document.getElementById("message").innerHTML = decodedText;
+        vin = decodedText;
+        document.getElementById("vin").innerHTML = 'VIN: ' + vin;
    }
     var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 });
     html5QrcodeScanner.render(onScanSuccess);

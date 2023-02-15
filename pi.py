@@ -3,6 +3,7 @@ import utils
 
 app = Flask(__name__)
 
+
 vpn_thread = utils.vpn()
 record_thread = utils.record()
 
@@ -10,13 +11,13 @@ record_thread = utils.record()
 def main():
     return render_template('index.html')
 
-@app.route('/record', methods=['GET'])
-def record():
-    return str(record_thread.record())
+@app.route('/record/<vin>', methods=['GET'])
+def record(vin):
+    return str(record_thread.record(vin))
 
-@app.route('/stop', methods=['GET'])
-def stop():
-    return str(record_thread.stop())
+@app.route('/stop/<vin>', methods=['GET'])
+def stop(vin):
+    return str(record_thread.stop(vin))
 
 @app.route('/check-vpn', methods=['GET'])
 def check_vpn():
@@ -26,5 +27,9 @@ def check_vpn():
 def connect_vpn():
     return str(vpn_thread.connect())
 
-if __name__ == "__main__":
+@app.route('/report/<vin>/<status>', methods=['POST'])
+def report(vin, status):
+    return utils.report(vin, status)
+
+if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000, ssl_context='adhoc')

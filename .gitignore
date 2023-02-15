@@ -2,3 +2,6 @@
 __pycache__/
 *.ipynb
 .DS_Store
+vin*
+*.wav
+*.sdp

@@ -1,0 +1,5 @@
+server_ip: '10.94.0.31'
+vpn_network: '10.94.0'
+save_local: true
+audio_folder: './audio'
+# audio_folder: './'
