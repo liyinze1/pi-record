@@ -24,6 +24,10 @@ def get_audio_filename(vin):
     file_name = 'vin-' + vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
     return os.path.join(audio_folder, file_name)
 
+def get_sdp_filename(vin):
+    filename = 'vin-' + vin + '.sdp'
+    return os.path.join(audio_folder, filename)
+
 def report(vin, status):
     requests.post(url='http://' + server_ip + ':8000/' + vin + '/' + status)
 
@@ -75,8 +79,7 @@ class receive:
         'b=AS:4608\n' + \
         'a=rtpmap:97 L24/48000/4\n'
         
-        filename = 'vin-' + vin + '.sdp'
-        self.sdp_filename = os.path.join(audio_folder, filename)
+        self.sdp_filename = get_sdp_filename(vin)
         f = open(self.sdp_filename, 'w')
         f.write(sdp)
         f.close()
@@ -154,9 +157,9 @@ class record:
     def get_stream_cmd(self, vin):
         addr = server_ip + ':' + self.port
         if save_local:
-            cmd = '/usr/bin/ffmpeg -re -i -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%(get_audio_filename(vin), addr)
+            cmd = '/usr/bin/ffmpeg -re -i - -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s'%(get_audio_filename(vin), addr)
         else:
-            cmd = '/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%addr
+            cmd = '/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s'%(addr)
             
         print(vin)
         print(cmd)
