@@ -85,7 +85,7 @@ class receive:
         
     def stop(self):
         self.receive_thread.kill()
-        port_controller.return_port(self.port)
+        self.port_controller.return_port(self.port)
     
         
 
