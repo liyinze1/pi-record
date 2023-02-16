@@ -60,6 +60,8 @@ class receive:
         # port
         self.port_controller = port_controller
         self.port = port_controller.get_port()
+        
+        print('the selected port for %s is'%vin, self.port)
     
         # sdp
         sdp = 'SDP:\n' + \
@@ -81,7 +83,7 @@ class receive:
         
         # thread for receiving
         cmd = shlex.split('ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s'%(self.sdp_filename, get_audio_filename(vin)))
-        self.receive_thread = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.receive_thread = subprocess.Popen(cmd)
         
     def stop(self):
         self.receive_thread.kill()
@@ -126,8 +128,13 @@ class record:
         self.port = r.text
         print('got port:', self.port)
         
-        self.record_thread = subprocess.Popen(self.record_cmd(), stdout=subprocess.PIPE)
-        self.stream_thread = subprocess.Popen(self.stream_cmd(vin), stdin=self.record_thread.stdout)
+        record_cmd = self.get_record_cmd()
+        stream_cmd = self.get_stream_cmd(vin)
+        
+        print('------------\n' + stream_cmd)
+        
+        self.record_thread = subprocess.Popen(record_cmd, stdout=subprocess.PIPE)
+        self.stream_thread = subprocess.Popen(stream_cmd, stdin=self.record_thread.stdout)
         time.sleep(2)
         if self.record_thread.poll() is None:
             return 'recording...'
@@ -143,10 +150,10 @@ class record:
             self.record_thread.kill()
             return 'stopped'
         
-    def record_cmd(self):
+    def get_record_cmd(self):
         return shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
     
-    def stream_cmd(self, vin):
+    def get_stream_cmd(self, vin):
         addr = server_ip + ':' + self.port
         if save_local:
             return shlex.split('/usr/bin/ffmpeg -re -i -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%(get_audio_filename(vin), addr))
