@@ -131,8 +131,6 @@ class record:
         record_cmd = self.get_record_cmd()
         stream_cmd = self.get_stream_cmd(vin)
         
-        print('------------\n' + stream_cmd)
-        
         self.record_thread = subprocess.Popen(record_cmd, stdout=subprocess.PIPE)
         self.stream_thread = subprocess.Popen(stream_cmd, stdin=self.record_thread.stdout)
         time.sleep(2)
@@ -154,7 +152,7 @@ class record:
         return shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
     
     def get_stream_cmd(self, vin):
-        addr = server_ip + ':' + self.port
+        addr = server_ip + ':' + str(self.port)
         if save_local:
             return shlex.split('/usr/bin/ffmpeg -re -i -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%(get_audio_filename(vin), addr))
         else:
