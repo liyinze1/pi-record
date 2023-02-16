@@ -157,4 +157,7 @@ class record:
             cmd = '/usr/bin/ffmpeg -re -i -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%(get_audio_filename(vin), addr)
         else:
             cmd = '/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%addr
+            
+        print(vin)
+        print(cmd)
         return shlex.split(cmd)
