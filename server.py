@@ -29,4 +29,4 @@ def report(vin, status):
     car_status[vin] = status
 
 if __name__ == '__main__':
-    app.run(host='10.94.0.31', debug=True, port=8000, ssl_context='adhoc')
+    app.run(host='0.0.0.0', debug=True, port=8000, ssl_context='adhoc')
