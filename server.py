@@ -22,7 +22,7 @@ def record(vin):
 @app.route('/stop/<vin>', methods=['POST'])
 def stop(vin):
     receive_threads[vin].stop()
-    receive_threads.remove(vin)
+    receive_threads.pop(vin)
     
 @app.route('/report/<vin>/<status>', methods=['POST'])
 def report(vin, status):
