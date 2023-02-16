@@ -152,7 +152,7 @@ class record:
         return shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
     
     def get_stream_cmd(self, vin):
-        addr = server_ip + ':' + str(self.port)
+        addr = server_ip + ':' + self.port
         if save_local:
             cmd = '/usr/bin/ffmpeg -re -i -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%(get_audio_filename(vin), addr)
         else:

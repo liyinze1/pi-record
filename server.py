@@ -17,7 +17,7 @@ def main():
 def record(vin):
     receive_thread = utils.receive(vin, port_controller)
     receive_threads[vin] = receive_thread
-    return receive_thread.port
+    return str(receive_thread.port)
 
 @app.route('/stop/<vin>', methods=['POST'])
 def stop(vin):
