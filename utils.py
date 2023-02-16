@@ -80,7 +80,7 @@ class receive:
         f.close()
         
         # thread for receiving
-        cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s'%(self.sdp_filename, get_audio_filename(vin))
+        cmd = shlex.split('ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s'%(self.sdp_filename, get_audio_filename(vin)))
         self.receive_thread = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
     def stop(self):
