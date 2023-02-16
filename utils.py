@@ -8,7 +8,7 @@ import socket
 import requests
 
 f = open('config.yaml')
-d = yaml.load(f)
+d = yaml.safe_load(f)
 f.close()
 vpn_network = d['vpn_network']
 server_ip = d['server_ip']
@@ -25,7 +25,7 @@ def get_audio_filename(vin):
     return os.path.join(audio_folder, file_name)
 
 def report(vin, status):
-    requests.post(url=server_ip + ':8000/' + vin + '/' + status)
+    requests.post(url='http://' + server_ip + ':8000/' + vin + '/' + status)
 
 class port_controll:
     
@@ -122,7 +122,7 @@ class record:
         if self.record_thread is not None and self.record_thread.poll() is None:
             return 'it\'s already recording'
         
-        r = requests.get(url=server_ip + ':8000/receive/' + vin)
+        r = requests.get(url='http://' + server_ip + ':8000/receive/' + vin)
         self.port = r.text
         print('got port:', self.port)
         
@@ -138,7 +138,7 @@ class record:
         if self.record_thread is None or self.record_thread.poll() is not None:
             return 'nothing to stop'
         else:
-            requests.post(url=server_ip + ':8000/stop/' + vin)
+            requests.post(url='http://' + server_ip + ':8000/stop/' + vin)
             self.stream_thread.kill()
             self.record_thread.kill()
             return 'stopped'
