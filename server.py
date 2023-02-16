@@ -7,13 +7,15 @@ receive_threads = {}
 
 car_status = {}
 
+port_controller = utils.port_controll()
+
 @app.route('/')
 def main():
     return render_template('index.html')
 
 @app.route('/receive/<vin>', methods=['GET'])
 def record(vin):
-    receive_thread = utils.receive(vin)
+    receive_thread = utils.receive(vin, port_controller)
     receive_threads[vin] = receive_thread
     return receive_thread.port
 

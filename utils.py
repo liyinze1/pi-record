@@ -53,12 +53,12 @@ class port_controll:
         sock.close()
         return result
 
-port_controller = port_controll()
 class receive:
     
-    def __init__(self, vin):
+    def __init__(self, vin, port_controller):
         
         # port
+        self.port_controller = port_controller
         self.port = port_controller.get_port()
     
         # sdp
