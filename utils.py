@@ -154,6 +154,7 @@ class record:
     def get_stream_cmd(self, vin):
         addr = server_ip + ':' + str(self.port)
         if save_local:
-            return shlex.split("/usr/bin/ffmpeg -re -i -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp"%(get_audio_filename(vin), addr))
+            cmd = '/usr/bin/ffmpeg -re -i -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%(get_audio_filename(vin), addr)
         else:
-            return shlex.split("/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp"%addr)
+            cmd = '/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s -sdp_file /home/pi/24.sdp'%addr
+        return shlex.split(cmd)
