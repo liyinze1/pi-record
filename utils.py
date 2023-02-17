@@ -63,7 +63,7 @@ class car_table:
     def __init__(self, filename):
         self.filename = filename
         self.table = {}
-        if not os.path.exists(filename):
+        if os.path.exists(filename):
             f = open(filename, 'r')
             for line in f.read().splitlines():
                 vin, status = line.split(',')
