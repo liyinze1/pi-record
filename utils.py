@@ -29,7 +29,8 @@ def get_sdp_filename(vin):
     return os.path.join(audio_folder, filename)
 
 def report(vin, status):
-    return requests.post(url='http://' + server_ip + ':8000/' + vin + '/' + status)
+    r = requests.get(url='http://' + server_ip + ':8000/' + vin + '/' + status)
+    return r.text
 
 class port_controll:
     
@@ -76,6 +77,7 @@ class car_table:
             for v, s in self.table.items():
                 f.write(v + ',' + s + '\n')
             f.close()
+        return 'car ' + vin + ' has been updated to ' + status
         
 class receive:
     

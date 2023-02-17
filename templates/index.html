@@ -62,6 +62,17 @@ p {
         xhttp.send();
     }
 
+    const report_cmds = ["normal", "squeak", "rattle", "both"]
+    function report(i) {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
+        xhttp.onload = function() {
+            document.getElementById("message").innerHTML = this.responseText;
+        }
+        xhttp.send();
+    }
+
+
     function onScanSuccess(decodedText, decodedResult) {
         console.log(`Code scanned = ${decodedText}`, decodedResult);
         vin = decodedText;

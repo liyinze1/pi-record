@@ -27,7 +27,7 @@ def check_vpn():
 def connect_vpn():
     return str(vpn_thread.connect())
 
-@app.route('/report/<vin>/<status>', methods=['POST'])
+@app.route('/report/<vin>/<status>', methods=['GET'])
 def report(vin, status):
     return utils.report(vin, status)
 

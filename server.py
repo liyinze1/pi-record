@@ -25,10 +25,9 @@ def stop(vin):
     receive_threads.pop(vin)
     return 'stopped'
     
-@app.route('/report/<vin>/<status>', methods=['POST'])
+@app.route('/report/<vin>/<status>', methods=['GET'])
 def report(vin, status):
-    car_table.update(vin, status)
-    return ''
+    return car_table.update(vin, status)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000)
