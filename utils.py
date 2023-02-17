@@ -29,7 +29,7 @@ def get_sdp_filename(vin):
     return os.path.join(audio_folder, filename)
 
 def report(vin, status):
-    r = requests.get(url='http://' + server_ip + ':8000/' + vin + '/' + status)
+    r = requests.get(url='http://' + server_ip + ':8000/report/' + vin + '/' + status)
     return r.text
 
 class port_controll:
