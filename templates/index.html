@@ -18,9 +18,14 @@
 .stop {background-color: #800000;} /* Red */
 .connect {background-color: #000080;} /* Blue */
 .check {background-color: #800080;} /* Pruple */
+.normal {background-color: #4CAF50;} /* Green */
+.squeak {background-color: #800000;} /* Red */
+.rattle {background-color: #000080;} /* Blue */
+.both {background-color: #800080;} /* Pruple */
+
 
 p {
-    font-size: 20px
+    font-size: 15px
 }
 
 </style>
@@ -28,10 +33,14 @@ p {
 <body>
     <p id='vin'>VIN: empty</p>
     <div id="qr-reader" style="width: 500px"></div>
-    <button onclick='run(0)' class='button record'>Record</button>
-    <button onclick='run(1)' class='button stop'>Stop</button></br>
-    <button onclick='vpn(0)' class='button connect'>Connect VPN</button>
-    <button onclick='vpn(1)' class='button check'>Check VPN</button></br>
+    <button onclick='run(0)' class='button record'>record</button>
+    <button onclick='run(1)' class='button stop'>stop</button></br>
+    <button onclick='vpn(0)' class='button connect'>connect VPN</button>
+    <button onclick='vpn(1)' class='button check'>check VPN</button></br>
+    <button onclick='report(0)' class='button normal'>normal</button>
+    <button onclick='report(1)' class='button squeak'>squeak</button>
+    <button onclick='report(2)' class='button rattle'>rattle</button>
+    <button onclick='report(3)' class='button both'>both</button></br>
     <p id='message'></p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.2.0/html5-qrcode.min.js"></script>
