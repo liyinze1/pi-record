@@ -18,7 +18,7 @@ Revise the ip address of the server and the network address on [config.yaml](./c
 Install zerotier on the phone and share Internet to the pi by hotspot.
 
 ## 1. Run
-Run ```sudo -E python3 pi.py``` on the pi, and ```python3 server.py``` on the server
+Run ```cd pi-record``` and ```sudo -E python3 pi.py``` on the pi, and ```python3 server.py``` on the server
 
 ## 2. Record
-Open ```https://[pi's ip address]:8000``` on the phone
+Open ```https://[pi's ip address]:8000``` on the phone, and make sure it's https
