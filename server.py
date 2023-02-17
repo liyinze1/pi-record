@@ -5,9 +5,9 @@ app = Flask(__name__)
 
 receive_threads = {}
 
-car_status = {}
-
 port_controller = utils.port_controll()
+
+car_table = utils.car_table('car_table.csv')
 
 @app.route('/')
 def main():
@@ -23,10 +23,12 @@ def record(vin):
 def stop(vin):
     receive_threads[vin].stop()
     receive_threads.pop(vin)
+    return 'stopped'
     
 @app.route('/report/<vin>/<status>', methods=['POST'])
 def report(vin, status):
-    car_status[vin] = status
+    car_table.update(vin, status)
+    return ''
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000)

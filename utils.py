@@ -29,7 +29,7 @@ def get_sdp_filename(vin):
     return os.path.join(audio_folder, filename)
 
 def report(vin, status):
-    requests.post(url='http://' + server_ip + ':8000/' + vin + '/' + status)
+    return requests.post(url='http://' + server_ip + ':8000/' + vin + '/' + status)
 
 class port_controll:
     
@@ -57,6 +57,26 @@ class port_controll:
         sock.close()
         return result
 
+class car_table:
+    
+    def __init__(self, filename):
+        self.filename = filename
+        self.table = {}
+        if not os.path.exists(filename):
+            f = open(filename, 'r')
+            for line in f.read().splitlines():
+                vin, status = line.split(',')
+                self.table[vin] = status
+            f.close()
+        
+    def update(self, vin, status):
+        if (vin in self.table and self.table[vin] != status) or vin not in self.table:
+            self.table[vin] = status
+            f = open(self.filename, 'w')
+            for v, s in self.table.items():
+                f.write(v + ',' + s + '\n')
+            f.close()
+        
 class receive:
     
     def __init__(self, vin, port_controller):
@@ -65,7 +85,9 @@ class receive:
         self.port_controller = port_controller
         self.port = port_controller.get_port()
         
+        print('------------------------------------------')
         print('the selected port for %s is'%vin, self.port)
+        print('------------------------------------------')
     
         # sdp
         sdp = 'SDP:\n' + \
