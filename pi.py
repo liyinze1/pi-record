@@ -21,6 +21,7 @@ def stop(vin):
 
 @app.route('/check-vpn', methods=['GET'])
 def check_vpn():
+    app.logger.info("checking vpn")
     return str(vpn_thread.check())
 
 @app.route('/connect-vpn', methods=['GET'])
@@ -32,4 +33,6 @@ def report(vin, status):
     return utils.report(vin, status)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=8000, ssl_context='adhoc')
+    #app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
+    app.run(host='0.0.0.0', debug=True, port=443, ssl_context=('cert.pem', 'key.pem'))
+    

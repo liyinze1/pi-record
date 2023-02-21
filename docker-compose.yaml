@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+           
+    backend-service:
+        image: python-base
+        build:
+            dockerfile: docker/Dockerfile
+            context: ./
+        working_dir: /app
+        command: python3 server.py
+        restart: "no"
+        ports:
+             - 8000:8000
+             - 23000-23010:23000-23010/udp
+             - 23000-23010:23000-23010/tcp
+        environment:
+            - TZ=Europe/Berlin
+        container_name: backend
+        volumes:
+            - ./:/app
+
+    frontend-service:
+        image: python-base
+        working_dir: /app
+        command: python3 pi.py
+        restart: "no"
+        ports:
+             - "443:443"
+        environment:
+            - TZ=Europe/Berlin
+        container_name: frontend
+        volumes:
+            - ./:/app

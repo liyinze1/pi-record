@@ -22,3 +22,8 @@ Run ```cd pi-record``` and ```sudo -E python3 pi.py``` on the pi, and ```python3
 
 ## 2. Record
 Open ```https://[pi's ip address]:8000``` on the phone, and make sure it's https
+
+
+## Local SSL Cerificate
+see https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https
+openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365

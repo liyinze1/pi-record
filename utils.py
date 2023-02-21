@@ -7,13 +7,19 @@ import os
 import socket
 import requests
 
-f = open('config.yaml')
-d = yaml.safe_load(f)
-f.close()
-vpn_network = d['vpn_network']
-server_ip = d['server_ip']
-save_local = d['save_local']
-audio_folder = d['audio_folder']
+import logging
+
+FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=FORMAT,level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+with open('config.yaml') as f:
+    d = yaml.safe_load(f)
+    vpn_network = d['vpn_network']
+    server_ip = d['server_ip']
+    save_local = d['save_local']
+    audio_folder = d['audio_folder']
+    vpn_start_cmd = d['vpn_start']
 
 
 if not os.path.exists(audio_folder):
@@ -51,10 +57,11 @@ class port_controll:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = False
         try:
-            sock.bind((server_ip, port))
+            #sock.bind((server_ip, port))
+            sock.bind(('0.0.0.0', port))
             result = True
-        except:
-            print("Port is in use")
+        except Exception as e:
+            logger.info("Port is in use  %s",e)
         sock.close()
         return result
 
@@ -87,9 +94,9 @@ class receive:
         self.port_controller = port_controller
         self.port = port_controller.get_port()
         
-        print('------------------------------------------')
-        print('the selected port for %s is'%vin, self.port)
-        print('------------------------------------------')
+       
+        logger.info('the selected port for %s is %s', vin, self.port)
+        
     
         # sdp
         sdp = 'SDP:\n' + \
@@ -122,22 +129,31 @@ class vpn:
     
     def __init__(self):
         self.vpn_thread = None
-        self.args = shlex.split('sudo openvpn --config /home/pi/audio-pi-1.ovpn')
+        #self.args = shlex.split('sudo openvpn --config /home/pi/audio-pi-1.ovpn')
+
+        self.args = shlex.split(vpn_start_cmd)
         
     def connect(self):
-        if self.check():
-            return 'It\'s already connected'
+        logger.info("connecting vpn with %s", vpn_start_cmd)
+        #if self.check():
+        #    return 'It\'s already connected'
         self.vpn_thread = subprocess.Popen(self.args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         for i in range(5):
-            time.sleep(2)
+            time.sleep(1)
             if self.check():
                 return 'Connected'
         self.vpn_thread.kill()
         return 'Failed, please try again later..'
     
     def check(self):
+        try:
+            r = requests.get(url='http://' + server_ip + ':8000/check-vpn',timeout=2)
+            res = r.text + '\n'
+        except Exception as e:
+            res = str(e) + '\n'
+
         process = subprocess.run(["ifconfig"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
-        return vpn_network in process.stdout
+        return res +  process.stdout
         
 
 class record:
@@ -145,7 +161,8 @@ class record:
     def __init__(self):
         self.record_thread = None
         self.stream_thread = None
-        self.record_args = shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
+        #self.record_args = shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
+        self.record_args = shlex.split('/usr/bin/arecord -Dac108 -f S24_LE -r 48000 -c 4')
     
     def record(self, vin):
         if self.record_thread is not None and self.record_thread.poll() is None:
@@ -153,7 +170,7 @@ class record:
         
         r = requests.get(url='http://' + server_ip + ':8000/receive/' + vin)
         self.port = r.text
-        print('got port:', self.port)
+        logger.info('got port: %s', self.port)
         
         record_cmd = self.get_record_cmd()
         stream_cmd = self.get_stream_cmd(vin)
@@ -185,6 +202,6 @@ class record:
         else:
             cmd = '/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s'%(addr)
             
-        print(vin)
-        print(cmd)
+        logger.info("vin %s" , vin)
+        logger.info("command %s", cmd)
         return shlex.split(cmd)
