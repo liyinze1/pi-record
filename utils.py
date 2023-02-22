@@ -171,8 +171,8 @@ class record:
             return 'nothing to stop'
         else:
             requests.post(url='http://' + server_ip + ':8000/stop/' + vin)
-            self.stream_thread.kill()
             self.record_thread.kill()
+            self.stream_thread.kill()
             return 'stopped'
         
     def get_record_cmd(self):
