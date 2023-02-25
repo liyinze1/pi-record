@@ -26,4 +26,20 @@ Open ```https://[pi's ip address]:8000``` on the phone, and make sure it's https
 
 ## Local SSL Cerificate
 see https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https
+
 openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
+
+## Service
+```
+sudo cp pi-record.service /etc/systemd/system/
+sudo systemctl enable pi-record.service
+sudo systemctl start pi-record.service
+sudo systemctl status pi-record.service
+
+sudo systemctl daemon-reload
+sudo systemctl restart  pi-record.service
+
+
+sudo journalctl -f -u  pi-record.service
+
+```

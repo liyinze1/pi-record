@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask
 import utils
 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ car_table = utils.car_table('car_table.csv')
 
 @app.route('/')
 def main():
-    return render_template('index.html')
+    return "server running"
 
 @app.route('/receive/<vin>', methods=['GET'])
 def record(vin):
