@@ -29,7 +29,7 @@ def stop(vin):
 def checkvpn():
     return "OK"
     
-@app.route('/report/<vin>/<status>', methods=['GET'])
+@app.route('/report/audio/<vin>/<status>', methods=['GET'])
 def report(vin, status):
     return car_table.update(vin, status)
 

@@ -24,6 +24,19 @@ with open('config.yaml') as f:
     vpn_start_cmd = d['vpn_start']
     local_only = d['local_only']
 
+class car_table:
+
+    def __init__(self, filename):
+        self.filename = filename
+
+    def update(self, vin, status):
+        with open(self.filename, "a") as f:
+              f.write(vin + ',' + status + '\n')
+        return 'car ' + vin + ' has been updated to ' + status
+
+if local_only:
+    ct = car_table('car_table.csv')
+
 
 if not os.path.exists(audio_folder):
     os.makedirs(audio_folder)
@@ -39,11 +52,17 @@ def get_sdp_filename(vin):
     filename = 'vin-' + vin + '.sdp'
     return os.path.join(audio_folder, filename)
 
-
-def report(vin, status):
-    r = requests.get(url='http://' + server_ip +
-                     ':8000/report/' + vin + '/' + status)
-    return r.text
+def report(vin, vin_file, status):
+    if vin_file == None:
+        return "no recording"
+    if not(vin in vin_file):
+        return "no recording for new vin"
+    if local_only:
+        return  ct.update(vin_file, status)
+    else:
+        r = requests.get(url='http://' + server_ip +
+                        ':8000/report/' + vin_file + '/' + status)
+        return r.text
 
 
 class port_controll:
@@ -76,26 +95,7 @@ class port_controll:
         return result
 
 
-class car_table:
 
-    def __init__(self, filename):
-        self.filename = filename
-        self.table = {}
-        if os.path.exists(filename):
-            f = open(filename, 'r')
-            for line in f.read().splitlines():
-                vin, status = line.split(',')
-                self.table[vin] = status
-            f.close()
-
-    def update(self, vin, status):
-        if (vin in self.table and self.table[vin] != status) or vin not in self.table:
-            self.table[vin] = status
-            f = open(self.filename, 'w')
-            for v, s in self.table.items():
-                f.write(v + ',' + s + '\n')
-            f.close()
-        return 'car ' + vin + ' has been updated to ' + status
 
 
 class receive:
@@ -150,14 +150,17 @@ class vpn:
         logger.info("connecting vpn with %s", vpn_start_cmd)
         # if self.check():
         #    return 'It\'s already connected'
-        self.vpn_thread = subprocess.Popen(
+        try:
+            self.vpn_thread = subprocess.Popen(
             self.args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        for i in range(5):
-            time.sleep(1)
-            if self.check():
-                return 'Connected'
-        self.vpn_thread.kill()
-        return 'Failed, please try again later..'
+            for i in range(5):
+                time.sleep(1)
+                if self.check():
+                    return 'Connected'
+            self.vpn_thread.kill()
+        except:
+            pass
+        return 'Failed to conncet vpn, please try again later..'
 
     def check(self):
         try:
@@ -171,11 +174,22 @@ class vpn:
                                  stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
         return res + process.stdout
 
+    def shut_down(self):
+        logger.info("shutting down")
+        cmd = shlex.split('sudo shutdown now')
+        try:
+            self.vpn_thread = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            return 'Initialted shutdown..'
+        except:
+            return 'cannot shutdown'       
+
 
 class record:
 
     def __init__(self):
         self.record_thread = None
+        self.record_filename = None
         # self.stream_thread = None
         # self.record_args = shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
         # self.record_args = shlex.split('/usr/bin/arecord -Dac108 -f S24_LE -r 48000 -c 4')
@@ -184,9 +198,11 @@ class record:
         if self.record_thread is not None and self.record_thread.poll() is None:
             return 'it\'s already recording'
 
+        self.record_filename = get_audio_filename(vin)
+
         if local_only:
             logger.info('Local recording only')
-            stream_cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 {}'.format(get_audio_filename(vin))
+            stream_cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 {}'.format(self.record_filename)
         else:
             r = requests.get(url='http://' + server_ip +
                              ':8000/receive/' + vin)
