@@ -1,96 +1,245 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<style>
-.button {
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 30px;
-  margin: 10px 10px;
-  cursor: pointer;
-}
+    <style>
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
 
-.record {background-color: #4CAF50;} /* Green */
-.stop {background-color: #800000;} /* Red */
-.connect {background-color: #000080;} /* Blue */
-.check {background-color: #800080;} /* Pruple */
-.normal {background-color: #4CAF50;} /* Green */
-.squeak {background-color: #800000;} /* Red */
-.rattle {background-color: #000080;} /* Blue */
-.both {background-color: #800080;} /* Pruple */
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            font-size: 60px;
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            width: 100%;
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+        .vertical-center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+
+        .button {
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 60px;
+            margin: 10px 10px;
+            cursor: pointer;
+        }
+
+        .record {
+            background-color: #4CAF50;
+        }
+
+        /* Green */
+        .stop {
+            background-color: #800000;
+        }
+
+        /* Red */
+        .connect {
+            background-color: #000080;
+        }
+
+        /* Blue */
+        .check {
+            background-color: #800080;
+        }
+
+        /* Pruple */
+        .normal {
+            background-color: #4CAF50;
+        }
+
+        /* Green */
+        .squeak {
+            background-color: #800000;
+        }
+
+        /* Red */
+        .rattle {
+            background-color: #000080;
+        }
+
+        /* Blue */
+        .both {
+            background-color: #800080;
+        }
+
+        .label {
+            white-space: pre-wrap;
+            font-size: 30px;
+        }
+
+        /* Pruple */
 
 
-p {
+        /* p {
     font-size: 15px
-}
-
-</style>
+} */
+    </style>
 </head>
+
 <body>
-    <p id='vin'>VIN: empty</p>
-    <div id="qr-reader" style="width: 500px"></div>
-    <button onclick='run(0)' class='button record'>record</button>
-    <button onclick='run(1)' class='button stop'>stop</button></br>
-    <button onclick='vpn(0)' class='button connect'>connect VPN</button>
-    <button onclick='vpn(1)' class='button check'>check VPN</button></br>
-    <button onclick='report(0)' class='button normal'>normal</button>
-    <button onclick='report(1)' class='button squeak'>squeak</button>
-    <button onclick='report(2)' class='button rattle'>rattle</button>
-    <button onclick='report(3)' class='button both'>both</button></br>
-    <p id='message'></p>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.2.0/html5-qrcode.min.js"></script>
-<script>
-    var vin = '';
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'Main')" id="defaultOpen">Main</button>
+        <button class="tablinks" onclick="openTab(event, 'Setup')">Setup</button>
+    </div>
+     <div id="Main" class="vertical-center tabcontent">
+            <!-- Page content -->
+            <button onclick='scanvin()' class='button record'>scan VIN</button></br>
+            <div id="qr-reader" style="width: 100%"></div></br>
 
-    const cmds = ["record", "stop"];
-    function run(i) {
-        const xhttp = new XMLHttpRequest();
-        if (vin == '') {
-            document.getElementById("message").innerHTML = 'Please scan to get a VIN at first';
-        } else {
-            xhttp.open("GET", "/" + cmds[i] + "/" + vin);
-            xhttp.onload = function() {
-                document.getElementById("message").innerHTML = this.responseText;
+
+
+            <button id="vinbutton" class='button record'>VIN not set</button></br>
+
+            <button onclick='run(0)' class='button record'>record</button></br>
+            <button onclick='run(1)' class='button stop'>stop</button></br>
+
+            <button onclick='report(0)' class='button normal'>normal</button></br>
+            <button onclick='report(1)' class='button squeak'>squeak</button></br>
+            <button onclick='report(2)' class='button rattle'>rattle</button></br>
+            <button onclick='report(3)' class='button both'>both</button></br>
+            <label id="message1" class="label">No Messages</label>
+
+
+        </div>
+
+        <div id="Setup" class="vertical-center tabcontent">
+            <button onclick='vpn(0)' class='button connect'>connect VPN</button></br>
+            <button onclick='vpn(1)' class='button check'>check VPN</button></br>
+            <button onclick='vpn(2)' class='button check'>shut down </button></br>
+            <label id="message2" class="label">No Messages</label>
+        </div>
+  
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
+
+
+    </script>
+    <script>
+
+        var vin = '';
+
+        function openTab(evt, tabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        const cmds = ["record", "stop"];
+        function run(i) {
+            const xhttp = new XMLHttpRequest();
+            if (vin == '') {
+                document.getElementById("message").innerHTML = 'Please scan to get a VIN at first';
+            } else {
+                xhttp.open("GET", "/" + cmds[i] + "/" + vin);
+                xhttp.onload = function () {
+                    document.getElementById("message1").innerHTML = this.responseText;
+                }
+                xhttp.send();
+            }
+        }
+
+        const vpn_cmds = ["connect-vpn", "check-vpn", "shut_down"];
+        function vpn(i) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/" + vpn_cmds[i]);
+            xhttp.onload = function () {
+                document.getElementById("message2").innerHTML = this.responseText;
             }
             xhttp.send();
         }
-    }
 
-    const vpn_cmds = ["connect-vpn", "check-vpn"];
-    function vpn(i) {
-        const xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "/" + vpn_cmds[i]);
-        xhttp.onload = function() {
-            document.getElementById("message").innerHTML = this.responseText;
+        const report_cmds = ["normal", "squeak", "rattle", "both"]
+        function report(i) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
+            xhttp.onload = function () {
+                document.getElementById("message1").innerHTML = this.responseText;
+            }
+            xhttp.send();
         }
-        xhttp.send();
-    }
 
-    const report_cmds = ["normal", "squeak", "rattle", "both"]
-    function report(i) {
-        const xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
-        xhttp.onload = function() {
-            document.getElementById("message").innerHTML = this.responseText;
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Code scanned = ${decodedText}`, decodedResult);
+            vin = decodedText;
+            document.getElementById("vinbutton").innerHTML = 'VIN: ' + vin;
+            html5QrcodeScanner.clear();
         }
-        xhttp.send();
-    }
 
+        let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
+            let minEdgePercentage = 0.7; // 70%
+            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+            let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+            return {
+                width: qrboxSize,
+                height: qrboxSize / 2
+            };
+        }
 
-    function onScanSuccess(decodedText, decodedResult) {
-        console.log(`Code scanned = ${decodedText}`, decodedResult);
-        vin = decodedText;
-        document.getElementById("vin").innerHTML = 'VIN: ' + vin;
-   }
-    var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 });
-    html5QrcodeScanner.render(onScanSuccess);
+        function scanvin() {
+            console.log('scan vin')
+            html5QrcodeScanner.render(onScanSuccess);
+        }
 
-</script>
+        var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: qrboxFunction });
+
+        document.getElementById("defaultOpen").click();
+
+    </script>
 
 </body>
+
 </html>

@@ -1,0 +1,15 @@
+[Unit]
+Description=Sound Collection Service
+After=network.target
+
+[Service]
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+ExecStart=/usr/bin/python3 pi.py
+WorkingDirectory=/home/pi/pi-record
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
