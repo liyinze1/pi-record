@@ -224,7 +224,7 @@
         }
 
         const save_locations = ["pi", "server", "both"]
-        function save_files_to(i) {
+        function save_files(i) {
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/save-location/" + report_cmds[i]);
             xhttp.onload = function () {
