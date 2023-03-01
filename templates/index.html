@@ -213,6 +213,8 @@
             xhttp.open("GET", "/stop");
             xhttp.onload = function () {
                 document.getElementById("message_record").innerHTML = this.responseText;
+                // jump to the next
+                document.getElementById("report_tab").click();
             }
             xhttp.send();
         }
