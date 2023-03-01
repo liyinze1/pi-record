@@ -19,52 +19,40 @@ with open('config.yaml') as f:
     d = yaml.safe_load(f)
     vpn_network = d['vpn_network']
     server_ip = d['server_ip']
-    save_local = d['save_local']
     audio_folder = d['audio_folder']
     vpn_start_cmd = d['vpn_start']
-    local_only = d['local_only']
 
 class car_table:
-
     def __init__(self, filename):
         self.filename = filename
 
     def update(self, vin, status):
         with open(self.filename, "a") as f:
-              f.write(vin + ',' + status + '\n')
+            f.write(vin + ',' + status + '\n')
         return 'car ' + vin + ' has been updated to ' + status
-
-if local_only:
-    ct = car_table('car_table.csv')
 
 
 if not os.path.exists(audio_folder):
     os.makedirs(audio_folder)
 
-
+# pi, server
 def get_audio_filename(vin):
     now = datetime.now()
     file_name = 'vin-' + vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
     return os.path.join(audio_folder, file_name)
 
-
+# server
 def get_sdp_filename(vin):
     filename = 'vin-' + vin + '.sdp'
     return os.path.join(audio_folder, filename)
 
-def report(vin, vin_file, status):
-    if vin_file == None:
-        return "no recording"
-    if not(vin in vin_file):
-        return "no recording for new vin"
-    if local_only:
-        return  ct.update(vin_file, status)
-    else:
-        r = requests.get(url='http://' + server_ip +
-                        ':8000/report/' + vin_file + '/' + status)
-        return r.text
+# pi
+def report_to_server(vin, status):
+    r = requests.get(url='http://' + server_ip +
+                        ':8000/report/' + vin + '/' + status)
+    return r.text
 
-
+# server
 class port_controll:
 
     def __init__(self):
@@ -94,10 +82,7 @@ class port_controll:
         sock.close()
         return result
 
-
-
-
-
+# server
 class receive:
 
     def __init__(self, vin, port_controller):
@@ -125,9 +110,10 @@ class receive:
         f.write(sdp)
         f.close()
 
+        self.audio_filename = get_audio_filename(vin)
         # thread for receiving
         cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s' % (
-            self.sdp_filename, get_audio_filename(vin))
+            self.sdp_filename, self.audio_filename)
         logger.info(cmd)
         cmd = shlex.split(cmd)
         self.receive_thread = subprocess.Popen(cmd)
@@ -170,9 +156,9 @@ class vpn:
         except Exception as e:
             res = str(e) + '\n'
 
-        process = subprocess.run(["ifconfig"], shell=True, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
-        return res + process.stdout
+        # process = subprocess.run(["ifconfig"], shell=True, stdout=subprocess.PIPE,
+        #                          stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
+        return res
 
     def shut_down(self):
         logger.info("shutting down")
@@ -184,42 +170,23 @@ class vpn:
         except:
             return 'cannot shutdown'       
 
-
 class record:
 
     def __init__(self):
         self.record_thread = None
         self.record_filename = None
-        # self.stream_thread = None
-        # self.record_args = shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
-        # self.record_args = shlex.split('/usr/bin/arecord -Dac108 -f S24_LE -r 48000 -c 4')
 
-    def record(self, vin):
+    def record(self, vin, save_location):
         if self.record_thread is not None and self.record_thread.poll() is None:
-            return 'it\'s already recording'
+            return 'already recording'
 
-        self.record_filename = get_audio_filename(vin)
+        self.save_location = save_location
+        stream_cmd = self.get_stream_cmd(vin, save_location)
 
-        if local_only:
-            logger.info('Local recording only')
-            stream_cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 {}'.format(self.record_filename)
-        else:
-            r = requests.get(url='http://' + server_ip +
-                             ':8000/receive/' + vin)
-            self.port = r.text
-            logger.info('got port: %s', self.port)
-            stream_cmd = self.get_stream_cmd_new(vin)
-
-        # record_cmd = self.get_record_cmd()
-        # stream_cmd = self.get_stream_cmd(vin)
-
-        logger.info(stream_cmd)
-
-        self.record_thread = subprocess.Popen(stream_cmd,  shell=True, stdout=subprocess.PIPE,
+        self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
                                               stderr=subprocess.PIPE, start_new_session=True)
 
         logger.info("recored thread %s", self.record_thread)
-
         # self.record_thread = subprocess.Popen(record_cmd, stdout=subprocess.PIPE)
         # self.stream_thread = subprocess.Popen(stream_cmd, stdin=self.record_thread.stdout)
         time.sleep(2)
@@ -232,33 +199,33 @@ class record:
         if self.record_thread is None or self.record_thread.poll() is not None:
             return 'nothing to stop'
         else:
-            if not(local_only):
+            if self.save_location in ('server', 'both'):
                 requests.post(url='http://' + server_ip + ':8000/stop/' + vin)
             # self.stream_thread.kill()
             # self.record_thread.kill()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
             return 'stopped'
 
-    def get_record_cmd(self):
-        return shlex.split('/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4')
-
-    def get_stream_cmd(self, vin):
-        addr = server_ip + ':' + self.port
-        if save_local:
-            cmd = 'sudo /usr/bin/ffmpeg -re -i - -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s'%(get_audio_filename(vin), addr)
+    def get_stream_cmd(self, vin, save_location):
+        self.record_filename = get_audio_filename(vin)
+        if save_location == 'pi':
+            # locally
+            cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 {}'.format(self.record_filename)
         else:
-            cmd = '/usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s' % (
-                addr)
-
-        logger.info("vin %s", vin)
-        logger.info("command %s", cmd)
-        return shlex.split(cmd)
-
-    def get_stream_cmd_new(self, vin):
-        addr = server_ip + ':' + self.port
-        cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s' % (
-            addr)
-
+            # get port number from server
+            r = requests.get(url='http://' + server_ip +
+                             ':8000/receive/' + vin)
+            port = r.text
+            logger.info('got port: %s', port)
+            addr = server_ip + ':' + port
+            
+            if save_location == 'server':
+                # server only
+                cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s' % (addr)
+            else:
+                # save both
+                cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 | /usr/bin/ffmpeg -re -i - -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s' % (self.record_filename, addr)
+        
         logger.info("vin %s", vin)
         logger.info("command %s", cmd)
         return cmd

@@ -117,36 +117,40 @@
 <body>
 
     <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'Main')" id="defaultOpen">Main</button>
-        <button class="tablinks" onclick="openTab(event, 'Setup')">Setup</button>
+        <button class="tablinks" onclick="openTab(event, 'scan_panel')" id="scan_tab">scan</button>
+        <button class="tablinks" onclick="openTab(event, 'record_panel')" id="record_tab">record</button>
+        <button class="tablinks" onclick="openTab(event, 'report_panel')" id="report_tab">report</button>
+        <button class="tablinks" onclick="openTab(event, 'setup_panel')">setup</button>
     </div>
-     <div id="Main" class="vertical-center tabcontent">
-            <!-- Page content -->
-            <button onclick='scanvin()' class='button record'>scan VIN</button></br>
-            <div id="qr-reader" style="width: 100%"></div></br>
+    
+    <div id="scan_panel" class="vertical-center tabcontent">
+        <button id="vinbutton" class='button record'>VIN not set</button></br>
+        <div id="qr-reader" style="width: 100%"></div></br>
+        <button onclick='scanvin()' class='button record'>scan VIN</button></br>
+        <label id="message_scan" class="label">No Messages</label>
+    </div>
+
+    <div id='record_panel' class="vertical-center tabcontent">
+        <button onclick='run(0)' class='button record'>record</button></br>
+        <button onclick='run(1)' class='button stop'>stop</button></br>
+        <label id="message_record" class="label">No Messages</label>
+    </div>
+
+    <div id='report_panel' class="vertical-center tabcontent">
+        <button onclick='report(0)' class='button normal'>normal</button></br>
+        <button onclick='report(1)' class='button squeak'>squeak</button></br>
+        <button onclick='report(2)' class='button rattle'>rattle</button></br>
+        <button onclick='report(3)' class='button both'>both</button></br>
+        <label id="message_report" class="label">No Messages</label>
+    </div>
 
 
-
-            <button id="vinbutton" class='button record'>VIN not set</button></br>
-
-            <button onclick='run(0)' class='button record'>record</button></br>
-            <button onclick='run(1)' class='button stop'>stop</button></br>
-
-            <button onclick='report(0)' class='button normal'>normal</button></br>
-            <button onclick='report(1)' class='button squeak'>squeak</button></br>
-            <button onclick='report(2)' class='button rattle'>rattle</button></br>
-            <button onclick='report(3)' class='button both'>both</button></br>
-            <label id="message1" class="label">No Messages</label>
-
-
-        </div>
-
-        <div id="Setup" class="vertical-center tabcontent">
-            <button onclick='vpn(0)' class='button connect'>connect VPN</button></br>
-            <button onclick='vpn(1)' class='button check'>check VPN</button></br>
-            <button onclick='vpn(2)' class='button check'>shut down </button></br>
-            <label id="message2" class="label">No Messages</label>
-        </div>
+    <div id="setup_panel" class="vertical-center tabcontent">
+        <button onclick='vpn(0)' class='button connect'>connect VPN</button></br>
+        <button onclick='vpn(1)' class='button check'>check VPN</button></br>
+        <button onclick='vpn(2)' class='button check'>shut down </button></br>
+        <label id="message_setup" class="label">No Messages</label>
+    </div>
   
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
@@ -182,11 +186,11 @@
         function run(i) {
             const xhttp = new XMLHttpRequest();
             if (vin == '') {
-                document.getElementById("message").innerHTML = 'Please scan to get a VIN at first';
+                document.getElementById("message_record").innerHTML = 'Please scan to get a VIN at first';
             } else {
                 xhttp.open("GET", "/" + cmds[i] + "/" + vin);
                 xhttp.onload = function () {
-                    document.getElementById("message1").innerHTML = this.responseText;
+                    document.getElementById("message_record").innerHTML = 'VIN: ' + vin + '\nis\n' + this.responseText;
                 }
                 xhttp.send();
             }
@@ -197,7 +201,7 @@
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/" + vpn_cmds[i]);
             xhttp.onload = function () {
-                document.getElementById("message2").innerHTML = this.responseText;
+                document.getElementById("message_setup").innerHTML = this.responseText;
             }
             xhttp.send();
         }
@@ -207,16 +211,21 @@
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
             xhttp.onload = function () {
-                document.getElementById("message1").innerHTML = this.responseText;
+                document.getElementById("message_report").innerHTML = this.responseText;
             }
             xhttp.send();
         }
 
-        function onScanSuccess(decodedText, decodedResult) {
-            console.log(`Code scanned = ${decodedText}`, decodedResult);
-            vin = decodedText;
-            document.getElementById("vinbutton").innerHTML = 'VIN: ' + vin;
-            html5QrcodeScanner.clear();
+        /*
+        function onScanSuccess(decodedText, decodedResult) {   
+        }
+
+        var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: qrboxFunction });
+        */
+
+        function scanvin() {
+            console.log('scan vin')
+            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
         }
 
         let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
@@ -229,14 +238,20 @@
             };
         }
 
-        function scanvin() {
-            console.log('scan vin')
-            html5QrcodeScanner.render(onScanSuccess);
-        }
+        const html5QrCode = new Html5Qrcode("qr-reader");
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            console.log(`Code scanned = ${decodedText}`, decodedResult);
+            vin = decodedText;
+            document.getElementById("vinbutton").innerHTML = 'VIN: ' + vin;
+            document.getElementById("message_scan").innerHTML = 'VIN: ' + vin;
+            html5QrCode.stop().then((ignore) => {
+                console.log('stopped')
+            }).catch((err) => {});
+        };
+        const config = { fps: 10, qrbox: qrboxFunction };
 
-        var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: qrboxFunction });
-
-        document.getElementById("defaultOpen").click();
+        // initialize
+        document.getElementById("scan_tab").click();
 
     </script>
 

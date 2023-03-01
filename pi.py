@@ -3,17 +3,26 @@ import utils
 
 app = Flask(__name__)
 
-
 vpn_thread = utils.vpn()
 record_thread = utils.record()
+
+save_location = 'both'
+car_table = utils.car_table('car_table.csv')
 
 @app.route('/')
 def main():
     return render_template('index.html')
 
+@app.route('/save-location/<save_location>', methods=['GET'])
+def set_save_location(new_save_location):
+    global save_location
+    assert save_location in ('both', 'pi', 'server')
+    save_location = new_save_location
+    return 'ok'
+
 @app.route('/record/<vin>', methods=['GET'])
 def record(vin):
-    return str(record_thread.record(vin))
+    return str(record_thread.record(vin, save_location))
 
 @app.route('/stop/<vin>', methods=['GET'])
 def stop(vin):
@@ -34,7 +43,15 @@ def shut_down():
 
 @app.route('/report/<vin>/<status>', methods=['GET'])
 def report(vin, status):
-    return utils.report(vin,record_thread.record_filename, status)
+    vin_file = record_thread.record_filename
+    if vin_file == None:
+        return "no recording"
+    if vin not in vin_file:
+        return "no recording for new vin"
+    if save_location in ('pi', 'both'):
+        return car_table.update(vin_file, status)
+    else:
+        return utils.report_to_server(vin, status)
 
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')

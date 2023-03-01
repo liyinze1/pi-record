@@ -22,16 +22,18 @@ def record(vin):
 @app.route('/stop/<vin>', methods=['POST'])
 def stop(vin):
     receive_threads[vin].stop()
-    receive_threads.pop(vin)
     return 'stopped'
 
 @app.route('/check-vpn', methods=['GET'])
 def checkvpn():
     return "OK"
     
-@app.route('/report/audio/<vin>/<status>', methods=['GET'])
+@app.route('/report/<vin>/<status>', methods=['GET'])
 def report(vin, status):
-    return car_table.update(vin, status)
+    if vin not in receive_threads:
+        return 'vin is not found on the server'
+    else:
+        return car_table.update(receive_threads.pop(vin).audio_filename, status)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000)

@@ -1,7 +1,6 @@
 server_ip: '10.0.0.28'
 vpn_network: '10.94.0'
-save_local: False
+save_location: 'both' # 'pi', 'server' or 'both'
 audio_folder: './audio'
 # audio_folder: './'
 vpn_start: 'wg-quick up wg0'
-local_only: True 
