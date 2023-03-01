@@ -217,6 +217,7 @@
                 document.getElementById("report_tab").click();
             }
             xhttp.send();
+            document.getElementById("message_record").innerHTML = "stopping, please wait...";
         }
 
         const report_cmds = ["normal", "squeak", "rattle", "both"]
@@ -227,6 +228,7 @@
                 document.getElementById("message_report").innerHTML = this.responseText;
             }
             xhttp.send();
+            document.getElementById("message_record").innerHTML = "reporting, please wait...";
         }
 
         const vpn_cmds = ["connect-vpn", "check-vpn", "shut_down"];
