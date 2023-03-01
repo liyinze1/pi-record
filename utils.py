@@ -31,7 +31,6 @@ class car_table:
             f.write(vin + ',' + status + '\n')
         return 'car ' + vin + ' has been updated to ' + status
 
-
 if not os.path.exists(audio_folder):
     os.makedirs(audio_folder)
 
