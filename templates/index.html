@@ -136,7 +136,7 @@
     </div>
 
     <div id='record_panel' class="vertical-center tabcontent">
-        <button id="vinbutton" class='button scan'>VIN not set</button></br>
+        <button id="vinbutton" class='button normal'>VIN not set</button></br>
         <button onclick='record()' class='button record'>record</button></br>
         <button onclick='stop()' class='button stop'>stop</button></br>
         <label id="message_record" class="label">No Messages</label>
@@ -278,6 +278,8 @@
             html5QrCode.stop().then((ignore) => {
                 console.log('stopped')
             }).catch((err) => {});
+            // jump to next tab
+            document.getElementById("record_tab").click();
         };
         const config = { fps: 10, qrbox: qrboxFunction };
 
