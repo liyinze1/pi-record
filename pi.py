@@ -50,7 +50,7 @@ def report(vin, status):
         return "no recording for new vin"
     if save_location in ('pi', 'both'):
         return car_table.update(vin_file, status)
-    else:
+    if save_location in ('server', 'both'):
         return utils.report_to_server(vin, status)
 
 if __name__ == '__main__':
