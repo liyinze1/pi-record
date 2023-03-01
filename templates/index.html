@@ -56,17 +56,23 @@
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 60px;
+            font-size: 100px;
             margin: 10px 10px;
             cursor: pointer;
         }
 
         .record {
+            font-size: 200px;
             background-color: #4CAF50;
+        }
+        
+        .scan {
+            background-color: #800000;
         }
 
         /* Green */
         .stop {
+            font-size: 200px;
             background-color: #800000;
         }
 
@@ -102,7 +108,7 @@
 
         .label {
             white-space: pre-wrap;
-            font-size: 30px;
+            font-size: 50px;
         }
 
         /* Pruple */
@@ -124,15 +130,15 @@
     </div>
     
     <div id="scan_panel" class="vertical-center tabcontent">
-        <button id="vinbutton" class='button record'>VIN not set</button></br>
+        <button id="vinbutton" class='button scan'>VIN not set</button></br>
         <div id="qr-reader" style="width: 100%"></div></br>
-        <button onclick='scanvin()' class='button record'>scan VIN</button></br>
+        <button onclick='scanvin()' class='button scan'>scan VIN</button></br>
         <label id="message_scan" class="label">No Messages</label>
     </div>
 
     <div id='record_panel' class="vertical-center tabcontent">
-        <button onclick='run(0)' class='button record'>record</button></br>
-        <button onclick='run(1)' class='button stop'>stop</button></br>
+        <button onclick='record()' class='button record'>record</button></br>
+        <button onclick='stop()' class='button stop'>stop</button></br>
         <label id="message_record" class="label">No Messages</label>
     </div>
 
@@ -189,18 +195,26 @@
             evt.currentTarget.className += " active";
         }
 
-        const cmds = ["record", "stop"];
-        function run(i) {
+        function record() {
             const xhttp = new XMLHttpRequest();
             if (vin == '') {
                 document.getElementById("message_record").innerHTML = 'Please scan to get a VIN at first';
             } else {
-                xhttp.open("GET", "/" + cmds[i] + "/" + vin);
+                xhttp.open("GET", "/record/" + vin);
                 xhttp.onload = function () {
                     document.getElementById("message_record").innerHTML = 'VIN: ' + vin + '\nis\n' + this.responseText;
                 }
                 xhttp.send();
             }
+        }
+
+        function stop() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/stop");
+            xhttp.onload = function () {
+                document.getElementById("message_record").innerHTML = this.responseText;
+            }
+            xhttp.send();
         }
 
         const report_cmds = ["normal", "squeak", "rattle", "both"]

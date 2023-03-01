@@ -179,6 +179,7 @@ class record:
         if self.record_thread is not None and self.record_thread.poll() is None:
             return 'already recording'
 
+        self.vin = vin
         self.save_location = save_location
         stream_cmd = self.get_stream_cmd(vin, save_location)
 
@@ -194,16 +195,16 @@ class record:
         else:
             return 'Failed\nlog:\t'
 
-    def stop(self, vin):
+    def stop(self):
         if self.record_thread is None or self.record_thread.poll() is not None:
             return 'nothing to stop'
         else:
             if self.save_location in ('server', 'both'):
-                requests.post(url='http://' + server_ip + ':8000/stop/' + vin)
+                requests.post(url='http://' + server_ip + ':8000/stop/' + self.vin)
             # self.stream_thread.kill()
             # self.record_thread.kill()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
-            return 'stopped'
+            return self.vin + ' has been stopped'
 
     def get_stream_cmd(self, vin, save_location):
         self.record_filename = get_audio_filename(vin)

@@ -24,9 +24,9 @@ def set_save_location(new_save_location):
 def record(vin):
     return str(record_thread.record(vin, save_location))
 
-@app.route('/stop/<vin>', methods=['GET'])
-def stop(vin):
-    return str(record_thread.stop(vin))
+@app.route('/stop', methods=['GET'])
+def stop():
+    return str(record_thread.stop())
 
 @app.route('/check-vpn', methods=['GET'])
 def check_vpn():
