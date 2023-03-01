@@ -226,7 +226,7 @@
         const save_locations = ["pi", "server", "both"]
         function save_files(i) {
             const xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "/save-location/" + report_cmds[i]);
+            xhttp.open("GET", "/save-location/" + save_locations[i]);
             xhttp.onload = function () {
                 document.getElementById("message_setup").innerHTML = this.responseText;
             }
