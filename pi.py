@@ -13,7 +13,7 @@ car_table = utils.car_table('car_table.csv')
 def main():
     return render_template('index.html')
 
-@app.route('/save-location/<save_location>', methods=['GET'])
+@app.route('/save-location/<new_save_location>', methods=['GET'])
 def set_save_location(new_save_location):
     global save_location
     assert save_location in ('both', 'pi', 'server')
