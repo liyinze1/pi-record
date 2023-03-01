@@ -18,7 +18,7 @@ def set_save_location(new_save_location):
     global save_location
     assert save_location in ('both', 'pi', 'server')
     save_location = new_save_location
-    return 'ok'
+    return 'save locations has been updated to ' + save_location
 
 @app.route('/record/<vin>', methods=['GET'])
 def record(vin):
