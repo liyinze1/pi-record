@@ -146,10 +146,15 @@
 
 
     <div id="setup_panel" class="vertical-center tabcontent">
-        <button onclick='vpn(0)' class='button connect'>connect VPN</button></br>
+        <button onclick='vpn(0)' class='button connect'>connect VPN</button>
         <button onclick='vpn(1)' class='button check'>check VPN</button></br>
         <button onclick='vpn(2)' class='button check'>shut down </button></br>
-        <label id="message_setup" class="label">No Messages</label>
+        <label id="message_setup" class="label">No Messages</label></br>
+
+        Save files to:
+        <button onclick="save_files(0)" class='button normal'>pi</button>
+        <button onclick="save_files(1)" class='button squeak'>server</button>
+        <button onclick="save_files(2)" class='button rattle'>both</button></br>
     </div>
   
 
@@ -196,6 +201,16 @@
             }
         }
 
+        const report_cmds = ["normal", "squeak", "rattle", "both"]
+        function report(i) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
+            xhttp.onload = function () {
+                document.getElementById("message_report").innerHTML = this.responseText;
+            }
+            xhttp.send();
+        }
+
         const vpn_cmds = ["connect-vpn", "check-vpn", "shut_down"];
         function vpn(i) {
             const xhttp = new XMLHttpRequest();
@@ -206,12 +221,12 @@
             xhttp.send();
         }
 
-        const report_cmds = ["normal", "squeak", "rattle", "both"]
-        function report(i) {
+        const save_locations = ["pi", "server", "both"]
+        function save_files_to(i) {
             const xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
+            xhttp.open("GET", "/save-location/" + report_cmds[i]);
             xhttp.onload = function () {
-                document.getElementById("message_report").innerHTML = this.responseText;
+                document.getElementById("message_setup").innerHTML = this.responseText;
             }
             xhttp.send();
         }
