@@ -1,6 +1,12 @@
 ## 0. Setup
 ### 0.1 Packages
-Run ```pip3 install -r requirements.txt``` on both server and pi to install python dependencies
+Run 
+```
+python3 -m venv ford-venv
+source ford-venv/bin/activate
+pip3 install -r requirements.txt
+``` 
+on both server and pi to install python dependencies
 
 It's also required a package called [FFmpeg](https://ffmpeg.org/) on both sides to send and receive audio stream.
 

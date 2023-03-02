@@ -7,3 +7,4 @@ vin*
 *.sdp
 *.csv
 *.pem
+*venv/
