@@ -9,7 +9,7 @@ WorkingDirectory=/mnt/120daa3e-6d5a-47f4-86fc-b9080ddf4988/ford_data/pi-record
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=yinze
+User=pi-record
 
 [Install]
 WantedBy=multi-user.target
