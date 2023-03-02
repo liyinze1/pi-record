@@ -24,6 +24,10 @@ def stop(vin):
     receive_threads[vin].stop()
     return 'stopped'
 
+@app.route('/stop-test', methods=['GET'])
+def stop_test():
+    return receive_threads.pop('test').stop_test()
+
 @app.route('/check-vpn', methods=['GET'])
 def checkvpn():
     return "OK"

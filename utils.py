@@ -8,7 +8,7 @@ import socket
 import requests
 import os
 import signal
-
+import wave
 import logging
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -121,7 +121,15 @@ class receive:
         self.receive_thread.kill()
         logger.info("returning port %s", self.port)
         self.port_controller.return_port(self.port)
-
+        
+    def stop_test(self):
+        self.receive_thread.wait()
+        self.receive_thread.kill()
+        f = wave.open(self.audio_filename, 'rb')
+        loss_rate = 1 - f.getnframes() / (48e4)
+        f.close()
+        self.port_controller.return_port(self.port)
+        return '%.2f%' % (loss_rate * 100)        
 
 class vpn:
 
@@ -189,13 +197,17 @@ class record:
         self.save_location = save_location
         stream_cmd = self.get_stream_cmd(vin, save_location)
 
+        if save_location == 'test':
+            # wait for server to start recieving
+            time.sleep(3)
+        
         self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
                                               stderr=subprocess.PIPE, start_new_session=True)
 
         logger.info("recored thread %s", self.record_thread)
         # self.record_thread = subprocess.Popen(record_cmd, stdout=subprocess.PIPE)
         # self.stream_thread = subprocess.Popen(stream_cmd, stdin=self.record_thread.stdout)
-        time.sleep(2)
+        # time.sleep(2)
         if self.record_thread.poll() is None:
             return 'recording...'
         else:
@@ -211,8 +223,14 @@ class record:
             # self.record_thread.kill()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
             return self.vin + ' has been stopped'
+        
+    def stop_test(self):
+        self.record_thread.wait()
+        # get loss rate
+        r = requests.get(url='http://' + server_ip + ':8000/stop-test')
+        return r.text
 
-    def get_stream_cmd(self, vin, save_location):
+    def get_stream_cmd(self, vin, save_location):        
         self.record_filename = get_audio_filename(vin)
         if save_location == 'pi':
             # locally
@@ -228,9 +246,12 @@ class record:
             if save_location == 'server':
                 # server only
                 cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s' % (addr)
-            else:
+            elif save_location == 'both':
                 # save both
                 cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 | /usr/bin/ffmpeg -re -i - -acodec copy %s -acodec pcm_s24be -f rtp rtp://%s' % (self.record_filename, addr)
+            else:
+                # test 10s
+                cmd = '/usr/bin/arecord -Dac108 -f S32_LE -r 48000 -c 4 -d 10 | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s' % (addr)
         
         logger.info("vin %s", vin)
         logger.info("command %s", cmd)

@@ -24,6 +24,11 @@ def set_save_location(new_save_location):
 def record(vin):
     return str(record_thread.record(vin, save_location))
 
+@app.route('/test-loss-rate', methods=['GET'])
+def test_loss_rate():
+    record_thread.record('test', 'test')
+    return record_thread.stop_test()
+
 @app.route('/stop', methods=['GET'])
 def stop():
     return str(record_thread.stop())
