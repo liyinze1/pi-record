@@ -8,7 +8,6 @@ import socket
 import requests
 import os
 import signal
-import wave
 import logging
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -125,11 +124,12 @@ class receive:
     def stop_test(self):
         self.receive_thread.wait()
         self.receive_thread.kill()
-        f = wave.open(self.audio_filename, 'rb')
-        loss_rate = 1 - f.getnframes() / (48e4)
+        import soundfile as sf
+        data, sr = sf.read(self.audio_filename)
+        loss_rate = 1 - len(data) / (48e4)
         f.close()
         self.port_controller.return_port(self.port)
-        return '%.2f%' % (loss_rate * 100)        
+        return '%.2f%%' % (loss_rate * 100)
 
 class vpn:
 
@@ -175,7 +175,17 @@ class vpn:
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return 'Initialted shutdown..'
         except:
-            return 'cannot shutdown'       
+            return 'cannot shutdown'
+    
+    def reboot(self):
+        logger.info("rebooting")
+        cmd = shlex.split('sudo reboot')
+        try:
+            self.vpn_thread = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            return 'Initialted reboot'
+        except:
+            return 'cannot reboot'
 
 class record:
 

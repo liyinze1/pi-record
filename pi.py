@@ -42,9 +42,13 @@ def check_vpn():
 def connect_vpn():
     return str(vpn_thread.connect())
 
-@app.route('/shut_down', methods=['GET'])
+@app.route('/shut-down', methods=['POST'])
 def shut_down():
     return vpn_thread.shut_down()
+
+@app.route('/reboot', methods=['POST'])
+def reboot():
+    return vpn_thread.reboot()
 
 @app.route('/report/<vin>/<status>', methods=['GET'])
 def report(vin, status):

@@ -127,6 +127,7 @@
         <button class="tablinks" onclick="openTab(event, 'record_panel')" id="record_tab">record</button>
         <button class="tablinks" onclick="openTab(event, 'report_panel')" id="report_tab">report</button>
         <button class="tablinks" onclick="openTab(event, 'setup_panel')">setup</button>
+        <button class="tablinks" onclick="openTab(event, 'power_panel')">power</button>
     </div>
     
     <div id="scan_panel" class="vertical-center tabcontent">
@@ -154,8 +155,7 @@
     <div id="setup_panel" class="vertical-center tabcontent">
         <button onclick='vpn(0)' class='button connect'>connect VPN</button>
         <button onclick='vpn(1)' class='button check'>check VPN</button></br>
-        <button onclick='test_loss_rate()' class='button rattle'>loss rate</button>
-        <button onclick='vpn(2)' class='button check'>shut down </button></br>
+        <button onclick='test_loss_rate()' class='button normal'>loss rate</button></br>
 
         <font size="60px">Save files to:</font>
         <button onclick="save_files(0)" class='button normal'>pi</button>
@@ -165,7 +165,11 @@
         <label id="message_setup" class="label">No Messages</label></br>
 
     </div>
-  
+
+    <div id="power_panel" class="vertical-center tabcontent">
+        <button onclick='power(0)' class='button normal'>reboot</button></br>
+        <button onclick='power(1)' class='button check'>shutdown</button></br>
+    </div>
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
 
@@ -232,13 +236,20 @@
             document.getElementById("message_record").innerHTML = "reporting, please wait...";
         }
 
-        const vpn_cmds = ["connect-vpn", "check-vpn", "shut_down"];
+        const vpn_cmds = ["connect-vpn", "check-vpn"];
         function vpn(i) {
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/" + vpn_cmds[i]);
             xhttp.onload = function () {
                 document.getElementById("message_setup").innerHTML = this.responseText;
             }
+            xhttp.send();
+        }
+
+        const power_cmds = ["shut-down", "reboot"]
+        function power(i) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/" +power_cmds[i]);
             xhttp.send();
         }
 
