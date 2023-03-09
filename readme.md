@@ -36,7 +36,9 @@ sudo journalctl -f -u vpn.service
 ## Local SSL Cerificate
 see https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https
 
+```
 openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
+```
 
 ## Service on pi
 ```
