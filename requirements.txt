@@ -2,5 +2,3 @@ Flask
 requests
 PyYAML
 pyopenssl
-numpy
-soundfile
