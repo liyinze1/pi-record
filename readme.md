@@ -1,5 +1,4 @@
-## 0. Setup
-### 0.1 Packages
+## Setup
 Run 
 ```
 python3 -m venv ford-venv
@@ -12,7 +11,7 @@ It's also required a package called [FFmpeg](https://ffmpeg.org/) on both sides 
 
 Try ```sudo apt install -y ffmpeg``` or, ```brew install ffmpeg``` or [manually download it](https://ffmpeg.org/download.html)
 
-### 0.2 VPN
+## VPN
 For the vpn between phone, pi and server, here I recommend [zerotier](https://www.zerotier.com/download/), and here is the [instruction](https://linuxhint.com/install-use-zerotier-raspberry-pi-virtual-network/) on
 how to install it on a raspberry pi.
 
@@ -20,22 +19,26 @@ Make sure they can ping to each other.
 
 Revise the ip address of the server and the network address on [config.yaml](./config.yaml)
 
-### 0.3 Tethering
-Install zerotier on the phone and share Internet to the pi by hotspot.
+```
+sudo cp server-record.service /etc/systemd/system/
+sudo systemctl enable vpn.service
+sudo systemctl start vpn.service
+sudo systemctl status vpn.service
 
-## 1. Run
-Run ```cd pi-record``` and ```sudo -E python3 pi.py``` on the pi, and ```python3 server.py``` on the server
+sudo systemctl daemon-reload
+sudo systemctl restart vpn.service
 
-## 2. Record
-Open ```https://[pi's ip address]:8000``` on the phone, and make sure it's https
 
+sudo journalctl -f -u vpn.service
+
+```
 
 ## Local SSL Cerificate
 see https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https
 
 openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
 
-## Service
+## Service on pi
 ```
 sudo cp pi-record.service /etc/systemd/system/
 sudo systemctl enable pi-record.service
@@ -46,6 +49,21 @@ sudo systemctl daemon-reload
 sudo systemctl restart  pi-record.service
 
 
-sudo journalctl -f -u  pi-record.service
+sudo journalctl -f -u pi-record.service
 
 ```
+## Service on server
+```
+sudo cp server-record.service /etc/systemd/system/
+sudo systemctl enable server-record.service
+sudo systemctl start server-record.service
+sudo systemctl status server-record.service
+
+sudo systemctl daemon-reload
+sudo systemctl restart server-record.service
+
+
+sudo journalctl -f -u server-record.service
+
+```
+
