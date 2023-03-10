@@ -107,6 +107,8 @@ class receive:
         f = open(self.sdp_filename, 'w')
         f.write(sdp)
         f.close()
+        
+        logger.info('port:%d'%self.port)
 
         self.audio_filename = get_audio_filename(vin)
         # thread for receiving
