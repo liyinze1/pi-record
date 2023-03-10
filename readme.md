@@ -20,16 +20,16 @@ Make sure they can ping to each other.
 Revise the ip address of the server and the network address on [config.yaml](./config.yaml)
 
 ```
-sudo cp server-record.service /etc/systemd/system/
-sudo systemctl enable vpn.service
-sudo systemctl start vpn.service
-sudo systemctl status vpn.service
+sudo cp pi-vpn.service /etc/systemd/system/
+sudo systemctl enable pi-vpn.service
+sudo systemctl start pi-vpn.service
+sudo systemctl status pi-vpn.service
 
 sudo systemctl daemon-reload
-sudo systemctl restart vpn.service
+sudo systemctl restart pi-vpn.service
 
 
-sudo journalctl -f -u vpn.service
+sudo journalctl -f -u pi-vpn.service
 
 ```
 
