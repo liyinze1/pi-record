@@ -214,7 +214,7 @@ class record:
         if self.record_thread is not None and self.record_thread.poll() is None:
             return 'already recording'
         
-        if save_location is not 'pi':
+        if save_location != 'pi':
             try:
                 requests.get(url='http://' + server_ip + ':8000/check-vpn', timeout=2)
             except Exception as e:
