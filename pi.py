@@ -63,13 +63,19 @@ def report(vin, status):
         return utils.report_to_server(vin, status)
     return 'ok'
 
-@app.route('/check-last-audio', methods=['GET'])
-def check_last_audio():
-    return utils.check_last_audio()
+@app.route('/check-last-audio/<position>', methods=['GET'])
+def check_last_audio(position):
+    if position == 'pi':
+        return utils.check_last_audio()
+    else:
+        return utils.check_last_audio_server()
 
-@app.route('/delete-last-audio/<audio>', methods=['GET'])
-def delete_last_audio(audio):
-    return utils.delete_last_audio(audio)
+@app.route('/delete-last-audio/<position>/<audio>', methods=['GET'])
+def delete_last_audio(position, audio):
+    if position == 'pi':
+        return utils.delete_last_audio(audio)
+    else:
+        return utils.delete_last_audio_server(audio)
 
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')

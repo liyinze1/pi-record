@@ -51,17 +51,28 @@ def report_to_server(vin, status):
                         ':8000/report/' + vin + '/' + status)
     return r.text
 
+def check_last_audio_server():
+    r = requests.get(url='http://' + server_ip +
+                        ':8000/check-last-audio')
+    return r.text
+
+def delete_last_audio_server(audio):
+    r = requests.get(url='http://' + server_ip +
+                        ':8000/delete-last-audio/' + audio)
+    return r.text
+
 # pi, server
 def check_last_audio():
     audios = glob.glob(os.path.join(audio_folder, '*.wav'))
     audios.sort(key=os.path.getmtime)
-    return audios
+    return audios[-1]
 
 def delete_last_audio(audio_name):
+    logger.info('Trying to delete ' + audio_name)
     try:
-        os.system('rm -f %s' % os.path.join(audio_folder, audio_name))
+        os.system('rm -f ' + audio_name)
         return 'Successfully deleted'
-    except OSError as e:
+    except:
         return 'Failed to delete'
 
 # server

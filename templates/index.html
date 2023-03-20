@@ -91,7 +91,7 @@
             background-color: #4CAF50;
         }
 
-        /* Green */
+        /* red */
         .squeak {
             background-color: #800000;
         }
@@ -127,6 +127,7 @@
         <button class="tablinks" onclick="openTab(event, 'record_panel')" id="record_tab">record</button>
         <button class="tablinks" onclick="openTab(event, 'report_panel')" id="report_tab">report</button>
         <button class="tablinks" onclick="openTab(event, 'setup_panel')">setup</button>
+        <button class="tablinks" onclick="openTab(event, 'delete_panel')">delete</button>
         <button class="tablinks" onclick="openTab(event, 'power_panel')">power</button>
     </div>
     
@@ -168,6 +169,14 @@
     <div id="power_panel" class="vertical-center tabcontent">
         <button onclick='power(0)' class='button normal'>reboot</button></br>
         <button onclick='power(1)' class='button check'>shutdown</button></br>
+    </div>
+
+    <div id="delete_panel" class="vertical-center tabcontent">
+        <font size="60px">check last audio on</font>
+        <button onclick='check_last_audio("server")' class='button normal'>server</button>
+        <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
+        <label id="message_last_audio" class="label">Selected audio: None</label></br>
+        <button onclick='delete_last_audio()' class='button squeak'>delete!</button></br>
     </div>
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
@@ -307,6 +316,35 @@
             document.getElementById("record_tab").click();
         };
         const config = { fps: 10, qrbox: qrboxFunction };
+
+
+        var last_audio_position = 'None';
+        var last_audio_name = '';
+        function check_last_audio(position) {
+            last_audio_position = position;
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/check-last-audio/" + last_audio_position);
+            xhttp.onload = function () {
+                last_audio_name = this.responseText;
+                document.getElementById("message_last_audio").innerHTML = 'Selected audio on ' + last_audio_position + ': ' + last_audio_name;
+            }
+            xhttp.send();
+        }
+
+        function delete_last_audio() {
+            if (last_audio_position == 'None' || last_audio_name == '') {
+                document.getElementById("message_last_audio").innerHTML = 'No audio selected!';
+            } else {
+                const xhttp = new XMLHttpRequest();
+                xhttp.open("GET", "/delete-last-audio/" + last_audio_position + "/" + last_audio_name);
+                xhttp.onload = function () {
+                    document.getElementById("message_last_audio").innerHTML = this.responseText;
+                    last_audio_position = 'None';
+                    last_audio_name = '';
+                }
+                xhttp.send();
+            }
+        }
 
         var lat = []
         var lon = []

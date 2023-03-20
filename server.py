@@ -38,6 +38,15 @@ def report(vin, status):
         return 'vin is not found on the server'
     else:
         return car_table.update(receive_threads.pop(vin).audio_filename, status)
+    
+
+@app.route('/check-last-audio', methods=['GET'])
+def check_last_audio():
+    return utils.check_last_audio()
+
+@app.route('/delete-last-audio/<audio>', methods=['GET'])
+def delete_last_audio(audio):
+    return utils.delete_last_audio(audio)
 
 if __name__ == '__main__':
     app.run(host='10.94.0.16', debug=True, port=8000)
