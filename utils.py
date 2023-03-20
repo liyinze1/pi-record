@@ -65,12 +65,12 @@ def delete_last_audio_server(audio):
 def check_last_audio():
     audios = glob.glob(os.path.join(audio_folder, '*.wav'))
     audios.sort(key=os.path.getmtime)
-    return audios[-1]
+    return audios[-1].split('/')[-1]
 
 def delete_last_audio(audio_name):
     logger.info('Trying to delete ' + audio_name)
     try:
-        os.system('rm -f ' + audio_name)
+        os.system('rm -f ' + os.path.join(audio_folder, audio_name))
         return 'Successfully deleted'
     except:
         return 'Failed to delete'
