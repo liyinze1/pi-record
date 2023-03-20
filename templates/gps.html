@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Click the button to get your coordinates per second.</p>
+
+<button onclick="repeat()">Try It</button>
+
+<p id="demo"></p>
+
+<script>
+var x = document.getElementById("demo");
+
+function repeat() {
+    setInterval(getLocation, 1000);
+}
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(showPosition);
+  } else { 
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+    
+function showPosition(position) {
+    x.innerHTML="Lat: " + position.coords.latitude + 
+    "<br>Lon: " + position.coords.longitude +
+    "<br>Acc:" + position.coords.accuracy +
+    "<br>Speed:" + position.coords.speed +
+    "<br>Clock:" + position.timestamp;
+}
+</script>
+
+</body>
+</html>
+

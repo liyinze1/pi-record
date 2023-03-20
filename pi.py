@@ -63,6 +63,14 @@ def report(vin, status):
         return utils.report_to_server(vin, status)
     return 'ok'
 
+@app.route('/check-last-audio', methods=['GET'])
+def check_last_audio():
+    return utils.check_last_audio()
+
+@app.route('/delete-last-audio/<audio>', methods=['GET'])
+def delete_last_audio(audio):
+    return utils.delete_last_audio(audio)
+
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
     app.run(host='0.0.0.0', debug=True, port=443, ssl_context=('cert.pem', 'key.pem'))

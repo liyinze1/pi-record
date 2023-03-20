@@ -308,6 +308,25 @@
         };
         const config = { fps: 10, qrbox: qrboxFunction };
 
+        var lat = []
+        var lon = []
+        var acc = []
+        var clk = []
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            lat.push(position.coords.latitude); 
+            lon.push(position.coords.longitude);
+            
+        }
+
         // initialize
         document.getElementById("scan_tab").click();
 

@@ -50,6 +50,19 @@ def report_to_server(vin, status):
                         ':8000/report/' + vin + '/' + status)
     return r.text
 
+# pi, server
+def check_last_audio():
+    audios = [audio for audio in os.listdir(audio_folder) if audio.endswith('wav')]
+    audios.sort(key=lambda x: int(x.split('-')[2]))
+    return audios[-1]
+
+def delete_last_audio(audio_name):
+    try:
+        os.system('rm -f %s' % os.path.join(audio_folder, audio_name))
+        return 'Successfully deleted'
+    except OSError as e:
+        return 'Failed to delete'
+
 # server
 class port_controll:
 
@@ -132,6 +145,7 @@ class receive:
         f.close()
         self.port_controller.return_port(self.port)
         return '%.2f%%' % (loss_rate * 100)
+        
 
 class vpn:
 
