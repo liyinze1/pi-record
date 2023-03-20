@@ -36,7 +36,7 @@ if not os.path.exists(audio_folder):
 # pi, server
 def get_audio_filename(vin):
     now = datetime.now()
-    file_name = 'vin-' + vin + '-' + now.strftime('%Y%m%d%H%M%S') + '.wav'
+    file_name = 'vin-' + vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
     return os.path.join(audio_folder, file_name)
 
 # server
