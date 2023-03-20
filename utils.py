@@ -9,6 +9,7 @@ import requests
 import os
 import signal
 import logging
+import glob
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -52,9 +53,9 @@ def report_to_server(vin, status):
 
 # pi, server
 def check_last_audio():
-    audios = [audio for audio in os.listdir(audio_folder) if audio.endswith('wav')]
-    audios.sort(key=lambda x: int(x.split('-')[2]))
-    return audios[-1]
+    audios = glob.glob(os.path.join(audio_folder, '*.wav'))
+    audios.sort(key=os.path.getmtime)
+    return audios
 
 def delete_last_audio(audio_name):
     try:
