@@ -40,6 +40,19 @@ def get_audio_filename(vin):
     file_name = 'vin-' + vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
     return os.path.join(audio_folder, file_name)
 
+def check_last_audio():
+    audios = glob.glob(os.path.join(audio_folder, '*.wav'))
+    audios.sort(key=os.path.getmtime)
+    return audios[-1].split('/')[-1]
+
+def delete_last_audio(audio_name):
+    logger.info('Trying to delete ' + audio_name)
+    try:
+        os.system('rm -f ' + os.path.join(audio_folder, audio_name))
+        return 'Successfully deleted'
+    except:
+        return 'Failed to delete'
+
 # server
 def get_sdp_filename(vin):
     filename = 'vin-' + vin + '.sdp'
@@ -60,20 +73,6 @@ def delete_last_audio_server(audio):
     r = requests.get(url='http://' + server_ip +
                         ':8000/delete-last-audio/' + audio)
     return r.text
-
-# pi, server
-def check_last_audio():
-    audios = glob.glob(os.path.join(audio_folder, '*.wav'))
-    audios.sort(key=os.path.getmtime)
-    return audios[-1].split('/')[-1]
-
-def delete_last_audio(audio_name):
-    logger.info('Trying to delete ' + audio_name)
-    try:
-        os.system('rm -f ' + os.path.join(audio_folder, audio_name))
-        return 'Successfully deleted'
-    except:
-        return 'Failed to delete'
 
 # server
 class port_controll:
