@@ -127,7 +127,7 @@
         <button class="tablinks" onclick="openTab(event, 'record_panel')" id="record_tab">record</button>
         <button class="tablinks" onclick="openTab(event, 'report_panel')" id="report_tab">report</button>
         <button class="tablinks" onclick="openTab(event, 'setup_panel')">setup</button>
-        <button class="tablinks" onclick="openTab(event, 'delete_panel')">delete</button>
+        <button class="tablinks" onclick="openTab(event, 'audio_panel')">audio</button>
         <button class="tablinks" onclick="openTab(event, 'power_panel')">power</button>
     </div>
     
@@ -171,13 +171,13 @@
         <button onclick='power(1)' class='button check'>shutdown</button></br>
     </div>
 
-    <div id="delete_panel" class="vertical-center tabcontent">
+    <div id="audio_panel" class="vertical-center tabcontent">
+        <a id="download_link" href="{{url_for('download')}}">
+            <button class='button rattle'>play last audio from pi</button>
+        </a></br>
         <font size="60px">check last audio on</font>
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
         <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
-        <a id='download_link' href='' download>
-            <button class='button rattle'>download from pi</button>
-        </a></br>
         <label id="message_last_audio" class="label">Selected audio: None</label></br>
         <button onclick='delete_last_audio()' class='button squeak'>delete!</button></br>
     </div>
@@ -241,10 +241,11 @@
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
             xhttp.onload = function () {
-                document.getElementById("message_report").innerHTML = this.responseText;
+                document.getElementById("message_record").innerHTML = this.responseText;
             }
             xhttp.send();
             document.getElementById("message_record").innerHTML = "reporting, please wait...";
+            document.getElementById("record_tab").click();
         }
 
         const vpn_cmds = ["connect-vpn", "check-vpn"];
@@ -342,11 +343,6 @@
                     last_audio_position = position;
                     last_audio_name = this.responseText;
                     document.getElementById("message_last_audio").innerHTML = 'Selected audio on ' + last_audio_position + ': ' + last_audio_name;
-
-                    if (last_audio_position == 'pi') {
-                        var a = document.getElementById('download_link');
-                        a.href = './audio/' + last_audio_name;
-                    }
                 }
             }
             xhttp.send();
@@ -368,9 +364,6 @@
         }
 
         function download_last_audio() {
-            if (last_audio_position != 'pi' || last_audio_name == '') {
-                document.getElementById("message_last_audio").innerHTML = 'No audio selected!';
-            }
         }
 
         var lat = []

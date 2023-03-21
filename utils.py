@@ -44,7 +44,7 @@ def check_last_audio():
     audios = glob.glob(os.path.join(audio_folder, '*.wav'))
     if len(audios) > 0:
         audios.sort(key=os.path.getmtime)
-        return audios[-1].split('/')[-1]
+        return audios[-1]
     else:
         return 'None'
 

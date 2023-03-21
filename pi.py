@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_file
 import utils
 app = Flask(__name__)
 
@@ -65,9 +65,9 @@ def report(vin, status):
 @app.route('/check-last-audio/<position>', methods=['GET'])
 def check_last_audio(position):
     if position == 'pi':
-        return utils.check_last_audio()
+        return utils.check_last_audio().split('/')[-1]
     else:
-        return utils.check_last_audio_server()
+        return utils.check_last_audio_server().split('/')[-1]
 
 @app.route('/delete-last-audio/<position>/<audio>', methods=['GET'])
 def delete_last_audio(position, audio):
@@ -78,7 +78,15 @@ def delete_last_audio(position, audio):
 
 @app.route('/update', methods=['GET'])
 def update():
-    pass
+    return utils.git_pull()
+
+@app.route('/download', methods=['GET'])
+def download():
+    audio = utils.check_last_audio()
+    if audio == 'None':
+        return send_file(audio, as_attachment=False)
+    else:
+        return 'There is no audio available'
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
