@@ -81,6 +81,6 @@ def update():
     pass
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
-    # app.run(host='0.0.0.0', debug=True, port=443, ssl_context=('cert.pem', 'key.pem'))
+    # app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
+    app.run(host='0.0.0.0', debug=True, port=443, ssl_context=('cert.pem', 'key.pem'))
     
