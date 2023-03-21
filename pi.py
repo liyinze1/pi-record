@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import utils
+import os
 
 app = Flask(__name__)
 
@@ -76,6 +77,15 @@ def delete_last_audio(position, audio):
         return utils.delete_last_audio(audio)
     else:
         return utils.delete_last_audio_server(audio)
+
+@app.route('/update', methods=['GET'])
+def update():
+    try:
+        os.system('git checkout .')
+        os.system('git pull')
+        return 'Done'
+    except:
+        return 'Failed'
 
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')

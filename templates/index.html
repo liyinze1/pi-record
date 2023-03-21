@@ -70,13 +70,13 @@
             background-color: #800000;
         }
 
-        /* Green */
+        /* Red */
         .stop {
             font-size: 200px;
             background-color: #800000;
         }
 
-        /* Red */
+        /* Blue */
         .connect {
             background-color: #000080;
         }
@@ -161,7 +161,7 @@
         <button onclick="save_files(0)" class='button normal'>pi</button>
         <button onclick="save_files(1)" class='button squeak'>server</button>
         <button onclick="save_files(2)" class='button rattle'>both</button></br>
-
+        <button onclick='update_pi()' class='button normal'>update</button></br>
         <label id="message_setup" class="label">No Messages</label></br>
 
     </div>
@@ -279,6 +279,15 @@
             }
             xhttp.send();
             document.getElementById("message_setup").innerHTML = 'Please wait for 15 ~ 20s...';
+        }
+
+        function update_pi() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/update");
+            xhttp.onload = function () {
+                document.getElementById("message_setup").innerHTML = this.responseText;
+            }
+            xhttp.send();
         }
 
         /*
