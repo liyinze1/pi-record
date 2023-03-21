@@ -176,7 +176,7 @@
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
         <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
         <a id='download_link' href='' download>
-            <button onclick='download_last_audio()' class='button rattle'>download from pi</button>
+            <button class='button rattle'>download from pi</button>
         </a></br>
         <label id="message_last_audio" class="label">Selected audio: None</label></br>
         <button onclick='delete_last_audio()' class='button squeak'>delete!</button></br>
@@ -336,12 +336,17 @@
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/check-last-audio/" + position);
             xhttp.onload = function () {
-                if(this.responseText == 'None') {
+                if (this.responseText == 'None') {
                     document.getElementById("message_last_audio").innerHTML = 'Nothing on ' + position;
                 } else {
                     last_audio_position = position;
                     last_audio_name = this.responseText;
                     document.getElementById("message_last_audio").innerHTML = 'Selected audio on ' + last_audio_position + ': ' + last_audio_name;
+
+                    if (last_audio_position == 'pi') {
+                        var a = document.getElementById('download_link');
+                        a.href = './audio/' + last_audio_name;
+                    }
                 }
             }
             xhttp.send();
@@ -365,9 +370,6 @@
         function download_last_audio() {
             if (last_audio_position != 'pi' || last_audio_name == '') {
                 document.getElementById("message_last_audio").innerHTML = 'No audio selected!';
-            } else {
-                var a = document.getElementById('download_link');
-                a.href = '../audio/' + last_audio_name;
             }
         }
 
