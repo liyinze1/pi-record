@@ -321,12 +321,16 @@
         var last_audio_position = 'None';
         var last_audio_name = '';
         function check_last_audio(position) {
-            last_audio_position = position;
             const xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "/check-last-audio/" + last_audio_position);
+            xhttp.open("GET", "/check-last-audio/" + position);
             xhttp.onload = function () {
-                last_audio_name = this.responseText;
-                document.getElementById("message_last_audio").innerHTML = 'Selected audio on ' + last_audio_position + ': ' + last_audio_name;
+                if(this.responseText == 'None') {
+                    document.getElementById("message_last_audio").innerHTML = 'Nothing on ' + position;
+                } else {
+                    last_audio_position = position;
+                    last_audio_name = this.responseText;
+                    document.getElementById("message_last_audio").innerHTML = 'Selected audio on ' + last_audio_position + ': ' + last_audio_name;
+                }
             }
             xhttp.send();
         }

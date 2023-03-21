@@ -42,8 +42,11 @@ def get_audio_filename(vin):
 
 def check_last_audio():
     audios = glob.glob(os.path.join(audio_folder, '*.wav'))
-    audios.sort(key=os.path.getmtime)
-    return audios[-1].split('/')[-1]
+    if len(audios) > 0:
+        audios.sort(key=os.path.getmtime)
+        return audios[-1].split('/')[-1]
+    else:
+        return 'None'
 
 def delete_last_audio(audio_name):
     logger.info('Trying to delete ' + audio_name)
