@@ -175,6 +175,9 @@
         <font size="60px">check last audio on</font>
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
         <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
+        <a id='download_link' href='' download>
+            <button onclick='download_last_audio()' class='button rattle'>download from pi</button>
+        </a></br>
         <label id="message_last_audio" class="label">Selected audio: None</label></br>
         <button onclick='delete_last_audio()' class='button squeak'>delete!</button></br>
     </div>
@@ -356,6 +359,15 @@
                     last_audio_name = '';
                 }
                 xhttp.send();
+            }
+        }
+
+        function download_last_audio() {
+            if (last_audio_position != 'pi' || last_audio_name == '') {
+                document.getElementById("message_last_audio").innerHTML = 'No audio selected!';
+            } else {
+                var a = document.getElementById('download_link');
+                a.href = './audio/' + last_audio_name;
             }
         }
 

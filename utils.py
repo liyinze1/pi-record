@@ -77,6 +77,18 @@ def delete_last_audio_server(audio):
                         ':8000/delete-last-audio/' + audio)
     return r.text
 
+def git_status():
+    process = subprocess.run(["git status ."], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
+    return process.stdout.splitlines()[1]
+
+def git_pull():
+    try:
+        os.system('git checkout .')
+        process = subprocess.run(["git status ."], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
+        return process.stdout
+    except:
+        return 'Failed'
+    
 # server
 class port_controll:
 

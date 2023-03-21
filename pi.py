@@ -1,7 +1,5 @@
 from flask import Flask, render_template
 import utils
-import os
-
 app = Flask(__name__)
 
 vpn_thread = utils.vpn()
@@ -80,14 +78,9 @@ def delete_last_audio(position, audio):
 
 @app.route('/update', methods=['GET'])
 def update():
-    try:
-        os.system('git checkout .')
-        os.system('git pull')
-        return 'Done'
-    except:
-        return 'Failed'
+    pass
 
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
-    app.run(host='0.0.0.0', debug=True, port=443, ssl_context=('cert.pem', 'key.pem'))
+    app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
+    # app.run(host='0.0.0.0', debug=True, port=443, ssl_context=('cert.pem', 'key.pem'))
     
