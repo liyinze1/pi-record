@@ -83,7 +83,7 @@ def update():
 @app.route('/download', methods=['GET'])
 def download():
     audio = utils.check_last_audio()
-    if audio == 'None':
+    if audio != 'None':
         return send_file(audio, as_attachment=False)
     else:
         return 'There is no audio available'
