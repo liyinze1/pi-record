@@ -84,7 +84,7 @@ def git_status():
 def git_pull():
     try:
         os.system('git checkout .')
-        process = subprocess.run(["git status ."], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
+        process = subprocess.run(["git pull"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
         return process.stdout
     except:
         return 'Failed'
