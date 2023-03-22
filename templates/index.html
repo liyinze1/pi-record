@@ -249,7 +249,7 @@
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
             xhttp.onload = function () {
-                document.getElementById("message_report").innerHTML = this.responseText + '\nIf you mis-clicked the button, you can re-click the right one';
+                document.getElementById("message_report").innerHTML = this.responseText + '\n\nIf you mis-clicked the wrong button, you can re-click the right one';
                 document.getElementById('next_button').style.display = 'block';
             }
             xhttp.send();
