@@ -149,6 +149,7 @@
         <button id='squeak_button' onclick='report(1)' class='button squeak'>squeak</button></br>
         <button id='rattle_button' onclick='report(2)' class='button rattle'>rattle</button></br>
         <button id='both_button' onclick='report(3)' class='button both'>both</button></br>
+        <button id='next_button' onClick="window.location.reload();" class='button normal'>next car</button>
         <label id="message_report" class="label">No Messages</label>
     </div>
 
@@ -248,11 +249,12 @@
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
             xhttp.onload = function () {
-                document.getElementById("message_record").innerHTML = this.responseText;
+                document.getElementById("message_report").innerHTML = this.responseText + '\nIf you mis-clicked the button, you can re-click the right one';
+                document.getElementById('next_button').style.display = 'block';
             }
             xhttp.send();
-            document.getElementById("message_record").innerHTML = "reporting, please wait...";
-            document.getElementById("record_tab").click();
+            document.getElementById("message_report").innerHTML = "reporting, please wait...";
+            
         }
 
         const vpn_cmds = ["connect-vpn", "check-vpn"];
@@ -395,13 +397,20 @@
 
         
         function initialize() {
-            document.getElementById("scan_tab").click();
+            vin = '';
+            document.getElementById("vin_label").innerHTML = 'VIN not set';
+            document.getElementById("message_scan").innerHTML = 'VIN not set';
+
             document.getElementById('stop_button').style.display = 'none';
             document.getElementById('record_button').style.display = 'none';
+
             document.getElementById('normal_button').style.display = 'none';
             document.getElementById('squeak_button').style.display = 'none';
             document.getElementById('rattle_button').style.display = 'none';
             document.getElementById('both_button').style.display = 'none';
+            document.getElementById('next_button').style.display = 'none';
+
+            document.getElementById("scan_tab").click();
         }
 
         // initialize
