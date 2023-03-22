@@ -138,17 +138,17 @@
     </div>
 
     <div id='record_panel' class="vertical-center tabcontent">
-        <button id="vinbutton" class='button normal'>VIN not set</button></br>
-        <button onclick='record()' class='button record'>record</button></br>
-        <button onclick='stop()' class='button stop'>stop</button></br>
+        <label id="vin_label" class='label'>VIN not set</label></br>
+        <button id='record_button' onclick='record()' class='button record'>record</button></br>
+        <button id='stop_button' onclick='stop()' class='button stop'>stop</button></br>
         <label id="message_record" class="label">No Messages</label>
     </div>
 
     <div id='report_panel' class="vertical-center tabcontent">
-        <button onclick='report(0)' class='button normal'>normal</button></br>
-        <button onclick='report(1)' class='button squeak'>squeak</button></br>
-        <button onclick='report(2)' class='button rattle'>rattle</button></br>
-        <button onclick='report(3)' class='button both'>both</button></br>
+        <button id='normal_button' onclick='report(0)' class='button normal'>normal</button></br>
+        <button id='squeak_button' onclick='report(1)' class='button squeak'>squeak</button></br>
+        <button id='rattle_button' onclick='report(2)' class='button rattle'>rattle</button></br>
+        <button id='both_button' onclick='report(3)' class='button both'>both</button></br>
         <label id="message_report" class="label">No Messages</label>
     </div>
 
@@ -219,6 +219,8 @@
                 xhttp.open("GET", "/record/" + vin);
                 xhttp.onload = function () {
                     document.getElementById("message_record").innerHTML = 'VIN: ' + vin + '\nis\n' + this.responseText;
+                    document.getElementById('record_button').style.display = 'none';
+                    document.getElementById('stop_button').style.display = 'block';
                 }
                 xhttp.send();
             }
@@ -230,10 +232,15 @@
             xhttp.onload = function () {
                 document.getElementById("message_record").innerHTML = this.responseText;
                 // jump to the next
+                document.getElementById('normal_button').style.display = 'block';
+                document.getElementById('squeak_button').style.display = 'block';
+                document.getElementById('rattle_button').style.display = 'block';
+                document.getElementById('both_button').style.display = 'block';
                 document.getElementById("report_tab").click();
             }
             xhttp.send();
             document.getElementById("message_record").innerHTML = "stopping, please wait...";
+            document.getElementById('stop_button').style.display = 'none';
         }
 
         const report_cmds = ["normal", "squeak", "rattle", "both"]
@@ -320,13 +327,14 @@
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code scanned = ${decodedText}`, decodedResult);
             vin = decodedText;
-            document.getElementById("vinbutton").innerHTML = 'VIN: ' + vin;
+            document.getElementById("vin_label").innerHTML = 'VIN: ' + vin;
             document.getElementById("message_scan").innerHTML = 'VIN: ' + vin;
             html5QrCode.stop().then((ignore) => {
                 console.log('stopped')
             }).catch((err) => {});
             // jump to next tab
             document.getElementById("record_tab").click();
+            document.getElementById('record_button').style.display = 'block';
         };
         const config = { fps: 10, qrbox: qrboxFunction };
 
@@ -385,8 +393,19 @@
             
         }
 
+        
+        function initialize() {
+            document.getElementById("scan_tab").click();
+            document.getElementById('stop_button').style.display = 'none';
+            document.getElementById('record_button').style.display = 'none';
+            document.getElementById('normal_button').style.display = 'none';
+            document.getElementById('squeak_button').style.display = 'none';
+            document.getElementById('rattle_button').style.display = 'none';
+            document.getElementById('both_button').style.display = 'none';
+        }
+
         // initialize
-        document.getElementById("scan_tab").click();
+        initialize();
 
     </script>
 
