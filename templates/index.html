@@ -199,6 +199,7 @@
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
         <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
         <label id="message_last_audio" class="label">Selected audio: None</label></br>
+        <button onclick='deselect_audio()' class='button normal'>deselect</button>
         <button onclick='delete_last_audio()' class='button squeak'>delete!</button></br>
     </div>
 
@@ -368,6 +369,7 @@
             xhttp.onload = function () {
                 if (this.responseText == 'None') {
                     document.getElementById("message_last_audio").innerHTML = 'Nothing on ' + position;
+                    last_audio_name = '';
                 } else {
                     last_audio_position = position;
                     last_audio_name = this.responseText;
@@ -390,6 +392,12 @@
                 }
                 xhttp.send();
             }
+        }
+
+        function deselect_audio() {
+            last_audio_position = 'None';
+            last_audio_name = '';
+            document.getElementById("message_last_audio").innerHTML = 'Selected audio: None';
         }
 
         function play_last_audio() {
