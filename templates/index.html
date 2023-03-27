@@ -180,12 +180,10 @@
     </div>
 
     <div id="audio_panel" class="vertical-center tabcontent">
-        <a id="download_link" href="{{url_for('download')}}">
-            <button class='button rattle'>play last audio from pi</button>
-        </a></br>
+        <button class='button rattle'>play last audio from pi</button>
         <audio controls>
             <source src="{{url_for('download')}}" />
-        </audio></br>
+        </audio></br></br></br></br></br>
         <font size="60px">check last audio on</font>
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
         <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
