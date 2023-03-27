@@ -79,7 +79,7 @@ def delete_last_audio_server(audio):
 
 def git_status():
     process = subprocess.run(["git status ."], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
-    return process.stdout.splitlines()[1]
+    return process.stdout
 
 def git_pull():
     try:

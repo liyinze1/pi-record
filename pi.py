@@ -77,6 +77,10 @@ def delete_last_audio(position, audio):
     else:
         return utils.delete_last_audio_server(audio)
 
+@app.route('/check-update', methods=['GET'])
+def check_update():
+    return utils.git_status()
+
 @app.route('/update', methods=['GET'])
 def update():
     return utils.git_pull()

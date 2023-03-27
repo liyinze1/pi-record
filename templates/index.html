@@ -176,6 +176,7 @@
         <button onclick="save_files(2)" class='button rattle'>both</button></br>
         <hr>
         <hr>
+        <button onclick='check_update_pi()' class='button check'>check update</button></br>
         <button onclick='update_pi()' class='button normal'>update software</button></br>
         <hr>
         <label id="message_setup" class="label">No Messages</label></br>
@@ -312,6 +313,15 @@
             }
             xhttp.send();
             document.getElementById("message_setup").innerHTML = 'Please wait for 15 ~ 20s...';
+        }
+
+        function check_update_pi() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/check-update");
+            xhttp.onload = function () {
+                document.getElementById("message_setup").innerHTML = this.responseText;
+            }
+            xhttp.send()
         }
 
         function update_pi() {
