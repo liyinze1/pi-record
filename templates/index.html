@@ -406,22 +406,18 @@
         function play_last_audio() {
             // initialize
             document.getElementById("audio_box_message").innerHTML = '';
+            if (last_audio_position == 'None' || last_audio_name == '') {
+                document.getElementById("audio_box_message").innerHTML = 'No audio selected!';
+                document.getElementById('audio_box').style.display = 'none';
+                document.getElementById('audio_source').src = '';
+                document.getElementById('audio_box').load();
 
-            const xhttp = new XMLHttpRequest();
-                if (last_audio_position == 'None' || last_audio_name == '') {
-                    document.getElementById("audio_box_message").innerHTML = 'No audio selected!';
-                    document.getElementById('audio_box').style.display = 'none';
-                    document.getElementById('audio_source').src = '';
-                    document.getElementById('audio_box').load();
-
-                } else {
-                    document.getElementById('audio_box').style.display = 'block';
-                    document.getElementById('audio_source').src = "download/" + last_audio_position + "/" + last_audio_name;
-                    document.getElementById('audio_box').load();
-                    document.getElementById("audio_box_message").innerHTML = 'Playing ' + last_audio_name + ' from ' + last_audio_position;
-                }
+            } else {
+                document.getElementById('audio_box').style.display = 'block';
+                document.getElementById('audio_source').src = "download/" + last_audio_position + "/" + last_audio_name;
+                document.getElementById('audio_box').load();
+                document.getElementById("audio_box_message").innerHTML = 'Playing ' + last_audio_name + ' from ' + last_audio_position;
             }
-            xhttp.send();
         }
 
         var lat = []
