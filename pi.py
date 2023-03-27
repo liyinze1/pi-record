@@ -80,13 +80,9 @@ def delete_last_audio(position, audio):
 def update():
     return utils.git_pull()
 
-@app.route('/download', methods=['GET'])
-def download():
-    audio = utils.check_last_audio()
-    if audio != 'None':
-        return send_file(audio, as_attachment=False)
-    else:
-        return ''
+@app.route('/download/<audio>', methods=['GET'])
+def download(audio):
+    return send_file(audio, as_attachment=False)
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
