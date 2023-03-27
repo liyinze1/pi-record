@@ -396,7 +396,7 @@
                     document.getElementById('audio_box').style.display = 'block';
                     document.getElementById('audio_source').src = "{{url_for('download')}}";
                     document.getElementById('audio_box').load();
-                    document.getElementById("message_last_audio").innerHTML = 'Playing ' last_audio_name;
+                    document.getElementById("message_last_audio").innerHTML = 'Playing ' + this.responseText;
                 }
             }
             xhttp.send();
