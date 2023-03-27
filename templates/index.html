@@ -8,6 +8,7 @@
         audio {
             transform-origin: top left;
             transform: scale(3, 3);
+            margin-bottom: 50%;
         }
 
         /* Style the tab */
@@ -183,7 +184,7 @@
         <button class='button rattle'>play last audio from pi</button>
         <audio controls autoplay>
             <source src="{{url_for('download')}}" />
-        </audio></br></br></br></br></br></br></br></br></br></br></br></br>
+        </audio></br>
         <font size="60px">check last audio on</font>
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
         <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
