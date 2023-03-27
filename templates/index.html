@@ -333,13 +333,6 @@
             xhttp.send();
         }
 
-        /*
-        function onScanSuccess(decodedText, decodedResult) {   
-        }
-
-        var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: qrboxFunction });
-        */
-
         function scanvin() {
             console.log('scan vin')
             html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
