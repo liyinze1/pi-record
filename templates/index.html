@@ -388,6 +388,7 @@
             document.getElementById('audio_box').load();
             document.getElementById('audio_box').style.display = 'none';
 
+            const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/check-last-audio/pi");
             xhttp.onload = function () {
                 if (this.responseText == 'None') {
