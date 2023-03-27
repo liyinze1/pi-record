@@ -367,6 +367,7 @@
 
         var last_audio_position = 'None';
         var last_audio_name = '';
+        var delete_count = 0;
         function check_last_audio(position) {
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/check-last-audio/" + position);
@@ -381,20 +382,27 @@
                 }
             }
             xhttp.send();
+            delete_count = 0;
         }
 
         function delete_last_audio() {
             if (last_audio_position == 'None' || last_audio_name == '') {
                 document.getElementById("message_last_audio").innerHTML = 'No audio selected!';
             } else {
-                const xhttp = new XMLHttpRequest();
-                xhttp.open("GET", "/delete-last-audio/" + last_audio_position + "/" + last_audio_name);
-                xhttp.onload = function () {
-                    document.getElementById("message_last_audio").innerHTML = this.responseText;
-                    last_audio_position = 'None';
-                    last_audio_name = '';
+                if (delete_count == 0) {
+                    delete_count = 1;
+                    document.getElementById("message_last_audio").innerHTML = 'Are you sure you want to delete ' + last_audio_name + ' from ' + last_audio_position + '?\n' + 'Click again to delete it';
+                } else {
+                    const xhttp = new XMLHttpRequest();
+                    xhttp.open("GET", "/delete-last-audio/" + last_audio_position + "/" + last_audio_name);
+                    xhttp.onload = function () {
+                        document.getElementById("message_last_audio").innerHTML = this.responseText;
+                        last_audio_position = 'None';
+                        last_audio_name = '';
+                    }
+                    xhttp.send();
+                    delete_count = 0;
                 }
-                xhttp.send();
             }
         }
 
@@ -402,11 +410,13 @@
             last_audio_position = 'None';
             last_audio_name = '';
             document.getElementById("message_last_audio").innerHTML = 'Selected audio: None';
+            delete_count = 0;
         }
 
         function play_last_audio() {
             // initialize
             document.getElementById("audio_box_message").innerHTML = '';
+            delete_count = 0;
             if (last_audio_position == 'None' || last_audio_name == '') {
                 document.getElementById("audio_box_message").innerHTML = 'No audio selected!';
                 document.getElementById('audio_box').style.display = 'none';
