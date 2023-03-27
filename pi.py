@@ -86,7 +86,7 @@ def download():
     if audio != 'None':
         return send_file(audio, as_attachment=False)
     else:
-        return 'There is no audio available'
+        return ''
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')

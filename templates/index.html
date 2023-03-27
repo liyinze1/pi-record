@@ -181,9 +181,9 @@
     </div>
 
     <div id="audio_panel" class="vertical-center tabcontent">
-        <button class='button rattle'>play last audio from pi</button>
-        <audio controls autoplay>
-            <source src="{{url_for('download')}}" />
+        <button onclick='play_last_audio()' class='button rattle'>play last audio from pi</button>
+        <audio id='audio_box' controls autoplay>
+            <source id='audio_source' src=''>
         </audio></br>
         <font size="60px">check last audio on</font>
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
@@ -382,7 +382,10 @@
             }
         }
 
-        function download_last_audio() {
+        function play_last_audio() {
+            document.getElementById('audio_box').style.display = 'block';
+            document.getElementById('audio_source').src = "{{url_for('download')}}";
+            document.getElementById('audio_box').load();
         }
 
         var lat = []
@@ -418,6 +421,8 @@
             document.getElementById('rattle_button').style.display = 'none';
             document.getElementById('both_button').style.display = 'none';
             document.getElementById('next_button').style.display = 'none';
+
+            document.getElementById('audio_box').style.display = 'none';
 
             document.getElementById("scan_tab").click();
         }
