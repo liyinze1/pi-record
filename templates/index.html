@@ -182,6 +182,7 @@
 
     <div id="audio_panel" class="vertical-center tabcontent">
         <button onclick='play_last_audio()' class='button rattle'>play last audio from pi</button>
+        <label id="audio_box_message" class="label"></label></br>
         <audio id='audio_box' controls autoplay>
             <source id='audio_source' src=''>
         </audio></br>
@@ -387,17 +388,18 @@
             document.getElementById('audio_source').src = '';
             document.getElementById('audio_box').load();
             document.getElementById('audio_box').style.display = 'none';
+            document.getElementById("audio_box_message").innerHTML = '';
 
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/check-last-audio/pi");
             xhttp.onload = function () {
                 if (this.responseText == 'None') {
-                    document.getElementById("message_last_audio").innerHTML = 'Nothing on pi';
+                    document.getElementById("audio_box_message").innerHTML = 'Nothing on pi';
                 } else {
                     document.getElementById('audio_box').style.display = 'block';
                     document.getElementById('audio_source').src = "{{url_for('download')}}";
                     document.getElementById('audio_box').load();
-                    document.getElementById("message_last_audio").innerHTML = 'Playing ' + this.responseText;
+                    document.getElementById("audio_box_message").innerHTML = 'Playing ' + this.responseText;
                 }
             }
             xhttp.send();
