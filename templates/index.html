@@ -189,7 +189,6 @@
     </div>
 
     <div id="audio_panel" class="vertical-center tabcontent">
-        <button onclick='play_last_audio()' class='button rattle'>play last audio from pi</button>
         <label id="audio_box_message" class="label"></label></br>
         <audio id='audio_box' controls autoplay>
             <source id='audio_source' src=''>
@@ -200,6 +199,7 @@
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
         <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
         <label id="message_last_audio" class="label">Selected audio: None</label></br>
+        <button onclick='play_last_audio()' class='button rattle'>play</button>
         <button onclick='deselect_audio()' class='button normal'>deselect</button>
         <button onclick='delete_last_audio()' class='button squeak'>delete!</button></br>
     </div>
@@ -408,19 +408,17 @@
             document.getElementById("audio_box_message").innerHTML = '';
 
             const xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "/check-last-audio/server");
-            xhttp.onload = function () {
-                if (this.responseText == 'None') {
-                    document.getElementById("audio_box_message").innerHTML = 'Nothing on pi';
+                if (last_audio_position == 'None' || last_audio_name == '') {
+                    document.getElementById("audio_box_message").innerHTML = 'No audio selected!';
                     document.getElementById('audio_box').style.display = 'none';
                     document.getElementById('audio_source').src = '';
                     document.getElementById('audio_box').load();
 
                 } else {
                     document.getElementById('audio_box').style.display = 'block';
-                    document.getElementById('audio_source').src = "download/server/" + this.responseText;
+                    document.getElementById('audio_source').src = "download/" + last_audio_position + "/" + last_audio_name;
                     document.getElementById('audio_box').load();
-                    document.getElementById("audio_box_message").innerHTML = 'Playing ' + this.responseText;
+                    document.getElementById("audio_box_message").innerHTML = 'Playing ' + last_audio_name + ' from ' + last_audio_position;
                 }
             }
             xhttp.send();
