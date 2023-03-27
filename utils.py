@@ -78,6 +78,7 @@ def delete_last_audio_server(audio):
     return r.text
 
 def git_status():
+    os.system('git remote update')
     process = subprocess.run(["git status ."], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", timeout=1)
     return process.stdout
 
