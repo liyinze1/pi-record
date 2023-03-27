@@ -1,5 +1,6 @@
 from flask import Flask, render_template, send_file
 import utils
+import os
 app = Flask(__name__)
 
 vpn_thread = utils.vpn()
@@ -82,7 +83,7 @@ def update():
 
 @app.route('/download/<audio>', methods=['GET'])
 def download(audio):
-    return send_file(audio, as_attachment=False)
+    return send_file(os.path.join(utils.audio_folder, audio), as_attachment=False)
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
