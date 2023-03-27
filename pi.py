@@ -85,9 +85,12 @@ def check_update():
 def update():
     return utils.git_pull()
 
-@app.route('/download/<audio>', methods=['GET'])
-def download(audio):
-    return send_file(os.path.join(utils.audio_folder, audio), as_attachment=False)
+@app.route('/download/<location>/<audio>', methods=['GET'])
+def download(location, audio):
+    if location == 'pi':
+        return send_file(os.path.join(utils.audio_folder, audio), as_attachment=False)
+    else:
+        return utils.download_from_server(audio)
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')

@@ -408,7 +408,7 @@
             document.getElementById("audio_box_message").innerHTML = '';
 
             const xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "/check-last-audio/pi");
+            xhttp.open("GET", "/check-last-audio/server");
             xhttp.onload = function () {
                 if (this.responseText == 'None') {
                     document.getElementById("audio_box_message").innerHTML = 'Nothing on pi';
@@ -418,7 +418,7 @@
 
                 } else {
                     document.getElementById('audio_box').style.display = 'block';
-                    document.getElementById('audio_source').src = "download/" + this.responseText;
+                    document.getElementById('audio_source').src = "download/server/" + this.responseText;
                     document.getElementById('audio_box').load();
                     document.getElementById("audio_box_message").innerHTML = 'Playing ' + this.responseText;
                 }

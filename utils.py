@@ -62,6 +62,11 @@ def get_sdp_filename(vin):
     return os.path.join(audio_folder, filename)
 
 # pi
+def download_from_server(audio):
+    r = requests.get(url='http://' + server_ip +
+                        ':8000/download/' + audio)
+    return r.content
+
 def report_to_server(vin, status):
     r = requests.get(url='http://' + server_ip +
                         ':8000/report/' + vin + '/' + status)

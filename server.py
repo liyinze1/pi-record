@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, send_file
 import utils
+import os
 
 app = Flask(__name__)
 
@@ -47,6 +48,10 @@ def check_last_audio():
 @app.route('/delete-last-audio/<audio>', methods=['GET'])
 def delete_last_audio(audio):
     return utils.delete_last_audio(audio)
+
+@app.route('/download/<audio>', methods=['GET'])
+def download(audio):
+    return send_file(os.path.join(utils.audio_folder, audio), as_attachment=False)
 
 if __name__ == '__main__':
     app.run(host='10.94.0.16', debug=True, port=8000)
