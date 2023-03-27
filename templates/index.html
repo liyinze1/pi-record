@@ -142,6 +142,7 @@
     <div id="scan_panel" class="vertical-center tabcontent">
         <div id="qr-reader" style="width: 100%"></div></br>
         <button onclick='scanvin()' class='button scan'>scan VIN</button></br>
+        <hr>
         <label id="message_scan" class="label">No Messages</label>
     </div>
 
@@ -149,6 +150,7 @@
         <label id="vin_label" class='label'>VIN not set</label></br>
         <button id='record_button' onclick='record()' class='button record'>record</button></br>
         <button id='stop_button' onclick='stop()' class='button stop'>stop</button></br>
+        <hr>
         <label id="message_record" class="label">No Messages</label>
     </div>
 
@@ -158,19 +160,24 @@
         <button id='rattle_button' onclick='report(2)' class='button rattle'>rattle</button></br>
         <button id='both_button' onclick='report(3)' class='button both'>both</button></br>
         <button id='next_button' onClick="window.location.reload();" class='button normal'>next car</button>
+        <hr>
         <label id="message_report" class="label">No Messages</label>
     </div>
 
 
     <div id="setup_panel" class="vertical-center tabcontent">
         <button onclick='vpn(1)' class='button check'>check VPN</button></br>
-        <button onclick='test_loss_rate()' class='button normal'>loss rate</button></br>
-
-        <font size="60px">Save files to:</font>
+        <button onclick='test_loss_rate()' class='button normal'>test loss rate</button></br>
+        <hr>
+        <hr>
+        <font size="60px">Save files to:</font></br>
         <button onclick="save_files(0)" class='button normal'>pi</button>
         <button onclick="save_files(1)" class='button squeak'>server</button>
         <button onclick="save_files(2)" class='button rattle'>both</button></br>
-        <button onclick='update_pi()' class='button normal'>update</button></br>
+        <hr>
+        <hr>
+        <button onclick='update_pi()' class='button normal'>update software</button></br>
+        <hr>
         <label id="message_setup" class="label">No Messages</label></br>
 
     </div>
@@ -186,7 +193,9 @@
         <audio id='audio_box' controls autoplay>
             <source id='audio_source' src=''>
         </audio></br>
-        <font size="60px">check last audio on</font>
+        <hr>
+        <hr>
+        <font size="60px">Check last audio on</font></br>
         <button onclick='check_last_audio("server")' class='button normal'>server</button>
         <button onclick='check_last_audio("pi")' class='button check'>pi</button></br>
         <label id="message_last_audio" class="label">Selected audio: None</label></br>
