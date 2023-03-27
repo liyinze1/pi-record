@@ -328,7 +328,7 @@
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/update");
             xhttp.onload = function () {
-                document.getElementById("message_setup").innerHTML = this.responseText + '/nPlease reload the website!';
+                document.getElementById("message_setup").innerHTML = this.responseText + '\nPlease reload the website!';
             }
             xhttp.send();
         }
