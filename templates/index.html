@@ -380,12 +380,14 @@
                     last_audio_name = this.responseText;
                     document.getElementById("message_last_audio").innerHTML = 'Selected audio on ' + last_audio_position + ': ' + last_audio_name;
                 }
+                initialize_audio_box();
             }
             xhttp.send();
             delete_count = 0;
         }
 
         function delete_last_audio() {
+            initialize_audio_box();
             if (last_audio_position == 'None' || last_audio_name == '') {
                 document.getElementById("message_last_audio").innerHTML = 'No audio selected!';
             } else {
@@ -406,11 +408,20 @@
             }
         }
 
+        function initialize_audio_box() {
+            document.getElementById("audio_box_message").innerHTML = '';
+            document.getElementById('audio_box').style.display = 'none';
+            document.getElementById('audio_source').src = '';
+            document.getElementById('audio_box').load();
+        }
+
         function deselect_audio() {
             last_audio_position = 'None';
             last_audio_name = '';
             document.getElementById("message_last_audio").innerHTML = 'Selected audio: None';
             delete_count = 0;
+
+            initialize_audio_box();
         }
 
         function play_last_audio() {
@@ -418,11 +429,8 @@
             document.getElementById("audio_box_message").innerHTML = '';
             delete_count = 0;
             if (last_audio_position == 'None' || last_audio_name == '') {
+                initialize_audio_box();
                 document.getElementById("audio_box_message").innerHTML = 'No audio selected!';
-                document.getElementById('audio_box').style.display = 'none';
-                document.getElementById('audio_source').src = '';
-                document.getElementById('audio_box').load();
-
             } else {
                 document.getElementById('audio_box').style.display = 'block';
                 document.getElementById('audio_source').src = "download/" + last_audio_position + "/" + last_audio_name;
