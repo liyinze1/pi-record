@@ -10,6 +10,8 @@ port_controller = utils.port_controll()
 
 car_table = utils.car_table('car_table.csv')
 
+utils.role = 'server'
+
 @app.route('/')
 def main():
     return "server running"

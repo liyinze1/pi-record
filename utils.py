@@ -14,6 +14,7 @@ import glob
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
+role = ''
 
 with open('config.yaml') as f:
     d = yaml.safe_load(f)
@@ -37,7 +38,7 @@ if not os.path.exists(audio_folder):
 # pi, server
 def get_audio_filename(vin):
     now = datetime.now()
-    file_name = 'vin-' + vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
+    file_name = role + '-' + vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
     return os.path.join(audio_folder, file_name)
 
 def check_last_audio():
@@ -58,7 +59,7 @@ def delete_last_audio(audio_name):
 
 # server
 def get_sdp_filename(vin):
-    filename = 'vin-' + vin + '.sdp'
+    filename = role + '-' + vin + '.sdp'
     return os.path.join(audio_folder, filename)
 
 # pi

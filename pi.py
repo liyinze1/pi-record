@@ -9,6 +9,8 @@ record_thread = utils.record()
 save_location = 'both'
 car_table = utils.car_table('car_table.csv')
 
+utils.role = 'pi'
+
 @app.route('/')
 def main():
     return render_template('index.html')
