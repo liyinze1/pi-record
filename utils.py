@@ -42,7 +42,7 @@ def get_audio_filename(vin):
     return os.path.join(audio_folder, file_name)
 
 def check_last_audio():
-    audios = check_all_audios()
+    audios = glob.glob(os.path.join(audio_folder, '*.wav'))
     prefix = os.path.join(audio_folder, role)
     audios = [audio for audio in audios if audio.startswith(prefix)]
     if len(audios) > 0:
@@ -50,9 +50,6 @@ def check_last_audio():
         return audios[-1].split(os.sep)[-1]
     else:
         return 'None'
-    
-def check_all_audios():
-    return glob.glob(os.path.join(audio_folder, '*.wav'))
 
 def delete_last_audio(audio_name):
     logger.info('Trying to delete ' + audio_name)
@@ -68,7 +65,20 @@ def get_sdp_filename(vin):
     return os.path.join(audio_folder, filename)
 
 # pi
-
+def upload_to_server():
+    upload_list = []
+    audios = os.listdir(audio_folder)
+    for audio in audios:
+        r = requests.get(url='http://' + server_ip +
+                        ':8000/check-audio-exits/' + audio)
+        if not eval(r.text):
+            f = open(os.path.join(audio_folder, audio), 'rb')
+            files = {'file': f}
+            requests.post(url='http://' + server_ip +
+                        ':8000/upload', files=files)
+            upload_list.append(audio)
+            f.close()
+    return 'done!\n' + str(upload_list) + '\nhave been uploaded successfully!'
 
 def download_from_server(audio):
     r = requests.get(url='http://' + server_ip +

@@ -136,6 +136,7 @@
         <button class="tablinks" onclick="openTab(event, 'report_panel')" id="report_tab">report</button>
         <button class="tablinks" onclick="openTab(event, 'setup_panel')">setup</button>
         <button class="tablinks" onclick="openTab(event, 'audio_panel')">audio</button>
+        <button class="tablinks" onclick="openTab(event, 'sync_panel')">sync</button>
         <button class="tablinks" onclick="openTab(event, 'power_panel')">power</button>
     </div>
     
@@ -183,11 +184,6 @@
 
     </div>
 
-    <div id="power_panel" class="vertical-center tabcontent">
-        <button onclick='power(0)' class='button normal'>shutdown</button></br>
-        <button onclick='power(1)' class='button check'>reboot</button></br>
-    </div>
-
     <div id="audio_panel" class="vertical-center tabcontent">
         <label id="audio_box_message" class="label"></label></br>
         <audio id='audio_box' controls controlsList="nodownload noplaybackrate" autoplay>
@@ -203,6 +199,17 @@
         <hr>
         <hr>
         <button onclick='delete_last_audio()' class='button squeak'>delete!</button></br>
+    </div>
+
+    <div id="sync_panel" class="vertical-center tabcontent">
+        <button onclick='sync()' class='button normal'>upload local audios to the server</button></br>
+        <hr>
+        <label id="message_sync" class="label"></label></br>
+    </div>
+
+    <div id="power_panel" class="vertical-center tabcontent">
+        <button onclick='power(0)' class='button normal'>shutdown</button></br>
+        <button onclick='power(1)' class='button check'>reboot</button></br>
     </div>
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
@@ -437,6 +444,16 @@
                 document.getElementById('audio_box').load();
                 document.getElementById("audio_box_message").innerHTML = 'Playing ' + last_audio_name + ' from ' + last_audio_position;
             }
+        }
+
+        function sync() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/upload-to-server");
+            xhttp.onload = function () {
+                document.getElementById("message_sync").innerHTML = this.responseText;
+            }
+            document.getElementById("message_sync").innerHTML = 'uploading... please be patient';
+            xhttp.send();
         }
 
         var lat = []
