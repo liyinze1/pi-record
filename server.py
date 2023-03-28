@@ -1,4 +1,4 @@
-from flask import Flask, send_file
+from flask import Flask, send_file, request
 import utils
 import os
 
@@ -53,6 +53,22 @@ def delete_last_audio(audio):
 @app.route('/download/<audio>', methods=['GET'])
 def download(audio):
     return send_file(os.path.join(utils.audio_folder, audio), as_attachment=False)
+
+@app.route('/check-audio-exits/<audio>', methods=['GET'])
+def check_audio_list(audio):
+    return os.path.exists(os.path.join(utils.audio_folder, audio))
+        
+@app.route('/upload', methods=['POST'])
+def upload():
+    if request.files == None:
+        return 'empty'
+    else:
+        file_dict = request.files
+        file_name = file_dict['file_name']
+        f = open(os.path.join(utils.audio_folder, file_name), 'wb')
+        f.write(file_dict['file'])
+        f.close()
+        return 'done'
 
 if __name__ == '__main__':
     app.run(host='10.94.0.16', debug=True, port=8000)
