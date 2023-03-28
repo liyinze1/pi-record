@@ -94,7 +94,7 @@ def download(location, audio):
     else:
         return utils.download_from_server(audio)
     
-@app.route('upload-to-server', methods=['GET'])
+@app.route('/upload-to-server', methods=['GET'])
 def upload_to_server():
     pass
 
