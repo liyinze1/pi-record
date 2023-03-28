@@ -68,9 +68,9 @@ def report(vin, status):
 @app.route('/check-last-audio/<position>', methods=['GET'])
 def check_last_audio(position):
     if position == 'pi':
-        return utils.check_last_audio().split('/')[-1]
+        return utils.check_last_audio()
     else:
-        return utils.check_last_audio_server().split('/')[-1]
+        return utils.check_last_audio_server()
 
 @app.route('/delete-last-audio/<position>/<audio>', methods=['GET'])
 def delete_last_audio(position, audio):
@@ -93,6 +93,10 @@ def download(location, audio):
         return send_file(os.path.join(utils.audio_folder, audio), as_attachment=False)
     else:
         return utils.download_from_server(audio)
+    
+@app.route('upload-to-server', methods=['GET'])
+def upload_to_server():
+    pass
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
