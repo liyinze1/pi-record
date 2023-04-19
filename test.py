@@ -3,6 +3,6 @@ import time
 
 pixels = led.Pixels()
 
-pixels.wakeup()
-time.sleep(10)
+pixels.speak()
+time.sleep(5)
 pixels.off()
