@@ -1,12 +1,8 @@
-from flask import Flask, request
+import led
+import time
 
-app = Flask(__name__)
+pixels = led.Pixels()
 
-
-@app.route('/upload', methods=['POST'])
-def upload():
-    global r
-    r = request
-    return True
-    
-app.run(host='127.0.0.1', debug=True, port=8000)
+pixels.wakeup()
+time.sleep(10)
+pixels.off()

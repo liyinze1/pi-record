@@ -16,6 +16,8 @@ logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 role = ''
 
+time_out = 300
+
 with open('config.yaml') as f:
     d = yaml.safe_load(f)
     vpn_network = d['vpn_network']
@@ -278,7 +280,8 @@ class record:
             time.sleep(3)
         
         self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
-                                              stderr=subprocess.PIPE, start_new_session=True)
+                                              stderr=subprocess.PIPE, start_new_session=True,
+                                              time_out=time_out)
 
         logger.info("recored thread %s", self.record_thread)
         # self.record_thread = subprocess.Popen(record_cmd, stdout=subprocess.PIPE)
