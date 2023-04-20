@@ -282,8 +282,7 @@ class record:
             time.sleep(3)
         
         self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
-                                              stderr=subprocess.PIPE, start_new_session=True,
-                                              timeout=timeout)
+                                              stderr=subprocess.PIPE, start_new_session=True)
 
         # turn on leds
         self.led.speak()
