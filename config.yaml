@@ -1,5 +1,4 @@
-server_ip: '10.94.0.16'
-vpn_network: '10.94.0'
+server_ip: '172.27.92.252'
 save_location: 'both' # 'pi', 'server' or 'both'
 audio_folder: './audio'
 # audio_folder: './'

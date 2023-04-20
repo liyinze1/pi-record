@@ -69,5 +69,5 @@ def upload():
         return 'done'
 
 if __name__ == '__main__':
-    app.run(host='10.94.0.16', debug=True, port=8000)
+    app.run(host='0.0.0.0', debug=True, port=8000)
     # app.run(host='127.0.0.1', debug=True, port=8000)

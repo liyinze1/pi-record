@@ -16,11 +16,10 @@ logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 role = ''
 
-time_out = 300
+timeout = None
 
 with open('config.yaml') as f:
     d = yaml.safe_load(f)
-    vpn_network = d['vpn_network']
     server_ip = d['server_ip']
     audio_folder = d['audio_folder']
     vpn_start_cmd = d['vpn_start']
@@ -255,9 +254,12 @@ class vpn:
         except:
             return 'cannot reboot'
 
+# pi
 class record:
 
     def __init__(self):
+        import led
+        self.led = led.Pixels()
         self.record_thread = None
         self.record_filename = None
 
@@ -281,8 +283,11 @@ class record:
         
         self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
                                               stderr=subprocess.PIPE, start_new_session=True,
-                                              time_out=time_out)
+                                              timeout=timeout)
 
+        # turn on leds
+        self.led.speak()
+        
         logger.info("recored thread %s", self.record_thread)
         # self.record_thread = subprocess.Popen(record_cmd, stdout=subprocess.PIPE)
         # self.stream_thread = subprocess.Popen(stream_cmd, stdin=self.record_thread.stdout)
@@ -293,6 +298,7 @@ class record:
             return 'Failed\nlog:\t'
 
     def stop(self):
+        self.led.off()
         if self.record_thread is None or self.record_thread.poll() is not None:
             return 'nothing to stop'
         else:
@@ -305,6 +311,7 @@ class record:
         
     def stop_test(self):
         self.record_thread.wait()
+        self.led.off()
         # get loss rate
         r = requests.get(url='http://' + server_ip + ':8000/stop-test')
         return r.text
