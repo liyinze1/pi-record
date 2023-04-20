@@ -3,6 +3,15 @@ import time
 
 pixels = led.Pixels()
 
-pixels.speak()
-time.sleep(5)
-pixels.off()
+if __name__ == '__main__':
+    while True:
+
+        try:
+            pixels.speak()
+            time.sleep(3)
+        except KeyboardInterrupt:
+            break
+
+
+    pixels.off()
+    time.sleep(1)
