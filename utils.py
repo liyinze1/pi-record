@@ -309,7 +309,7 @@ class record:
     def stop(self):
         self.led.off()
         if self.record_thread is None or self.record_thread.poll() is not None:
-            return 'nothing to stop'
+            return ''
         else:
             if self.save_location in ('server', 'both'):
                 requests.post(url='http://' + server_ip + ':8000/stop/' + self.vin)

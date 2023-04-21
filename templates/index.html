@@ -152,7 +152,9 @@
         <button id='record_button' onclick='record()' class='button record'>record</button></br>
         <button id='stop_button' onclick='stop()' class='button stop'>stop</button></br>
         <hr>
-        <label id="message_record" class="label">No Messages</label>
+        <label id="message_record" class="label">No Messages</label></br>
+        <hr>
+        <label id="message_timeout" class="label">No Messages</label>
     </div>
 
     <div id='report_panel' class="vertical-center tabcontent">
@@ -219,6 +221,8 @@
     <script>
 
         var vin = '';
+        const timeout = 10;
+        var counter = null;
 
         function openTab(evt, tabName) {
             // Declare all variables
@@ -248,15 +252,34 @@
             } else {
                 xhttp.open("GET", "/record/" + vin);
                 xhttp.onload = function () {
-                    document.getElementById("message_record").innerHTML = 'VIN: ' + vin + '\nis\n' + this.responseText;
-                    document.getElementById('record_button').style.display = 'none';
-                    document.getElementById('stop_button').style.display = 'block';
+                    if (this.responseText == 'recording...') {
+                        document.getElementById("message_record").innerHTML = 'VIN: ' + vin + '\nis\n' + this.responseText;
+                        document.getElementById('record_button').style.display = 'none';
+                        document.getElementById('stop_button').style.display = 'block';
+
+                    } else {
+                        document.getElementById("message_record").innerHTML = this.responseText;
+                        var seconds = timeout;
+                        // Update the count down every 1 second
+                        counter = setInterval(function() {
+                            seconds -= 1;
+                            document.getElementById("demo").innerHTML = seconds + 's to auto stop';
+                            // If the count down is over, write some text 
+                            if (seconds < 0) {
+                                document.getElementById("demo").innerHTML = "EXPIRED";
+                                stop();
+                            }
+                        }, 1000);
+                    }
                 }
                 xhttp.send();
             }
         }
 
         function stop() {
+
+            clearInterval(counter);
+
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/stop");
             xhttp.onload = function () {
