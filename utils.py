@@ -10,13 +10,14 @@ import os
 import signal
 import logging
 import glob
+import threading
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 role = ''
 
-timeout = None
+timeout = 10
 
 with open('config.yaml') as f:
     d = yaml.safe_load(f)
@@ -113,6 +114,7 @@ def git_pull():
         return process.stdout
     except:
         return 'Failed'
+
     
 # server
 class port_controll:
@@ -197,7 +199,7 @@ class receive:
         self.port_controller.return_port(self.port)
         return '%.2f%%' % (loss_rate * 100)
         
-
+# pi
 class vpn:
 
     def __init__(self):
@@ -262,6 +264,11 @@ class record:
         self.led = led.Pixels()
         self.record_thread = None
         self.record_filename = None
+        
+    def watch_dog(self):
+        time.sleep(timeout)
+        self.stop()
+        self.led.off()
 
     def record(self, vin, save_location):
         if self.record_thread is not None and self.record_thread.poll() is None:
@@ -292,6 +299,9 @@ class record:
         # self.stream_thread = subprocess.Popen(stream_cmd, stdin=self.record_thread.stdout)
         # time.sleep(2)
         if self.record_thread.poll() is None:
+            # count down
+            t = threading.Thread(target=self.watch_dog)
+            t.start()
             return 'recording...'
         else:
             return 'Failed\nlog:\t'
