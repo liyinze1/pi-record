@@ -263,7 +263,7 @@
                         // Update the count down every 1 second
                         counter = setInterval(function() {
                             seconds -= 1;
-                            document.getElementById("message_timeout").innerHTML = seconds + 's to auto stop';
+                            document.getElementById("message_timeout").innerHTML = String(seconds) + 's to auto stop';
                             // If the count down is over, write some text 
                             if (seconds < 0) {
                                 document.getElementById("message_timeout").innerHTML = "EXPIRED";
