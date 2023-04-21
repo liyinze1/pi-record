@@ -256,20 +256,18 @@
                         document.getElementById("message_record").innerHTML = 'VIN: ' + vin + '\nis\n' + this.responseText;
                         document.getElementById('record_button').style.display = 'none';
                         document.getElementById('stop_button').style.display = 'block';
-
-                    } else {
-                        document.getElementById("message_record").innerHTML = this.responseText;
                         var seconds = timeout;
                         // Update the count down every 1 second
                         counter = setInterval(function() {
                             seconds -= 1;
                             document.getElementById("message_timeout").innerHTML = seconds + 's to auto stop';
-                            // If the count down is over, write some text 
                             if (seconds < 0) {
                                 document.getElementById("message_timeout").innerHTML = "EXPIRED";
                                 stop();
                             }
                         }, 1000);
+                    } else {
+                        document.getElementById("message_record").innerHTML = this.responseText;
                     }
                 }
                 xhttp.send();
