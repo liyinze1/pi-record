@@ -3,3 +3,4 @@ requests
 PyYAML
 pyopenssl
 numpy
+soundfile
