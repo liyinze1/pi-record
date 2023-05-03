@@ -5,4 +5,5 @@ sudo systemctl enable server-record.service
 sudo systemctl start server-record.service
 sudo systemctl status server-record.service
 mkdir ./audio
-sudo chmod 777 ./audio
+sudo chmod 777 -r .
+sudo chmod 777 .
