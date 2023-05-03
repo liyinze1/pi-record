@@ -1,3 +1,4 @@
+sudo apt install -y ffmpeg
 sudo apt install -y python3-pip
 pip3 install -r requirements/pi/requirements.txt
 sudo cp pi-record.service /etc/systemd/system/
