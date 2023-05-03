@@ -1,4 +1,4 @@
-server_ip: '172.27.60.127'
+server_ip: '172.27.92.252'
 save_location: 'both' # 'pi', 'server' or 'both'
 audio_folder: './audio'
 # audio_folder: './'
