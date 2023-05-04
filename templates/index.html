@@ -368,7 +368,7 @@
         }
 
         let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
-            let minEdgePercentage = 1; // 70%
+            let minEdgePercentage = 0.95;
             let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
             let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
             return {
