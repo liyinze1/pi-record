@@ -377,7 +377,7 @@
             };
         }
 
-        const html5QrCode = new Html5Qrcode("qr-reader");
+        const html5QrCode = new Html5Qrcode("qr-reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_39] });
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code scanned = ${decodedText}`, decodedResult);
             vin = decodedText;
