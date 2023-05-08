@@ -377,7 +377,8 @@
             };
         }
 
-        function onScanSuccess(decodedText, decodedResult) {
+        const html5QrCode = new Html5Qrcode("qr-reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_39] });
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code scanned = ${decodedText}`, decodedResult);
             if (decodedResult.startsWith("WF") && decodedResult.length == 17) {
                 vin = decodedText;
@@ -388,20 +389,10 @@
                 }).catch((err) => {});
                 // jump to next tab
                 document.getElementById("record_tab").click();
-                document.getElementById('record_button').style.display = 'block';
+                document.getElementById('record_button').style.display = 'block';   
             }
         };
-        const formatsToSupport = [Html5QrcodeSupportedFormats.CODE_39];
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader",
-        {
-            fps: 10,
-            qrbox: qrboxFunction,
-            formatsToSupport: formatsToSupport,
-            showTorchButtonIfSupported: true
-        },
-        /* verbose= */ false);
-        html5QrcodeScanner.render(onScanSuccess);
+        const config = { fps: 10, qrbox: qrboxFunction };
 
 
         var last_audio_position = 'None';
