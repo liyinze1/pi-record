@@ -417,6 +417,100 @@
             delete_count = 0;
         }
 
+
+        function scanvin() {
+            console.log('scan vin')
+            html5QrcodeScanner.render(onScanSuccess);
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+        // Handle the scanned code as you like, for example:
+            console.log(`Code matched = ${decodedText}`, decodedResult);
+            document.getElementById("message_scan").innerHTML = decodedText;
+        }
+
+        let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
+            let minEdgePercentage = 0.99;
+            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+            let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+            return {
+                width: qrboxSize,
+                height: qrboxSize / 2
+            };
+        }
+
+        const formatsToSupport = [Html5QrcodeSupportedFormats.CODE_39];
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader",
+            {
+                fps: 10,
+                qrbox: qrboxFunction,
+                showTorchButtonIfSupported: true,
+                formatsToSupport: formatsToSupport
+                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+            },
+        /* verbose= */ false);
+
+
+        /*
+
+        function scanvin() {
+            console.log('scan vin')
+            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+        }
+
+        let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
+            let minEdgePercentage = 0.99;
+            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+            let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+            return {
+                width: qrboxSize,
+                height: qrboxSize / 2
+            };
+        }
+
+        const html5QrCode = new Html5Qrcode("qr-reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_39] });
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            console.log(`Code scanned = ${decodedText}`, decodedResult);
+            document.getElementById("message_scan").innerHTML = decodedText;
+            if (decodedText.startsWith("WF") && decodedText.length == 17) {
+                vin = decodedText;
+                document.getElementById("vin_label").innerHTML = 'VIN: ' + vin;
+                document.getElementById("message_scan").innerHTML = 'VIN: ' + vin;
+                html5QrCode.stop().then((ignore) => {
+                    console.log('stopped')
+                }).catch((err) => {});
+                // jump to next tab
+                document.getElementById("record_tab").click();
+                document.getElementById('record_button').style.display = 'block';   
+            }
+        };
+        const config = { fps: 20, qrbox: qrboxFunction };
+
+
+        var last_audio_position = 'None';
+        var last_audio_name = '';
+        var delete_count = 0;
+        function check_last_audio(position) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/check-last-audio/" + position);
+            xhttp.onload = function () {
+                if (this.responseText == 'None') {
+                    document.getElementById("message_last_audio").innerHTML = 'Nothing on ' + position;
+                    last_audio_name = '';
+                } else {
+                    last_audio_position = position;
+                    last_audio_name = this.responseText;
+                    document.getElementById("message_last_audio").innerHTML = 'Selected audio on ' + last_audio_position + ': ' + last_audio_name;
+                }
+                initialize_audio_box();
+            }
+            xhttp.send();
+            delete_count = 0;
+        }
+
+        */
+
         function delete_last_audio() {
             initialize_audio_box();
             if (last_audio_position == 'None' || last_audio_name == '') {
