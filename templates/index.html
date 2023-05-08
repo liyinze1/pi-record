@@ -380,6 +380,7 @@
         const html5QrCode = new Html5Qrcode("qr-reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_39] });
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code scanned = ${decodedText}`, decodedResult);
+            document.getElementById("message_scan").innerHTML = decodedResult;
             if (decodedResult.startsWith("WF") && decodedResult.length == 17) {
                 vin = decodedText;
                 document.getElementById("vin_label").innerHTML = 'VIN: ' + vin;
