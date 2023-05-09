@@ -569,7 +569,8 @@
                     if (this.responseText.startsWith('record')) {
                         document.getElementById("record_tab").click();
                         document.getElementById('stop_button').style.display = 'block';
-                        document.getElementById('message_record') = this.responseText;
+                        document.getElementById("vin_label").innerHTML = 'VIN: ' + vin;
+                        document.getElementById('message_record').innerHTML = this.responseText;
                     } if (this.responseText.startsWith('stop')) {
                         document.getElementById('normal_button').style.display = 'block';
                         document.getElementById('squeak_button').style.display = 'block';
