@@ -17,7 +17,7 @@ logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 role = ''
 
-timeout = 300
+timeout = 30
 
 with open('config.yaml') as f:
     d = yaml.safe_load(f)
@@ -271,6 +271,7 @@ class record:
         for i in range(timeout):
             time.sleep(1)
             if self.kill_timer:
+                print('Manually stopped!')
                 return
         self.stop()
 
