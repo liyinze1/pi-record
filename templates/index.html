@@ -245,7 +245,7 @@
             evt.currentTarget.className += " active";
         }
 
-        var start_time = 0;
+        var timeup = 0;
         function record() {
             const xhttp = new XMLHttpRequest();
             if (vin == '') {
@@ -257,12 +257,12 @@
                         document.getElementById("message_record").innerHTML = 'VIN: ' + vin + '\nis\n' + this.responseText;
                         document.getElementById('record_button').style.display = 'none';
                         document.getElementById('stop_button').style.display = 'block';
-                        start_time = getTime();
+                        timeup = new Date().getTime() + timeout * 1000;
                         // Update the count down every 1 second
                         counter = setInterval(function() {
-                            let seconds = Math.floor((getTime() - start_time) / 1000);
-                            document.getElementById("message_timeout").innerHTML = (timeout - seconds) + 's to auto stop';
-                            if (seconds > timeout) {
+                            var time = new Date().getTime();
+                            document.getElementById("message_timeout").innerHTML = Math.floor((timeup - time) / 1000) + 's to auto stop';
+                            if (time > timeup) {
                                 document.getElementById("message_timeout").innerHTML = "EXPIRED";
                                 stop();
                             }

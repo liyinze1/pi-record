@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>JavaScript Dates</h1>
+<h2>The getTime() Method</h2>
+
+<p>The internal clock in JavaScript starts at midnight January 1, 1970.</p>
+
+<p>getTime() returns the number of milliseconds since January 1, 1970:</p>
+
+<p id="demo"></p>
+
+<script>
+let start_time = new Date().getTime();
+counter = setInterval(function() {
+    let seconds  = Math.floor((new Date().getTime() - start_time) / 1000);
+    document.getElementById("demo").innerHTML = (100 - seconds) + 's to auto stop';
+}, 1000);
+
+</script>
+
+</body>
+</html>
