@@ -264,11 +264,15 @@ class record:
         self.led = led.Pixels()
         self.record_thread = None
         self.record_filename = None
+        self.timer = None
+        self.kill_timer = False
         
     def watch_dog(self):
-        time.sleep(timeout)
+        for i in range(timeout):
+            time.sleep(1)
+            if self.kill_timer:
+                return
         self.stop()
-        self.led.off()
 
     def record(self, vin, save_location):
         if self.record_thread is not None and self.record_thread.poll() is None:
@@ -300,21 +304,24 @@ class record:
         # time.sleep(2)
         if self.record_thread.poll() is None:
             # count down
+            self.kill_timer = False
             t = threading.Thread(target=self.watch_dog)
             t.start()
+            self.timer = t
             return 'recording...'
         else:
             return 'Failed\nlog:\t'
 
     def stop(self):
-        self.led.off()
+        self.kill_timer = True
         if self.record_thread is None or self.record_thread.poll() is not None:
             return ''
         else:
             if self.save_location in ('server', 'both'):
-                requests.post(url='http://' + server_ip + ':8000/stop/' + self.vin)
+                threading.Thread(target=lambda: requests.post(url='http://' + server_ip + ':8000/stop/' + self.vin)).start()
             # self.stream_thread.kill()
             # self.record_thread.kill()
+            self.led.off()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
             return self.vin + ' has been stopped'
         

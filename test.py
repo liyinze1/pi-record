@@ -1,17 +1,3 @@
-import led
-import time
+import requests
 
-pixels = led.Pixels()
-
-if __name__ == '__main__':
-    while True:
-
-        try:
-            pixels.speak()
-            time.sleep(3)
-        except KeyboardInterrupt:
-            break
-
-
-    pixels.off()
-    time.sleep(1)
+requests.post(url='http://127.0.0.1:8000/stop/1')
