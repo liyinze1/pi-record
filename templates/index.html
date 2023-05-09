@@ -221,7 +221,7 @@
     <script>
 
         var vin = '';
-        const timeout = 300;
+        const timeout = 100;
         var counter = null;
 
         function openTab(evt, tabName) {
@@ -245,6 +245,7 @@
             evt.currentTarget.className += " active";
         }
 
+        var start_time = 0;
         function record() {
             const xhttp = new XMLHttpRequest();
             if (vin == '') {
@@ -256,12 +257,12 @@
                         document.getElementById("message_record").innerHTML = 'VIN: ' + vin + '\nis\n' + this.responseText;
                         document.getElementById('record_button').style.display = 'none';
                         document.getElementById('stop_button').style.display = 'block';
-                        var seconds = timeout;
+                        start_time = getTime();
                         // Update the count down every 1 second
                         counter = setInterval(function() {
-                            seconds -= 1;
-                            document.getElementById("message_timeout").innerHTML = seconds + 's to auto stop';
-                            if (seconds < 0) {
+                            let seconds = Math.floor((getTime - start_time) / 1000);
+                            document.getElementById("message_timeout").innerHTML = (timeout - seconds) + 's to auto stop';
+                            if (seconds > timeout) {
                                 document.getElementById("message_timeout").innerHTML = "EXPIRED";
                                 stop();
                             }
