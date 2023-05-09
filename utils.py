@@ -17,7 +17,7 @@ logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 role = ''
 
-timeout = 30
+timeout = 300
 
 with open('config.yaml') as f:
     d = yaml.safe_load(f)
