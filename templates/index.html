@@ -162,6 +162,7 @@
         <button id='squeak_button' onclick='report(1)' class='button squeak'>squeak</button></br>
         <button id='rattle_button' onclick='report(2)' class='button rattle'>rattle</button></br>
         <button id='both_button' onclick='report(3)' class='button both'>both</button></br>
+        <button id='abort_button' onclick='report(4)' class='button squeak'>abort</button></br>
         <button id='next_button' onClick="window.location.reload();" class='button normal'>next car</button>
         <hr>
         <label id="message_report" class="label">No Messages</label>
@@ -288,6 +289,7 @@
                 document.getElementById('squeak_button').style.display = 'block';
                 document.getElementById('rattle_button').style.display = 'block';
                 document.getElementById('both_button').style.display = 'block';
+                document.getElementById('abort_button').style.display = 'block';
                 document.getElementById("report_tab").click();
             }
             xhttp.send();
@@ -295,7 +297,7 @@
             document.getElementById('stop_button').style.display = 'none';
         }
 
-        const report_cmds = ["normal", "squeak", "rattle", "both"]
+        const report_cmds = ["normal", "squeak", "rattle", "both", "abort"]
         function report(i) {
             const xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/report/" + vin + "/" + report_cmds[i]);
@@ -552,11 +554,34 @@
             document.getElementById('squeak_button').style.display = 'none';
             document.getElementById('rattle_button').style.display = 'none';
             document.getElementById('both_button').style.display = 'none';
+            document.getElementById('abort_button').style.display = 'none';
             document.getElementById('next_button').style.display = 'none';
 
             document.getElementById('audio_box').style.display = 'none';
 
-            document.getElementById("scan_tab").click();
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/get-step");
+            xhttp.onload = function () {
+                if (this.responseText == 'scan') {
+                    document.getElementById("scan_tab").click();
+                } else {
+                    vin = this.responseText.split(' ')[1];
+                    if (this.responseText.startsWith('record')) {
+                        document.getElementById("record_tab").click();
+                        document.getElementById('stop_button').style.display = 'block';
+                        document.getElementById('message_record') = this.responseText;
+                    } if (this.responseText.startsWith('stop')) {
+                        document.getElementById('normal_button').style.display = 'block';
+                        document.getElementById('squeak_button').style.display = 'block';
+                        document.getElementById('rattle_button').style.display = 'block';
+                        document.getElementById('both_button').style.display = 'block';
+                        document.getElementById('abort_button').style.display = 'block';
+                        document.getElementById('message_report').innerHTML = 'select label for ' + vin;
+                        document.getElementById("report_tab").click();
+                    }
+                }
+            }
+            xhttp.send();
         }
 
         // initialize

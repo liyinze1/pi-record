@@ -266,6 +266,7 @@ class record:
         self.record_filename = None
         self.timer = None
         self.kill_timer = False
+        self.step = 'scan'
         
     def watch_dog(self):
         for i in range(timeout):
@@ -309,6 +310,7 @@ class record:
             t = threading.Thread(target=self.watch_dog)
             t.start()
             self.timer = t
+            self.step = 'record ' + vin
             return 'recording...'
         else:
             return 'Failed\nlog:\t'
@@ -324,6 +326,7 @@ class record:
             # self.record_thread.kill()
             self.led.off()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
+            self.step = 'stop ' + self.vin
             return self.vin + ' has been stopped'
         
     def stop_test(self):

@@ -59,6 +59,7 @@ def report(vin, status):
         return "no recording"
     if vin not in vin_file:
         return "no recording for new vin"
+    record_thread.step = 'scan'
     if save_location in ('pi', 'both'):
         car_table.update(vin_file, status)
     if save_location in ('server', 'both'):
@@ -97,6 +98,10 @@ def download(location, audio):
 @app.route('/upload-to-server', methods=['GET'])
 def upload_to_server():
     return utils.upload_to_server()
+
+@app.route('/get-step', methods=['GET'])
+def get_step():
+    return record_thread.step
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', debug=True, port=443, ssl_context='adhoc')
