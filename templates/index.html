@@ -372,16 +372,16 @@
         }
 
         let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
-            let minEdgePercentage = 0.99;
+            let minEdgePercentage = 0.7;
             let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
             let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
             return {
                 width: qrboxSize,
-                height: qrboxSize / 2
+                height: qrboxSize
             };
         }
 
-        const html5QrCode = new Html5Qrcode("qr-reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_39] });
+        const html5QrCode = new Html5Qrcode("qr-reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE] });
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code scanned = ${decodedText}`, decodedResult);
             document.getElementById("message_scan").innerHTML = decodedText;
