@@ -330,6 +330,7 @@ class record:
             return self.vin + ' has been stopped'
         
     def stop_test(self):
+        self.step = 'scan'
         self.record_thread.wait()
         self.led.off()
         # get loss rate
