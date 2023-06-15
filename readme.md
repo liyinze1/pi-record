@@ -1,15 +1,10 @@
 ## Setup
 Run 
 ```
-python3 -m venv ford-venv
-source ford-venv/bin/activate
-pip3 install -r requirements.txt
+sudo bash setup-pi.sh
+sudo bash setup-vpn.sh
+sudo bash zerotier.sh
 ``` 
-on both server and pi to install python dependencies
-
-It's also required a package called [FFmpeg](https://ffmpeg.org/) on both sides to send and receive audio stream.
-
-Try ```sudo apt install -y ffmpeg``` or, ```brew install ffmpeg``` or [manually download it](https://ffmpeg.org/download.html)
 
 ## VPN
 ### Zerotier
