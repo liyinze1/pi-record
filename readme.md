@@ -4,6 +4,7 @@ Run
 sudo bash setup-pi.sh
 sudo bash setup-vpn.sh
 sudo bash zerotier.sh
+openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
 ``` 
 
 ## VPN
