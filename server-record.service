@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 AmbientCapabilities=CAP_NET_BIND_SERVICE
-ExecStart=/mnt/120daa3e-6d5a-47f4-86fc-b9080ddf4988/ford/pi-record/ford-venv/bin/python3 server.py
+ExecStart=/usr/bin/python3 server.py
 WorkingDirectory=/mnt/120daa3e-6d5a-47f4-86fc-b9080ddf4988/ford/pi-record
 StandardOutput=inherit
 StandardError=inherit
