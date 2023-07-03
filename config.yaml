@@ -1,5 +1,5 @@
 server_ip: '10.94.0.32'
-save_location: 'both' # 'pi', 'server' or 'both'
+save_location: 'pi' # 'pi', 'server' or 'both'
 audio_folder: './audio'
 # audio_folder: './'
 vpn_start: 'wg-quick up wg0'
