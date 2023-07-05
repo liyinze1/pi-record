@@ -7,6 +7,11 @@ sudo bash zerotier.sh
 openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
 ``` 
 
+put
+```sudo /usr/sbin/alsactl --file /home/pi/pi-record/asound.state restore```
+in
+```sudo nano /etc/rc.local```
+
 ## VPN
 ### Zerotier
 For the vpn between phone, pi and server, here I recommend [zerotier](https://www.zerotier.com/download/), and here is the [instruction](https://linuxhint.com/install-use-zerotier-raspberry-pi-virtual-network/) on
