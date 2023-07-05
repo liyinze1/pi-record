@@ -92,6 +92,8 @@ class sync:
         f.close()
         self.file_message = str(len(lines)) + ' audios on the pi, ' + str(len(label_table)) + ' audios will be transmitted to the server'
         
+        print(self.file_message)
+        
         for audio in label_table.keys():
             report_to_server(audio, label_table[audio])
             f = open(os.path.join(audio_folder, audio), 'rb')
