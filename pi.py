@@ -99,6 +99,7 @@ def download(location, audio):
     
 @app.route('/upload-to-server', methods=['GET'])
 def upload_to_server():
+    global upload_object
     upload_object = utils.sync()
     return upload_object.upload_to_server()
 
