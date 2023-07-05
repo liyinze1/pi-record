@@ -24,6 +24,7 @@ with open('config.yaml') as f:
     server_ip = d['server_ip']
     audio_folder = d['audio_folder']
     vpn_start_cmd = d['vpn_start']
+    save_location = d['save_location']
 
 class car_table:
     def __init__(self, filename):

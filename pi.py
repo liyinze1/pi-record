@@ -6,7 +6,7 @@ app = Flask(__name__)
 vpn_thread = utils.vpn()
 record_thread = utils.record()
 
-save_location = 'both'
+save_location = utils.save_location
 car_table = utils.car_table('car_table.csv')
 
 utils.role = 'pi'
