@@ -100,8 +100,13 @@ def download(location, audio):
 @app.route('/upload-to-server', methods=['GET'])
 def upload_to_server():
     global upload_object
-    upload_object = utils.sync()
-    return upload_object.upload_to_server()
+    if upload_object is not None:
+        return ''
+    else:
+        upload_object = utils.sync()
+        message = upload_object.upload_to_server()
+        upload_object = None
+        return message
 
 @app.route('/upload-message', methods=['GET'])
 def upload_message():
