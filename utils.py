@@ -82,7 +82,7 @@ def upload_to_server():
     for audio in audios:
         r = requests.get(url='http://' + server_ip +
                         ':8000/check-audio-exits/' + audio)
-        if not eval(r.text):
+        if not eval(r.text) and audio in label_table:
             report_to_server(audio, label_table[audio])
             f = open(os.path.join(audio_folder, audio), 'rb')
             files = {'file': f}
