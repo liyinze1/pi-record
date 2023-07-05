@@ -224,6 +224,7 @@
         var vin = '';
         const timeout = 300;
         var counter = null;
+        var upload_message_timer = null;
 
         function openTab(evt, tabName) {
             // Declare all variables
@@ -517,8 +518,17 @@
             xhttp.open("GET", "/upload-to-server");
             xhttp.onload = function () {
                 document.getElementById("message_sync").innerHTML = this.responseText;
+                clearInterval(upload_message_timer);
             }
             document.getElementById("message_sync").innerHTML = 'uploading... please be patient';
+            var upload_message_timer = setInterval(function() {
+                const xhttp2 = new XMLHttpRequest();
+                xhttp2.open("GET", "/upload-to-server");
+                xhttp2.onload = function() {
+                    document.getElementById("message_sync").innerHTML = this.responseText;
+                }
+                xhttp2.send();
+            }, 5000);
             xhttp.send();
         }
 

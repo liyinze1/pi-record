@@ -68,21 +68,31 @@ def get_sdp_filename(vin):
     return os.path.join(audio_folder, filename)
 
 # pi
-def upload_to_server():
-    upload_list = []
-    audios = os.listdir(audio_folder)
-    f = open('car_table.csv', 'r')
-    label_table = {}
-    for line in f.read().splitlines():
-        audio, label = line.split(',')
-        audio = audio.split('/')[-1]
-        label_table[audio] = label
-    f.close()
-    
-    for audio in audios:
-        r = requests.get(url='http://' + server_ip +
-                        ':8000/check-audio-exits/' + audio)
-        if not eval(r.text) and audio in label_table:
+class sync:
+
+    def __init__(self):
+        self.file_message = 'checking audios to be uploaded on the pi'
+        self.count = 0
+
+    def message(self):
+        return self.file_message + '\n' + str(self.count) + ' audios has been uploaded!'
+
+    def upload_to_server(self):
+        upload_list = []
+        # audios = os.listdir(audio_folder)
+        f = open('car_table.csv', 'r')
+        label_table = {}
+        lines = f.read().splitlines()
+        for line in lines:
+            audio, label = line.split(',')
+            audio = audio.split('/')[-1]
+            r = requests.get(url='http://' + server_ip + ':8000/check-audio-exits/' + audio)
+            if not eval(r.text):
+                label_table[audio] = label
+        f.close()
+        self.file_message = str(len(lines)) + ' audios on the pi, ' + str(len(label_table)) + ' audios will be transmitted to the server'
+        
+        for audio in label_table.keys():
             report_to_server(audio, label_table[audio])
             f = open(os.path.join(audio_folder, audio), 'rb')
             files = {'file': f}
@@ -90,7 +100,8 @@ def upload_to_server():
                         ':8000/upload', files=files)
             upload_list.append(audio)
             f.close()
-    return 'done!\n' + str(upload_list) + '\nhave been uploaded successfully!'
+            count += 1
+        return 'done!\n' + str(upload_list) + '\nhave been uploaded successfully!'
 
 def download_from_server(audio):
     r = requests.get(url='http://' + server_ip +

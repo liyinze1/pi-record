@@ -9,6 +9,8 @@ record_thread = utils.record()
 save_location = utils.save_location
 car_table = utils.car_table('car_table.csv')
 
+upload_object = None
+
 utils.role = 'pi'
 
 @app.route('/')
@@ -97,7 +99,15 @@ def download(location, audio):
     
 @app.route('/upload-to-server', methods=['GET'])
 def upload_to_server():
-    return utils.upload_to_server()
+    upload_object = utils.sync()
+    return upload_object.upload_to_server()
+
+@app.route('/upload-message', method=['GET'])
+def upload_message():
+    if upload_object == None:
+        return ''
+    else:
+        return upload_object.message()
 
 @app.route('/get-step', methods=['GET'])
 def get_step():
