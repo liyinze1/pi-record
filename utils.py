@@ -100,7 +100,7 @@ class sync:
                         ':8000/upload', files=files)
             upload_list.append(audio)
             f.close()
-            count += 1
+            self.count += 1
         return 'done!\n' + str(upload_list) + '\nhave been uploaded successfully!'
 
 def download_from_server(audio):
