@@ -102,7 +102,7 @@ def upload_to_server():
     upload_object = utils.sync()
     return upload_object.upload_to_server()
 
-@app.route('/upload-message', method=['GET'])
+@app.route('/upload-message', methods=['GET'])
 def upload_message():
     if upload_object == None:
         return ''
