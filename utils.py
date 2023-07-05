@@ -96,12 +96,13 @@ class sync:
         
         for audio in label_table.keys():
             report_to_server(audio, label_table[audio])
-            f = open(os.path.join(audio_folder, audio), 'rb')
-            files = {'file': f}
-            requests.post(url='http://' + server_ip +
-                        ':8000/upload', files=files)
-            upload_list.append(audio)
-            f.close()
+            if os.path.exists(os.path.join(audio_folder, audio)):
+                f = open(os.path.join(audio_folder, audio), 'rb')
+                files = {'file': f}
+                requests.post(url='http://' + server_ip +
+                            ':8000/upload', files=files)
+                upload_list.append(audio)
+                f.close()
             self.count += 1
         return 'done!\n' + str(upload_list) + '\nhave been uploaded successfully!'
 
