@@ -523,7 +523,7 @@
             document.getElementById("message_sync").innerHTML = 'uploading... please be patient';
             var upload_message_timer = setInterval(function() {
                 const xhttp2 = new XMLHttpRequest();
-                xhttp2.open("GET", "/upload-to-server");
+                xhttp2.open("GET", "/upload-message");
                 xhttp2.onload = function() {
                     document.getElementById("message_sync").innerHTML = this.responseText;
                 }
