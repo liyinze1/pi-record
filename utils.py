@@ -70,6 +70,14 @@ def get_sdp_filename(vin):
 def upload_to_server():
     upload_list = []
     audios = os.listdir(audio_folder)
+    f = open('car_table.csv', 'r')
+    label_table = {}
+    for line in f.read().splitlines():
+        audio, label = line.split(',')
+        audio = audio[:2]
+        label_table[audio] = label
+    f.close()
+    
     for audio in audios:
         r = requests.get(url='http://' + server_ip +
                         ':8000/check-audio-exits/' + audio)
@@ -79,6 +87,7 @@ def upload_to_server():
             requests.post(url='http://' + server_ip +
                         ':8000/upload', files=files)
             upload_list.append(audio)
+            report_to_server(audio, label_table[audio])
             f.close()
     return 'done!\n' + str(upload_list) + '\nhave been uploaded successfully!'
 

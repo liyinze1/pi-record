@@ -37,8 +37,9 @@ def checkvpn():
     
 @app.route('/report/<vin>/<status>', methods=['GET'])
 def report(vin, status):
+    # return car_table.update(vin, status)
     if vin not in receive_threads:
-        return 'vin is not found on the server'
+        return car_table.update(vin, status)
     else:
         return car_table.update(receive_threads.pop(vin).audio_filename, status)
 
