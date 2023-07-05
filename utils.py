@@ -75,7 +75,7 @@ def upload_to_server():
     label_table = {}
     for line in f.read().splitlines():
         audio, label = line.split(',')
-        audio = audio[:2]
+        audio = audio.split('/')[-1]
         label_table[audio] = label
     f.close()
     
@@ -83,12 +83,12 @@ def upload_to_server():
         r = requests.get(url='http://' + server_ip +
                         ':8000/check-audio-exits/' + audio)
         if not eval(r.text):
+            report_to_server(audio, label_table[audio])
             f = open(os.path.join(audio_folder, audio), 'rb')
             files = {'file': f}
             requests.post(url='http://' + server_ip +
                         ':8000/upload', files=files)
             upload_list.append(audio)
-            report_to_server(audio, label_table[audio])
             f.close()
     return 'done!\n' + str(upload_list) + '\nhave been uploaded successfully!'
 
