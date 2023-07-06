@@ -518,7 +518,9 @@
             xhttp.open("GET", "/upload-to-server");
             xhttp.onload = function () {
                 document.getElementById("message_sync").innerHTML = this.responseText;
-                clearInterval(upload_message_timer);
+                if (this.responseText.startsWith("done")) {
+                    clearInterval(upload_message_timer);
+                }
             }
             document.getElementById("message_sync").innerHTML = 'uploading... please be patient';
             var upload_message_timer = setInterval(function() {
@@ -526,6 +528,9 @@
                 xhttp2.open("GET", "/upload-message");
                 xhttp2.onload = function() {
                     document.getElementById("message_sync").innerHTML = this.responseText;
+                    if (this.responseText.startsWith("done")) {
+                        clearInterval(upload_message_timer);
+                    }
                 }
                 xhttp2.send();
             }, 5000);

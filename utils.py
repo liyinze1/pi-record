@@ -75,7 +75,7 @@ class sync:
         self.count = 0
 
     def message(self):
-        return self.file_message + '\n' + str(self.count) + ' audios has been uploaded!'
+        return self.file_message + '\n' + str(self.count) + ' audios have been uploaded!'
 
     def upload_to_server(self):
         upload_list = []
@@ -104,7 +104,9 @@ class sync:
                 upload_list.append(audio)
                 f.close()
             self.count += 1
-        return 'done!\n' + str(upload_list) + '\nhave been uploaded successfully!'
+        
+        self.file_message = 'done!\n'
+        return self.message()
 
 def download_from_server(audio):
     r = requests.get(url='http://' + server_ip +
