@@ -87,7 +87,7 @@ class sync:
             audio, label = line.split(',')
             audio = audio.split('/')[-1]
             r = requests.get(url='http://' + server_ip + ':8000/check-audio-exits/' + audio)
-            if not eval(r.text):
+            if (not eval(r.text)) and os.path.exists(os.path.join(audio_folder, audio)):
                 label_table[audio] = label
         f.close()
         self.file_message = str(len(lines)) + ' audios on the pi, ' + str(len(label_table)) + ' audios will be transmitted to the server'
