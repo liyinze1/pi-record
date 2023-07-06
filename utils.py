@@ -80,6 +80,8 @@ class sync:
     def upload_to_server(self):
         upload_list = []
         # audios = os.listdir(audio_folder)
+        if not os.path.exists('car_table.csv'):
+            return 'done'
         f = open('car_table.csv', 'r')
         label_table = {}
         lines = f.read().splitlines()
@@ -106,6 +108,11 @@ class sync:
             self.count += 1
         
         self.file_message = 'done!\n'
+        
+        # delete files
+        os.system('rm -f audio/*.wav')
+        os.system('rm -f car_table.csv')
+        
         return self.message()
 
 def download_from_server(audio):
