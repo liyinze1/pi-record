@@ -110,7 +110,7 @@ def upload_to_server():
 
 @app.route('/upload-message', methods=['GET'])
 def upload_message():
-    if upload_object == None:
+    if upload_object is None:
         return ''
     else:
         return upload_object.message()
