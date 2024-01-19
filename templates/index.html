@@ -386,7 +386,7 @@
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code scanned = ${decodedText}`, decodedResult);
             document.getElementById("message_scan").innerHTML = decodedText;
-            if (decodedText.startsWith("WF") && decodedText.length == 17) {
+            //if (decodedText.startsWith("WF") && decodedText.length == 17) {
                 vin = decodedText;
                 document.getElementById("vin_label").innerHTML = 'VIN: ' + vin;
                 document.getElementById("message_scan").innerHTML = 'VIN: ' + vin;
@@ -396,7 +396,7 @@
                 // jump to next tab
                 document.getElementById("record_tab").click();
                 document.getElementById('record_button').style.display = 'block';   
-            }
+            //}
         };
         const config = { fps: 20, qrbox: qrboxFunction };
 
