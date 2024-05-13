@@ -2,11 +2,9 @@
 <html>
 <body>
 
-<p>Click the button to get your coordinates per second.</p>
+<button onclick="repeat()" style="font-size:30px; ">Get GPS</button>
 
-<button onclick="repeat()">Try It</button>
-
-<p id="demo"></p>
+<p id="demo" style="font-size:30px; "></p>
 
 <script>
 var x = document.getElementById("demo");
@@ -26,9 +24,12 @@ function getLocation() {
 function showPosition(position) {
     x.innerHTML="Lat: " + position.coords.latitude + 
     "<br>Lon: " + position.coords.longitude +
-    "<br>Acc:" + position.coords.accuracy +
-    "<br>Speed:" + position.coords.speed +
-    "<br>Clock:" + position.timestamp;
+    "<br>Acc: " + position.coords.accuracy +
+    "<br>Speed: " + position.coords.speed + " m/s\t" + (3.6 * position.coords.speed) + " km/h" +
+    "<br>Altitude: " + position.coords.altitude +
+    "<br>Altitude Acc: " + position.coords.altitudeAccuracy +
+    "<br>Timestamp :" + position.coords.timestamp + 
+    "<br>Degrees clockwise from North: " + position.coords.heading;
 }
 
 
