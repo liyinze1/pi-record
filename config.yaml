@@ -1,4 +1,4 @@
-server_ip: '10.94.0.32'
+server_ip: 'fordserver1.local'
 save_location: 'pi' # 'pi', 'server' or 'both'
 audio_folder: './audio'
 # audio_folder: './'
