@@ -1,4 +1,4 @@
-from flask import Flask, send_file, request
+from flask import Flask, send_file, render_template
 import utils
 import os
 
@@ -6,69 +6,95 @@ app = Flask(__name__)
 
 receive_threads = {}
 
-port_controller = utils.port_controll()
-
-car_table = utils.car_table('car_table.csv')
-
-utils.role = 'server'
-
 @app.route('/')
 def main():
-    return "server running"
+    return render_template('index.html')
 
-@app.route('/receive/<vin>', methods=['GET'])
+@app.route('/save-location/<new_save_location>', methods=['GET'])
+def set_save_location(new_save_location):
+    global save_location
+    assert save_location in ('both', 'pi', 'server')
+    save_location = new_save_location
+    return 'save locations has been updated to ' + save_location
+
+@app.route('/record/<vin>', methods=['GET'])
 def record(vin):
-    receive_thread = utils.receive(vin, port_controller)
-    receive_threads[vin] = receive_thread
-    return str(receive_thread.port)
+    pass
 
-@app.route('/stop/<vin>', methods=['POST'])
-def stop(vin):
-    receive_threads[vin].stop()
-    return 'stopped'
+@app.route('/test-loss-rate', methods=['GET'])
+def test_loss_rate():
+    pass
 
-@app.route('/stop-test', methods=['GET'])
-def stop_test():
-    return receive_threads.pop('test').stop_test()
+@app.route('/stop', methods=['GET'])
+def stop():
+    pass
 
-@app.route('/check-vpn', methods=['GET'])
-def checkvpn():
-    return "OK"
-    
+@app.route('/shut-down', methods=['POST'])
+def shut_down():
+    pass
+
+@app.route('/reboot', methods=['POST'])
+def reboot():
+    pass
+
 @app.route('/report/<vin>/<status>', methods=['GET'])
 def report(vin, status):
-    # return car_table.update(vin, status)
-    if vin not in receive_threads:
-        return car_table.update(vin, status)
+    return 'ok'
+
+@app.route('/check-last-audio/<position>', methods=['GET'])
+def check_last_audio(position):
+    if position == 'pi':
+        return utils.check_last_audio()
     else:
-        return car_table.update(receive_threads.pop(vin).audio_filename, status)
+        return utils.check_last_audio_server()
 
-@app.route('/check-last-audio', methods=['GET'])
-def check_last_audio():
-    return utils.check_last_audio()
-
-@app.route('/delete-last-audio/<audio>', methods=['GET'])
-def delete_last_audio(audio):
-    return utils.delete_last_audio(audio)
-
-@app.route('/download/<audio>', methods=['GET'])
-def download(audio):
-    return send_file(os.path.join(utils.audio_folder, audio), as_attachment=False)
-
-@app.route('/check-audio-exits/<audio>', methods=['GET'])
-def check_audio_list(audio):
-    return str(os.path.exists(os.path.join(utils.audio_folder, audio)))
-        
-@app.route('/upload', methods=['POST'])
-def upload():
-    if request.files == None:
-        return 'empty'
+@app.route('/delete-last-audio/<position>/<audio>', methods=['GET'])
+def delete_last_audio(position, audio):
+    if position == 'pi':
+        return utils.delete_last_audio(audio)
     else:
-        file = request.files['file']
-        file.save(os.path.join(utils.audio_folder, file.filename))
-        # print(file.filename)
-        return 'done'
+        return utils.delete_last_audio_server(audio)
+
+@app.route('/check-update', methods=['GET'])
+def check_update():
+    return utils.git_status()
+
+@app.route('/update', methods=['GET'])
+def update():
+    return utils.git_pull()
+
+@app.route('/download/<location>/<audio>', methods=['GET'])
+def download(location, audio):
+    if location == 'pi':
+        return send_file(os.path.join(utils.audio_folder, audio), as_attachment=False)
+    else:
+        return utils.download_from_server(audio)
+    
+@app.route('/upload-to-server', methods=['GET'])
+def upload_to_server():
+    global upload_object
+    if upload_object is not None:
+        return ''
+    else:
+        upload_object = utils.sync()
+        message = upload_object.upload_to_server()
+        upload_object = None
+        return message
+
+@app.route('/upload-message', methods=['GET'])
+def upload_message():
+    if upload_object is None:
+        return ''
+    else:
+        return upload_object.message()
+
+@app.route('/get-step', methods=['GET'])
+def get_step():
+    pass
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000)
     # app.run(host='127.0.0.1', debug=True, port=8000)
+    
+    
