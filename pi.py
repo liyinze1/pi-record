@@ -1,23 +1,22 @@
 import socket
+import time
 
+status = b'r'
 
-def message_handler(data):
-    if data == b'?':
-        return b'A'
-    elif data == 'R':
-        pass
-    elif data == 'S':
-        pass
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind(('0.0.0.0', 22000))
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind(('0.0.0.0', 22000))
-    s.listen()
-    # while True:
-    conn, addr = s.accept()
-    with conn:
-        print('Connected by', addr)
-        while True:
-            data = conn.recv(1024)
-            print()
-            # conn.send(message_handler(data))
-            
+while True:
+    data, addr = sock.recvfrom(1024)
+    print(data, addr)
+    # sock.sendto(data, addr)
+    
+    sn = data[:1]
+    msg = data[1:]
+    print(sn + status)
+    if msg == b'?':
+        sock.sendto(sn + status, addr)
+    elif msg == b'r':
+        sock.sendto(sn + status, addr)
+    elif msg == b's':
+        sock.sendto(sn + status, addr)
