@@ -1,7 +1,7 @@
 import socket
 import time
 
-status = b'r'
+status = b'ready'
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(('0.0.0.0', 22000))
@@ -15,8 +15,9 @@ while True:
     msg = data[1:]
     print(sn + status)
     if msg == b'?':
-        sock.sendto(sn + status, addr)
+        pass
     elif msg == b'r':
-        sock.sendto(sn + status, addr)
+        pass
     elif msg == b's':
-        sock.sendto(sn + status, addr)
+        pass
+    sock.sendto(sn + status, addr)

@@ -1,5 +1,0 @@
-server_ip: 'fordserver1.local'
-save_location: 'pi' # 'pi', 'server' or 'both'
-audio_folder: './audio'
-# audio_folder: './'
-vpn_start: 'wg-quick up wg0'

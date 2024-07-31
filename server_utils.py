@@ -1,20 +1,30 @@
 import socket
 import threading
 import time
+import yaml
+
+def import_device():
+    f = open('devices.yaml', 'r')
+    d = yaml.safe_load(f)
+    f.close()
+    return d
 
 class Pi_controller():
     
-    def __init__(self, host='0.0.0.0', port=22000):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((host, port))
-        
-        self.receive_thread = threading.Thread(target=self._receive_message)
-        self.receive_thread.start()
-        
+    def __init__(self, host='127.0.0.1', port=22000):
+        self.addr = (host, port)
         self.event_dict = {tuple: threading.Event}
         self.sn_dict = {tuple: int}
         self.receive_dict = {tuple: bytes}
         
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.bind(self.addr)
+        
+        # self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # print('--------', self.sock.connect(self.addr))
+        
+        self.receive_thread = threading.Thread(target=self._receive_message)
+        self.receive_thread.start()
         
     def send(self, data, dest, timeout=1, retry=3):
         if dest not in self.event_dict:

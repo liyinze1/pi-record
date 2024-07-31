@@ -41,6 +41,21 @@
         .tab-content.active {
             display: block;
         }
+        .tab-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .tab-content table, .tab-content th, .tab-content td {
+            border: 1px solid #ddd;
+        }
+        .tab-content th, .tab-content td {
+            padding: 8px;
+            text-align: left;
+        }
+        .tab-content th {
+            background-color: #f2f2f2;
+        }
         .tab-content button {
             display: block;
             margin: 10px 0;
@@ -86,44 +101,55 @@
         <h1>Recorder</h1>
     </header>
     <nav>
-        <a href='#tabDevice' class='active' onclick='openTab(event, "tabDevice")'>Device</a>
-        <a href='#tabScan' onclick='openTab(event, "tabScan")'>Scan</a>
-        <a href='#tabRecord' onclick='openTab(event, "tabRecord")'>Record</a>
-        <a href='#tabLabel' onclick='openTab(event, "tabLabel")'>Label</a>
-        <a href='#tabSettings' onclick='openTab(event, "tabSettings")'>Settings</a>
+        <a id='device_tab_button' href='#tabDevice' class='active' onclick='openTab(event, "tabDevice")'>Device</a>
+        <a id='scan_tab_button' href='#tabScan' onclick='openTab(event, "tabScan")'>Scan</a>
+        <a id='record_tab_button' href='#tabRecord' onclick='openTab(event, "tabRecord")'>Record</a>
+        <a id='label_tab_button' href='#tabLabel' onclick='openTab(event, "tabLabel")'>Label</a>
+        <a id='setting_tab_button' href='#tabSettings' onclick='openTab(event, "tabSettings")'>Settings</a>
     </nav>
+    <div id='message' class='message'>no message</div>
     <div class='container'>
         <div id='tabDevice' class='tab-content active'>
-            <div class='message'>Message for Device</div>
-            <button class='blue'>Device-1</button>
-            <button class='blue'>Device-2</button>
+            <table id="device-table">
+                <thead>
+                    <tr>
+                        <th>Device Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="device-table-body">
+                </tbody>
+            </table>
+            <div id="device-buttons"></div>
         </div>
         <div id='tabScan' class='tab-content'>
-            <div id='scan_message' class='message'>Message for Scan</div>
             <div id='qr-reader' style="width: 100%"></div>
             <button class='blue' onclick='scan_vin()'>Scan</button>
         </div>
         <div id='tabRecord' class='tab-content'>
-            <div class='message'>Message for Record</div>
-            <button class='start'>Start</button>
-            <button class='stop'>Stop</button>
+            <button class='start' onclick=startRecording()>Start</button>
+            <button class='stop' onclick=stopRecording()>Stop</button>
         </div>
         <div id='tabLabel' class='tab-content'>
-            <div class='message'>Message for Label</div>
             <button class='blue'>Button Label-1</button>
             <button class='blue'>Button Label-2</button>
         </div>
         <div id='tabSettings' class='tab-content'>
-            <div class='message'>Message for Settings</div>
             <button class='blue'>Button Settings-1</button>
             <button class='blue'>Button Settings-2</button>
         </div>
     </div>
 
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
+    <script src='https://unpkg.com/html5-qrcode' type='text/javascript'>
     </script>
 
     <script>
+        // variables
+        let vin = '';
+        let selected_device = '';
+
+
+        // tab switch
         function openTab(event, tabId) {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName('tab-content');
@@ -140,9 +166,57 @@
             event.currentTarget.classList.add('active');
         }
 
+        // update message
+        function update_message(data) {
+            if (data) {
+                document.getElementById('message').innerHTML = 'selected device = ' + selected_device + '<br>selected VIN =' + vin + '<br>' + data;
+            } else {
+                document.getElementById('message').innerHTML = 'selected device = ' + selected_device + '<br>selected VIN =' + vin;
+            }
+        }
+
+        // fetch devices
+        function fetchDevices() {
+            fetch('/devices')
+                .then(response => response.json())
+                .then(devices => {
+                    const deviceTableBody = document.getElementById('device-table-body');
+                    const deviceButtonsContainer = document.getElementById('device-buttons');
+                    deviceTableBody.innerHTML = ''; // Clear existing table rows
+                    deviceButtonsContainer.innerHTML = ''; // Clear existing buttons
+
+                    for (const [device, status] of Object.entries(devices)) {
+                        const row = document.createElement('tr');
+                        const deviceCell = document.createElement('td');
+                        const statusCell = document.createElement('td');
+
+                        deviceCell.textContent = device;
+                        statusCell.textContent = status;
+
+                        row.appendChild(deviceCell);
+                        row.appendChild(statusCell);
+                        deviceTableBody.appendChild(row);
+
+                        const button = document.createElement('button');
+                        button.className = 'blue';
+                        button.textContent = device;
+                        button.onclick = () => {
+                            selected_device = device;
+                            update_message('Please scan the VIN number');
+                            document.getElementById('scan_tab_button').click();
+                        };
+                        deviceButtonsContainer.appendChild(button);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching devices:', error);
+                });
+        }
+
+        // scan QR code
         function scan_vin() {
             console.log('scan vin')
-            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+            html5QrCode.start({ facingMode: 'environment' }, config, qrCodeSuccessCallback);
         }
         let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
             let minEdgePercentage = 0.7;
@@ -153,18 +227,69 @@
                 height: qrboxSize
             };
         };
-        const html5QrCode = new Html5Qrcode("qr-reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE] });
+        const html5QrCode = new Html5Qrcode('qr-reader', { formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE] });
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code scanned = ${decodedText}`, decodedResult);
-            if (decodedText.startsWith("WF") && decodedText.length == 17) {
-                document.getElementById("message_scan").innerHTML = "scanned VIN: " + decodedText;
+            if (decodedText.startsWith('WF') && decodedText.length == 17) {
+                update_message('VIN scanned, you can start recording')
+                document.getElementById('record_tab_button').click();
             }
         }
-        const config = { fps: 20, qrbox: qrboxFunction };
+        const config = { fps: 10, qrbox: qrboxFunction };
+
+        // record
+        function startRecording() {
+            fetch('/record', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ vin: vin, device: selected_device })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('connection to the server failed');
+                }
+            })
+            .then(data => {
+                console.log(data);
+                update_message(data);
+                
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function stopRecording() {
+            fetch('/stop', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ vin: vin, device: selected_device })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('connection to the server failed');
+                }
+            })
+            .then(data => {
+                console.log(data);
+                update_message(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
 
         // Default to tab Device on page load
         document.getElementById('tabDevice').style.display = 'block';
-        
+        document.addEventListener('DOMContentLoaded', fetchDevices);
 
     </script>
 </body>
