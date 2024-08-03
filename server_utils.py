@@ -7,11 +7,14 @@ def import_device():
     f = open('devices.yaml', 'r')
     d = yaml.safe_load(f)
     f.close()
-    return d
+    addr_list = {}
+    for deive, ip in d.items:
+        addr_list[deive] = (ip, 22000)
+    return addr_list
 
 class Pi_controller():
     
-    def __init__(self, host='127.0.0.1', port=22000):
+    def __init__(self, host='0.0.0.0', port=22000):
         self.addr = (host, port)
         self.event_dict = {tuple: threading.Event}
         self.sn_dict = {tuple: int}
@@ -27,30 +30,32 @@ class Pi_controller():
         self.receive_thread.start()
         
     def send(self, data, dest, timeout=1, retry=3):
-        if dest not in self.event_dict:
-            self.event_dict[dest] = threading.Event()
+        if dest not in self.sn_dict:
             self.sn_dict[dest] = 0
+            self.event_dict[dest] = threading.Event()
+            # time.sleep(0.1)
         
         self.sn_dict[dest] += 1
         self.sn_dict[dest] %= 128
         
         sn = self.sn_dict[dest].to_bytes(1, 'big')
         
-        print('sending', data, 'to', dest, 'sn=', sn[0])
+        print('------------- sending', data, 'to', dest, 'sn=', sn[0], '-------------')
         
-        for _ in range(retry):
+        for i in range(retry):
             try:
+                print('Try', i+1)
                 self.sock.sendto(sn + data, dest)
                 # break
                 self.event_dict[dest].wait(timeout=timeout)
                 if self.event_dict[dest].is_set():
-                    print("Correct SN received")
+                    print('Correct SN received')
                     return self.receive_dict[dest]
                 else:
-                    print("Timeout or incorrect SN, resending message")
+                    print('Timeout')
                     self.event_dict[dest].clear()
-            except:
-                print("Timeout, resending message")
+            except Exception as e:
+                print('Error', e)
         print('Already tried', retry, 'times...')
         return None
     
@@ -67,7 +72,9 @@ class Pi_controller():
         while True:
             data, addr = self.sock.recvfrom(1024)
             print('received message', data, addr)
-            if self.sn_dict[addr] == data[0]:
+            if addr not in self.sn_dict:
+                print(addr, 'not in dictionary')
+            elif self.sn_dict[addr] == data[0]:
                 self.receive_dict[addr] = data[1:]
                 self.event_dict[addr].set()
     

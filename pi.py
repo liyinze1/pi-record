@@ -9,8 +9,6 @@ sock.bind(('0.0.0.0', 22000))
 while True:
     data, addr = sock.recvfrom(1024)
     print(data, addr)
-    # sock.sendto(data, addr)
-    
     sn = data[:1]
     msg = data[1:]
     print(sn + status)

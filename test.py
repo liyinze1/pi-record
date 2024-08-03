@@ -1,11 +1,13 @@
-from flask import Flask
-import socket
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind(('127.0.0.1', 22000))
+from server_utils import *
+import time
 
-app = Flask(__name__)
+device_list:dict = import_device()
 
-if __name__ == '__main__':
-    app.run(host='127.0.0.1', debug=True, port=8080, use_reloader=False)
-    
+pi_controller = Pi_controller()
+
+# time.sleep(1)
+
+response = {}
+for device, ip in device_list.items():
+    response[device] = pi_controller.status((ip, 23000))

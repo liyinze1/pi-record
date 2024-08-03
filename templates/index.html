@@ -4,104 +4,15 @@
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Recorder</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-        }
-        .container {
-            padding: 20px;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
-        nav {
-            display: flex;
-            justify-content: space-around;
-            background-color: #333;
-            padding: 10px 0;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            padding: 10px;
-            font-size: 1.2em;
-        }
-        nav a.active {
-            background-color: #555;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .tab-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        .tab-content table, .tab-content th, .tab-content td {
-            border: 1px solid #ddd;
-        }
-        .tab-content th, .tab-content td {
-            padding: 8px;
-            text-align: left;
-        }
-        .tab-content th {
-            background-color: #f2f2f2;
-        }
-        .tab-content button {
-            display: block;
-            margin: 10px 0;
-            padding: 15px;
-            font-size: 1.2em;
-            width: 100%;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .tab-content button.start {
-            background-color: #28a745;
-            color: white;
-        }
-        .tab-content button.stop {
-            background-color: #dc3545;
-            color: white;
-        }
-        .tab-content button.blue {
-            background-color: #007BFF;
-            color: white;
-        }
-        .tab-content button:hover.start {
-            background-color: #218838;
-        }
-        .tab-content button:hover.stop {
-            background-color: #c82333;
-        }
-        .tab-content button:hover.blue {
-            background-color: #0056b3;
-        }
-        .message {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel='stylesheet' href='static/styles.css'>
 </head>
 <body>
     <header>
-        <h1>Recorder</h1>
+        <img src='https://upload.wikimedia.org/wikipedia/commons/3/3e/Ford_logo_flat.svg' alt='ford_logo'>
+        <img src='https://upload.wikimedia.org/wikipedia/commons/4/49/KU_Leuven_logo.svg' alt='kul_logo'>
     </header>
     <nav>
-        <a id='device_tab_button' href='#tabDevice' class='active' onclick='openTab(event, "tabDevice")'>Device</a>
+        <a id='device_tab_button' href='#tabDevice' class='active' onclick='device_tab_click(event, "tabDevice")'>Device</a>
         <a id='scan_tab_button' href='#tabScan' onclick='openTab(event, "tabScan")'>Scan</a>
         <a id='record_tab_button' href='#tabRecord' onclick='openTab(event, "tabRecord")'>Record</a>
         <a id='label_tab_button' href='#tabLabel' onclick='openTab(event, "tabLabel")'>Label</a>
@@ -110,14 +21,14 @@
     <div id='message' class='message'>no message</div>
     <div class='container'>
         <div id='tabDevice' class='tab-content active'>
-            <table id="device-table">
+            <table id='device-table'>
                 <thead>
                     <tr>
                         <th>Device Name</th>
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody id="device-table-body">
+                <tbody id='device-table-body'>
                 </tbody>
             </table>
             <div id="device-buttons"></div>
@@ -127,12 +38,14 @@
             <button class='blue' onclick='scan_vin()'>Scan</button>
         </div>
         <div id='tabRecord' class='tab-content'>
-            <button class='start' onclick=startRecording()>Start</button>
-            <button class='stop' onclick=stopRecording()>Stop</button>
+            <button class='green' onclick='startRecording()'>Start</button>
+            <button class='red' onclick='stopRecording()'>Stop</button>
         </div>
         <div id='tabLabel' class='tab-content'>
-            <button class='blue'>Button Label-1</button>
-            <button class='blue'>Button Label-2</button>
+            <button class='green' onclick='label(0)'>Normall</button>
+            <button class='yellow' onclick='label(1)'>Squek</button>
+            <button class='orange' onclick='label(2)'>Rattley</button>
+            <button class='red' onclick='label(3)'>S & R</button>
         </div>
         <div id='tabSettings' class='tab-content'>
             <button class='blue'>Button Settings-1</button>
@@ -140,157 +53,7 @@
         </div>
     </div>
 
-    <script src='https://unpkg.com/html5-qrcode' type='text/javascript'>
-    </script>
-
-    <script>
-        // variables
-        let vin = '';
-        let selected_device = '';
-
-
-        // tab switch
-        function openTab(event, tabId) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName('tab-content');
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = 'none';
-                tabcontent[i].classList.remove('active');
-            }
-            tablinks = document.querySelectorAll('nav a');
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove('active');
-            }
-            document.getElementById(tabId).style.display = 'block';
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // update message
-        function update_message(data) {
-            if (data) {
-                document.getElementById('message').innerHTML = 'selected device = ' + selected_device + '<br>selected VIN =' + vin + '<br>' + data;
-            } else {
-                document.getElementById('message').innerHTML = 'selected device = ' + selected_device + '<br>selected VIN =' + vin;
-            }
-        }
-
-        // fetch devices
-        function fetchDevices() {
-            fetch('/devices')
-                .then(response => response.json())
-                .then(devices => {
-                    const deviceTableBody = document.getElementById('device-table-body');
-                    const deviceButtonsContainer = document.getElementById('device-buttons');
-                    deviceTableBody.innerHTML = ''; // Clear existing table rows
-                    deviceButtonsContainer.innerHTML = ''; // Clear existing buttons
-
-                    for (const [device, status] of Object.entries(devices)) {
-                        const row = document.createElement('tr');
-                        const deviceCell = document.createElement('td');
-                        const statusCell = document.createElement('td');
-
-                        deviceCell.textContent = device;
-                        statusCell.textContent = status;
-
-                        row.appendChild(deviceCell);
-                        row.appendChild(statusCell);
-                        deviceTableBody.appendChild(row);
-
-                        const button = document.createElement('button');
-                        button.className = 'blue';
-                        button.textContent = device;
-                        button.onclick = () => {
-                            selected_device = device;
-                            update_message('Please scan the VIN number');
-                            document.getElementById('scan_tab_button').click();
-                        };
-                        deviceButtonsContainer.appendChild(button);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching devices:', error);
-                });
-        }
-
-        // scan QR code
-        function scan_vin() {
-            console.log('scan vin')
-            html5QrCode.start({ facingMode: 'environment' }, config, qrCodeSuccessCallback);
-        }
-        let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
-            let minEdgePercentage = 0.7;
-            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-            let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
-            return {
-                width: qrboxSize,
-                height: qrboxSize
-            };
-        };
-        const html5QrCode = new Html5Qrcode('qr-reader', { formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE] });
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-            console.log(`Code scanned = ${decodedText}`, decodedResult);
-            if (decodedText.startsWith('WF') && decodedText.length == 17) {
-                update_message('VIN scanned, you can start recording')
-                document.getElementById('record_tab_button').click();
-            }
-        }
-        const config = { fps: 10, qrbox: qrboxFunction };
-
-        // record
-        function startRecording() {
-            fetch('/record', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ vin: vin, device: selected_device })
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.text();
-                } else {
-                    throw new Error('connection to the server failed');
-                }
-            })
-            .then(data => {
-                console.log(data);
-                update_message(data);
-                
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-        
-        function stopRecording() {
-            fetch('/stop', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ vin: vin, device: selected_device })
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.text();
-                } else {
-                    throw new Error('connection to the server failed');
-                }
-            })
-            .then(data => {
-                console.log(data);
-                update_message(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        // Default to tab Device on page load
-        document.getElementById('tabDevice').style.display = 'block';
-        document.addEventListener('DOMContentLoaded', fetchDevices);
-
-    </script>
+    <script src='https://unpkg.com/html5-qrcode' type='text/javascript'></script>
+    <script src='static/scripts.js'></script>
 </body>
 </html>
