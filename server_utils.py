@@ -8,7 +8,7 @@ def import_device():
     d = yaml.safe_load(f)
     f.close()
     addr_list = {}
-    for deive, ip in d.items:
+    for deive, ip in d.items():
         addr_list[deive] = (ip, 22000)
     return addr_list
 
