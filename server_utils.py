@@ -16,10 +16,7 @@ logger = logging.getLogger(__name__)
 f = open('devices.yaml', 'r')
 d = yaml.safe_load(f)
 f.close()
-device_list = {}
-for deive, ip in d.items():
-    device_list[deive] = (ip, 22000)
-    
+device_list = d
 audio_folder = './audio'
 
 class Port_controller:
@@ -104,10 +101,13 @@ import requests
 
 class Pi_controller:
 
+    def get_url(self, dest):
+        return 'http://%s:22000' % dest
+
     def status(self, dest):
         try:
             response = requests.get(
-                'https://%s:22000/status' % dest,
+                self.get_url(dest) + '/status',
                 verify=False
             )
             if response.status_code == 200:
@@ -123,7 +123,7 @@ class Pi_controller:
     def record(self, dest, port):
         try:
             response = requests.post(
-                'https://%s:22000/record' % dest,
+                self.get_url(dest) + '/record',
                 json={'port': port},
                 verify=False
             )
@@ -141,7 +141,7 @@ class Pi_controller:
         '''Send a POST request to the /stop endpoint.'''
         try:
             response = requests.post(
-                'https://%s:22000/stop' % dest,
+                self.get_url(dest) + '/stop',
                 verify=False
             )
             if response.status_code == 200:

@@ -122,6 +122,9 @@ const qrCodeSuccessCallback = (decodedText, decodedResult) => {
     if (decodedText.startsWith('WF') && decodedText.length == 17) {
         update_message('VIN scanned, you can start recording')
         vin = decodedText;
+        html5QrCode.stop().then((ignore) => {
+            console.log('stopped')
+        }).catch((err) => {});
         document.getElementById('record_tab_button').click();
     }
 }

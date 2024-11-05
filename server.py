@@ -38,7 +38,7 @@ def record():
         print('trying to start receiving...')
         receive = Receive(vin, port)
         receive_threads[vin] = receive
-        return 'ok'
+        return 'recording...'
     else:
         port_controller.return_port(port)
         return 'failed to start recording'
@@ -55,16 +55,16 @@ def stop():
         receive_threads[vin].stop()
         port = receive_threads.pop(vin).port
         port_controller.return_port(port)
-    return 'ok'
+    return 'stopped, please select label'
 
 @app.route('/label', methods=['POST'])
 def label():
     data = request.get_json()
     vin = data['vin']
-    opt = data['opt']
+    opt = data['label']
     db.update(vin, opt)
     return 'ok'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=8080, use_reloader=False)
+    app.run(host='0.0.0.0', debug=True, port=443, use_reloader=False, ssl_context=('cert.pem', 'key.pem'))
     # app.run(host='127.0.0.1', debug=True, port=8000)
