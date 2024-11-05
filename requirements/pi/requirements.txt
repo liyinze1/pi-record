@@ -2,7 +2,3 @@ Flask
 requests
 PyYAML
 pyopenssl
-
-spidev
-gpiozero
-pyaudio

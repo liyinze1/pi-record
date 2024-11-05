@@ -1,16 +1,77 @@
 import socket
 import threading
-import time
 import yaml
+import logging
+import subprocess
+import os
+import shlex
+import datetime
+from tinydb import TinyDB, Query
 
-def import_device():
-    f = open('devices.yaml', 'r')
-    d = yaml.safe_load(f)
-    f.close()
-    addr_list = {}
-    for deive, ip in d.items():
-        addr_list[deive] = (ip, 22000)
-    return addr_list
+FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+f = open('devices.yaml', 'r')
+d = yaml.safe_load(f)
+f.close()
+device_list = {}
+for deive, ip in d.items():
+    device_list[deive] = (ip, 22000)
+    
+audio_folder = './audio'
+
+class receive:
+
+    def __init__(self, vin, port_controller):
+
+        # port
+        self.port_controller = port_controller
+        self.port = port_controller.get_port()
+
+        logger.info('the selected port for %s is %s', vin, self.port)
+
+        # sdp
+        sdp = 'SDP:\n' + \
+            'v=0\n' + \
+            'o=- 0 0 IN IP4 127.0.0.1\n' + \
+            's=No Name\n' + \
+            'c=IN IP4 %s\n' % device_list['server'] + \
+            't=0 0\n' + \
+            'a=tool:libavformat 58.20.100\n' + \
+            'm=audio %s RTP/AVP 97\n' % self.port + \
+            'b=AS:4608\n' + \
+            'a=rtpmap:97 L24/48000/4\n'
+
+        self.sdp_filename = self.get_sdp_filename(vin)
+        f = open(self.sdp_filename, 'w')
+        f.write(sdp)
+        f.close()
+        
+        logger.info('port:%d'%self.port)
+
+        self.audio_filename = self.get_audio_filename(vin)
+        # thread for receiving
+        cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s' % (
+            self.sdp_filename, self.audio_filename)
+        logger.info(cmd)
+        cmd = shlex.split(cmd)
+        self.receive_thread = subprocess.Popen(cmd)
+
+    def stop(self):
+        self.receive_thread.kill()
+        logger.info("returning port %s", self.port)
+        return 'ok'
+    
+    def get_sdp_filename(self, vin):
+        filename = vin + '.sdp'
+        return os.path.join(audio_folder, filename)
+    
+    def get_audio_filename(vin):
+        now = datetime.datetime.now()
+        file_name = vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
+        return os.path.join(audio_folder, file_name)
 
 class Pi_controller():
     
@@ -77,4 +138,19 @@ class Pi_controller():
             elif self.sn_dict[addr] == data[0]:
                 self.receive_dict[addr] = data[1:]
                 self.event_dict[addr].set()
+
+
+class VehicleDatabase:
+    def __init__(self, db_path='label.json'):
+        # Load existing database or create a new one if it doesn't exist
+        self.db = TinyDB(db_path)
     
+    def update(self, vin, status):
+        # Check if the record with the specified VIN already exists
+        query = Query()
+        if self.db.contains(query.vin == vin):
+            # If it exists, update it with the new status
+            self.db.update({'vin': vin, 'status': status}, query.vin == vin)
+        else:
+            # Otherwise, insert a new entry
+            self.db.insert({'vin': vin, 'status': status})
