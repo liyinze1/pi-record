@@ -28,7 +28,7 @@ class Pi_recorder:
         if self.record_thread is not None and self.record_thread.poll() is None:
             return b'recording'
         else:
-            return b'stopped'
+            return b'ready'
 
     def record(self, ip, msg):
         
@@ -38,6 +38,8 @@ class Pi_recorder:
         
         self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
                                               stderr=subprocess.PIPE, start_new_session=True)
+        
+        print('Start to record')
         
         return b'recording'
 

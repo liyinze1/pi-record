@@ -12,10 +12,12 @@ pi_recorder = pi_utils.Pi_recorder()
 while True:
     data, addr = sock.recvfrom(1024)
     ip = addr[0]
-    print(data, addr)
+
     sn = data[:1]
     cmd = data[1:2]
     msg = data[2:].decode('ascii')
+    
+    print(addr, 'sn:', sn, 'cmd:', cmd, 'msg:', msg)
     
     print(sn + status)
     if cmd == b'?':
