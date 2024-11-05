@@ -9,9 +9,9 @@ receive_threads = {str: Receive}
 
 db = VehicleDatabase()
 
-pi_controller = Pi_controller(port=22000)
-
 port_controller = Port_controller()
+
+pi_controller = Pi_controller()
 
 @app.route('/')
 def main():
@@ -22,11 +22,9 @@ def get_devices():
     response = {}
     for device, addr in device_list.items():
         status = pi_controller.status(addr)
-        if status == None:
-            response[device] = 'offline'
-        else:
-            response[device] = status.decode('ascii')
+        response[device] = status
     return jsonify(response)
+
 
 @app.route('/record', methods=['POST'])
 def record():
@@ -36,13 +34,15 @@ def record():
     print('Request to start recording, device', device, 'vin', vin)
     port = port_controller.get_port()
     
-    if pi_controller.record(device_list[device], port) is not None:
+    if pi_controller.record(device_list[device], port) == 'recording':
         print('trying to start receiving...')
         receive = Receive(vin, port)
         receive_threads[vin] = receive
         return 'ok'
-    
-    return 'failed to start recording'
+    else:
+        port_controller.return_port(port)
+        return 'failed to start recording'
+
 
 @app.route('/stop', methods=['POST'])
 def stop():

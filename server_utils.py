@@ -100,73 +100,59 @@ class Receive:
         file_name = vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
         return os.path.join(audio_folder, file_name)
 
-class Pi_controller():
-    
-    def __init__(self, host='0.0.0.0', port=22000):
-        self.addr = (host, port)
-        self.event_dict = {tuple: threading.Event}
-        self.sn_dict = {tuple: int}
-        self.receive_dict = {tuple: bytes}
-        
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind(self.addr)
-        
-        # self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # print('--------', self.sock.connect(self.addr))
-        
-        self.receive_thread = threading.Thread(target=self._receive_message)
-        self.receive_thread.start()
-        
-    def send(self, data, dest, timeout=1, retry=3):
-        if dest not in self.sn_dict:
-            self.sn_dict[dest] = 0
-            self.event_dict[dest] = threading.Event()
-            # time.sleep(0.1)
-        
-        self.sn_dict[dest] += 1
-        self.sn_dict[dest] %= 128
-        
-        sn = self.sn_dict[dest].to_bytes(1, 'big')
-        
-        print('------------- sending', data, 'to', dest, 'sn=', sn[0], '-------------')
-        
-        for i in range(retry):
-            try:
-                print('Try', i+1)
-                self.sock.sendto(sn + data, dest)
-                # break
-                self.event_dict[dest].wait(timeout=timeout)
-                if self.event_dict[dest].is_set():
-                    print('Correct SN received, data:', self.receive_dict[dest])
-                    return self.receive_dict[dest]
-                else:
-                    print('Timeout')
-                    self.event_dict[dest].clear()
-            except Exception as e:
-                print('Error', e)
-        print('Already tried', retry, 'times...')
-        return None
-    
-    def status(self, dest):
-        return self.send(b'?', dest, timeout=1, retry=3)
-    
-    def record(self, dest, port):
-        return self.send(b'r' + int.to_bytes(port, length=2, byteorder='big'), dest, timeout=3, retry=3)
-    
-    def stop(self, dest):
-        return self.send(b's', dest, timeout=3, retry=3)
+import requests
 
-    def _receive_message(self):
-        while True:
-            data, addr = self.sock.recvfrom(1024)
-            print('received message', data, addr)
-            if addr not in self.sn_dict:
-                print(addr, 'not in dictionary')
-            elif self.sn_dict[addr] == data[0]:
-                self.receive_dict[addr] = data[1:]
-                self.event_dict[addr].set()
-                
-                # print(self.receive_dict)
+class Pi_controller:
+
+    def status(self, dest):
+        try:
+            response = requests.get(
+                'https://%s:22000/status' % dest,
+                verify=False
+            )
+            if response.status_code == 200:
+                print('Status:', response.json())
+                return response.json()['status']
+            else:
+                print('Failed to get status:', response.status_code)
+                return 'offline'
+        except requests.exceptions.RequestException as e:
+            print(f'Error getting status: {e}')
+            return 'offline'
+
+    def record(self, dest, port):
+        try:
+            response = requests.post(
+                'https://%s:22000/record' % dest,
+                json={'port': port},
+                verify=False
+            )
+            if response.status_code == 200:
+                print('Recording started:', response.json())
+                return response.json()['status']
+            else:
+                print('Failed to start recording:', response.status_code)
+                return {'error': 'Failed to start recording', 'status_code': response.status_code}
+        except requests.exceptions.RequestException as e:
+            print(f'Error starting record: {e}')
+            return {'error': str(e)}
+
+    def stop(self, dest):
+        '''Send a POST request to the /stop endpoint.'''
+        try:
+            response = requests.post(
+                'https://%s:22000/stop' % dest,
+                verify=False
+            )
+            if response.status_code == 200:
+                print('Recording stopped:', response.json())
+                return response.json()['status']
+            else:
+                print('Failed to stop recording:', response.status_code)
+                return {'error': 'Failed to stop recording', 'status_code': response.status_code}
+        except requests.exceptions.RequestException as e:
+            print(f'Error stopping record: {e}')
+            return {'error': str(e)}
 
 class VehicleDatabase:
     def __init__(self, db_path='label.json'):

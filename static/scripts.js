@@ -176,6 +176,8 @@ function stopRecording() {
     .then(data => {
         console.log(data);
         update_message(data);
+
+        document.getElementById('label_tab_button').click();
     })
     .catch(error => {
         console.error('Error:', error);

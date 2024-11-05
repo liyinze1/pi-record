@@ -1,33 +1,32 @@
-import socket
-import time
-import pi_utils
+from flask import Flask, jsonify, request
+from pi_utils import *
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind(('0.0.0.0', 22000))
+app = Flask(__name__)
 
-pi_recorder = pi_utils.Pi_recorder()
+pi_recorder = Pi_recorder()
 
-while True:
-    status = b''
-    
-    data, addr = sock.recvfrom(1024)
-    ip = addr[0]
+@app.route('/status', methods=['GET'])
+def status():
+    return jsonify({
+        'status': pi_recorder.status(),
+    }), 200
 
-    sn = data[:1]
-    cmd = data[1:2]
-    msg = data[2:]
+@app.route('/record', methods=['POST'])
+def record():
+    '''Start recording with an integer parameter port.'''
+    ip = request.remote_addr
+    data = request.get_json()
+    port = data['port']
+    return jsonify({
+        'status': pi_recorder.record(ip, port),
+    }), 200
     
-    print(addr, 'sn:', sn, 'cmd:', cmd, 'msg:', msg)
-    
-    if cmd == b'?':
-        status = pi_recorder.status()
-    elif cmd == b'r':
-        # pass the ip address and the port
-        port = int.from_bytes(msg, 'big')
-        print('Get port number:', port)
-        status = pi_recorder.record(ip, port)
-    elif cmd == b's':
-        status = pi_recorder.stop()
-    
-    print(sn + status)
-    sock.sendto(sn + status, addr)
+@app.route('/stop', methods=['POST'])
+def stop():
+    '''Stop recording.'''
+    return jsonify({
+        'status': pi_recorder.stop(),
+    }), 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=22000, debug=True)

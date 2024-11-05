@@ -26,14 +26,22 @@ class Pi_recorder:
             data = yaml.safe_load(f)
             self.timeout = data['timeout']
             
+    def check(self):
+        '''
+            return True if recording
+        '''
+        return self.record_thread is not None and self.record_thread.poll() is None
+            
     def status(self):
-        if self.record_thread is not None and self.record_thread.poll() is None:
-            return b'recording'
+        if self.check():
+            return 'recording'
         else:
-            return b'ready'
+            return 'ready'
 
     def record(self, ip, port):
         
+        if self.check():
+            return 'recording'
 
         stream_cmd = '/usr/bin/arecord -D plughw:CARD=ADCX140,DEV=0 -f S32_LE -r 48000 -c 4 -d %d | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s:%d' % (self.timeout, ip, port)
         
@@ -42,15 +50,16 @@ class Pi_recorder:
         
         print('Start to record')
         print(stream_cmd)
-        return b'recording'
+        return 'recording'
 
     def stop(self):
 
-        # self.stream_thread.kill()
-        # self.record_thread.kill()
-        # self.led.off()
-        os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
-        return b'stopped'
+        if self.check():
+            # self.stream_thread.kill()
+            # self.record_thread.kill()
+            # self.led.off()
+            os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
+        return 'stopped'
         
 
     
