@@ -15,16 +15,19 @@ while True:
 
     sn = data[:1]
     cmd = data[1:2]
-    msg = data[2:].decode('ascii')
+    msg = data[2:]
     
     print(addr, 'sn:', sn, 'cmd:', cmd, 'msg:', msg)
     
-    print(sn + status)
     if cmd == b'?':
         status = pi_recorder.status()
     elif cmd == b'r':
         # pass the ip address and the port
-        status = pi_recorder.record(ip, msg)
+        port = int.from_bytes(msg, 'big')
+        print('Get port number:', port)
+        status = pi_recorder.record(ip, port)
     elif cmd == b's':
         status = pi_recorder.stop()
+    
+    print(sn + status)
     sock.sendto(sn + status, addr)

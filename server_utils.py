@@ -152,7 +152,7 @@ class Pi_controller():
         return self.send(b'?', dest, timeout=1, retry=3)
     
     def record(self, dest, port):
-        return self.send(b'r' + bytes(port, encoding='ascii'), dest, timeout=3, retry=3)
+        return self.send(b'r' + int.to_bytes(port, length=2, byteorder='big'), dest, timeout=3, retry=3)
     
     def stop(self, dest):
         return self.send(b's', dest, timeout=3, retry=3)
