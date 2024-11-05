@@ -137,7 +137,7 @@ class Pi_controller():
                 # break
                 self.event_dict[dest].wait(timeout=timeout)
                 if self.event_dict[dest].is_set():
-                    print('Correct SN received')
+                    print('Correct SN received, data:', self.receive_dict[dest])
                     return self.receive_dict[dest]
                 else:
                     print('Timeout')
@@ -165,7 +165,8 @@ class Pi_controller():
             elif self.sn_dict[addr] == data[0]:
                 self.receive_dict[addr] = data[1:]
                 self.event_dict[addr].set()
-
+                
+                # print(self.receive_dict)
 
 class VehicleDatabase:
     def __init__(self, db_path='label.json'):

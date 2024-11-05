@@ -36,17 +36,13 @@ def record():
     print('Request to start recording, device', device, 'vin', vin)
     port = port_controller.get_port()
     
-    
-    print('&&&&&&&&&&&&&', pi_controller.record(device_list[device], port))
-    
-    if pi_controller.record(device_list[device], port) == b'recording':
-        print('trying to start recording...')
+    if pi_controller.record(device_list[device], port) is not None:
+        print('trying to start receiving...')
         receive = Receive(vin, port)
         receive_threads[vin] = receive
         return 'ok'
-    else:
-        port_controller.return_port(port)
-        return 'Cannot record'
+    
+    return 'failed to start recording'
 
 @app.route('/stop', methods=['POST'])
 def stop():
