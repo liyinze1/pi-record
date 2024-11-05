@@ -96,7 +96,7 @@ class Receive:
         filename = vin + '.sdp'
         return os.path.join(audio_folder, filename)
     
-    def get_audio_filename(vin):
+    def get_audio_filename(self, vin):
         now = datetime.datetime.now()
         file_name = vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
         return os.path.join(audio_folder, file_name)

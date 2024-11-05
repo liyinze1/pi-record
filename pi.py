@@ -2,14 +2,14 @@ import socket
 import time
 import pi_utils
 
-status = b'ready'
-
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(('0.0.0.0', 22000))
 
 pi_recorder = pi_utils.Pi_recorder()
 
 while True:
+    status = b''
+    
     data, addr = sock.recvfrom(1024)
     ip = addr[0]
 
