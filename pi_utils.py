@@ -10,6 +10,8 @@ FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+
 class Pi_recorder:
 
     def __init__(self):

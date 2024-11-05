@@ -5,11 +5,13 @@ import time
 
 app = Flask(__name__)
 
-receive_threads = {}
+receive_threads = {str: Receive}
 
 db = VehicleDatabase()
 
 pi_controller = Pi_controller(port=22000)
+
+port_controller = Port_controller()
 
 @app.route('/')
 def main():
@@ -32,8 +34,14 @@ def record():
     vin = data['vin']
     device = data['device']
     print('Request to start recording, device', device, 'vin', vin)
-    pi_controller.record(device_list[device])
-    return 'ok'
+    port = port_controller.get_port()
+    if pi_controller.record(device_list[device], port) == b'recording':
+        receive = Receive(vin, port)
+        receive_threads[vin] = receive
+        return 'ok'
+    else:
+        port_controller.return_port(port)
+        return 'Cannot record'
 
 @app.route('/stop', methods=['POST'])
 def stop():
@@ -42,6 +50,10 @@ def stop():
     device = data['device']
     print('Request to stop recording, device', device, 'vin', vin)
     pi_controller.stop(device_list[device])
+    if vin in receive_threads:
+        receive_threads[vin].stop()
+        port = receive_threads.pop(vin).port
+        port_controller.return_port(port)
     return 'ok'
 
 @app.route('/label', methods=['POST'])

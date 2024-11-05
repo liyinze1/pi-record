@@ -22,13 +22,41 @@ for deive, ip in d.items():
     
 audio_folder = './audio'
 
-class receive:
+class Port_controller:
 
-    def __init__(self, vin, port_controller):
+    def __init__(self):
+        self.port_list = [i for i in range(23000, 23010, 2)]
+
+    def get_port(self):
+        logger.info("number of ports %s", len(self.port_list))
+        for port in self.port_list:
+            logger.info("checking  %s", port)
+            if self.check_port(port):
+                self.port_list.remove(port)
+                return port
+        raise Exception('port not found')
+
+    def return_port(self, port):
+        self.port_list.append(port)
+
+    def check_port(self, port):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = False
+        try:
+            # sock.bind((server_ip, port))
+            sock.bind(('0.0.0.0', port))
+            result = True
+        except Exception as e:
+            logger.info("Port is in use  %s", e)
+        sock.close()
+        return result
+
+class Receive:
+
+    def __init__(self, vin, port):
 
         # port
-        self.port_controller = port_controller
-        self.port = port_controller.get_port()
+        self.port = port
 
         logger.info('the selected port for %s is %s', vin, self.port)
 
@@ -37,7 +65,7 @@ class receive:
             'v=0\n' + \
             'o=- 0 0 IN IP4 127.0.0.1\n' + \
             's=No Name\n' + \
-            'c=IN IP4 %s\n' % device_list['server'] + \
+            'c=IN IP4 0.0.0.0\n' + \
             't=0 0\n' + \
             'a=tool:libavformat 58.20.100\n' + \
             'm=audio %s RTP/AVP 97\n' % self.port + \
@@ -123,8 +151,8 @@ class Pi_controller():
     def status(self, dest):
         return self.send(b'?', dest, timeout=1, retry=3)
     
-    def record(self, dest):
-        return self.send(b'r', dest, timeout=3, retry=3)
+    def record(self, dest, port):
+        return self.send(b'r' + bytes(port, encoding='ascii'), dest, timeout=3, retry=3)
     
     def stop(self, dest):
         return self.send(b's', dest, timeout=3, retry=3)
