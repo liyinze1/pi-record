@@ -58,7 +58,7 @@ class Receive:
         # port
         self.port = port
 
-        logger.info('the selected port for %s is %s', vin, self.port)
+        print('the selected port for %s is %s', vin, self.port)
 
         # sdp
         sdp = 'SDP:\n' + \
@@ -77,19 +77,18 @@ class Receive:
         f.write(sdp)
         f.close()
         
-        logger.info('port:%d'%self.port)
+        print('port:%d'%self.port)
 
         self.audio_filename = self.get_audio_filename(vin)
         # thread for receiving
-        cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s' % (
-            self.sdp_filename, self.audio_filename)
-        logger.info(cmd)
+        cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s' % (self.sdp_filename, self.audio_filename)
+        print(cmd)
         cmd = shlex.split(cmd)
         self.receive_thread = subprocess.Popen(cmd)
 
     def stop(self):
         self.receive_thread.kill()
-        logger.info("returning port %s", self.port)
+        print("returning port %s", self.port)
         return 'ok'
     
     def get_sdp_filename(self, vin):

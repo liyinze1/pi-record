@@ -41,7 +41,7 @@ class Pi_recorder:
                                               stderr=subprocess.PIPE, start_new_session=True)
         
         print('Start to record')
-        
+        print(stream_cmd)
         return b'recording'
 
     def stop(self):
