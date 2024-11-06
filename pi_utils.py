@@ -43,7 +43,7 @@ class Pi_recorder:
         if self.check():
             return 'recording'
 
-        stream_cmd = '/usr/bin/arecord -D plughw:CARD=ADCX140,DEV=0 -f S32_LE -r 48000 -c 4 -d %d | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s:%d' % (self.timeout, ip, port)
+        stream_cmd = '/usr/bin/arecord -D plughw:CARD=ADCX140,DEV=0 -f S32_LE -r 48000 -c 1 -d %d | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s:%d' % (self.timeout, ip, port)
         
         self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
                                               stderr=subprocess.PIPE, start_new_session=True)

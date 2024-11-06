@@ -102,7 +102,7 @@ import requests
 class Pi_controller:
 
     def get_url(self, dest):
-        return 'http://%s:22000' % dest
+        return 'https://%s:22000' % dest
 
     def status(self, dest):
         try:
