@@ -9,7 +9,7 @@ WorkingDirectory=/home/pi/pi-record
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=pi
+User=yinze
 
 [Install]
 WantedBy=multi-user.target
