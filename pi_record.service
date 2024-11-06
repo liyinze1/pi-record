@@ -5,7 +5,7 @@ After=network.target
 [Service]
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 ExecStart=/usr/bin/python3 pi.py
-WorkingDirectory=/home/pi/pi-record
+WorkingDirectory=/home/yinze/pi-record
 StandardOutput=inherit
 StandardError=inherit
 Restart=always

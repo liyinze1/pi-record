@@ -49,16 +49,16 @@ openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 36
 
 ## Service on pi
 ```
-sudo cp pi-record.service /etc/systemd/system/
-sudo systemctl enable pi-record.service
-sudo systemctl start pi-record.service
-sudo systemctl status pi-record.service
+sudo cp pi_record.service /etc/systemd/system/
+sudo systemctl enable pi_record.service
+sudo systemctl start pi_record.service
+sudo systemctl status pi_record.service
 
 sudo systemctl daemon-reload
-sudo systemctl restart  pi-record.service
+sudo systemctl restart  pi_record.service
 
 
-sudo journalctl -f -u pi-record.service
+sudo journalctl -f -u pi_record.service
 
 ```
 ## Service on server
