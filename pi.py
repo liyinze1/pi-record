@@ -4,6 +4,7 @@ from pi_utils import *
 app = Flask(__name__)
 
 pi_recorder = Pi_recorder()
+at = ATCommandInterface()
 
 @app.route('/status', methods=['GET'])
 def status():

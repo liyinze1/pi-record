@@ -9,3 +9,4 @@ vin*
 *.pem
 *venv/
 *.json
+*.txt

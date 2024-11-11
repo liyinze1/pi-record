@@ -2,15 +2,58 @@ import subprocess
 import yaml
 import pi_mic
 import logging
-import threading
 import os
 import signal
+import serial
+import time
+import atexit
+import datetime
+import threading
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+class ATCommandInterface:
+    def __init__(self, port='/dev/ttyUSB2', baudrate=115200, timeout=1):
+        """Initialize the serial connection."""
+        self.port = port
+        self.baudrate = baudrate
+        self.timeout = timeout
+        self.ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
+        print(f"Connected to {port} at {baudrate} baud.")
+        
+        self.log = True
+        self.thread = threading.Thread(target=self.start_logging)
+        self.thread.start()
+        
+        # Register the close method to be called on program exit
+        atexit.register(self.close)
 
+    def send_command(self, command):
+        self.ser.write(command)
+        time.sleep(0.5)
+        response = self.ser.read_all().decode('ascii', errors='ignore').strip()
+        return response
+
+    def close(self):
+        """Close the serial connection."""
+        if self.ser.is_open:
+            self.ser.close()
+            print("Connection closed.")
+        self.log = False
+        self.thread.join()
+
+    def start_logging(self, filename='log.txt', interval=30):
+        while self.log:
+            t = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
+            CSQ = self.send_command(b'AT+CSQ\r')
+            COPS = self.send_command(b'AT+COPS?\r')
+            CPSI = self.send_command(b'AT+CPSI?\r')
+            with open(filename, 'a') as f:
+                f.write(t + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n')
+    
+            time.sleep(interval)
 
 class Pi_recorder:
 

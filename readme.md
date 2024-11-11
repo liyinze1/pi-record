@@ -55,7 +55,7 @@ sudo systemctl start pi_record.service
 sudo systemctl status pi_record.service
 
 sudo systemctl daemon-reload
-sudo systemctl restart  pi_record.service
+sudo systemctl restart pi_record.service
 
 
 sudo journalctl -f -u pi_record.service
