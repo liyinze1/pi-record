@@ -1,5 +1,4 @@
 import socket
-import threading
 import yaml
 import logging
 import subprocess
@@ -7,6 +6,7 @@ import os
 import shlex
 import datetime
 from tinydb import TinyDB, Query
+import requests
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -97,8 +97,6 @@ class Receive:
         file_name = vin + '-' + now.strftime('%Y-%m-%d-%H-%M-%S') + '.wav'
         return os.path.join(audio_folder, file_name)
 
-import requests
-
 class Pi_controller:
 
     def get_url(self, dest):
@@ -108,7 +106,8 @@ class Pi_controller:
         try:
             response = requests.get(
                 self.get_url(dest) + '/status',
-                verify=False
+                verify=False,
+                timeout=5
             )
             if response.status_code == 200:
                 print('Status:', response.json())
@@ -125,7 +124,8 @@ class Pi_controller:
             response = requests.post(
                 self.get_url(dest) + '/record',
                 json={'port': port},
-                verify=False
+                verify=False,
+                timeout=5
             )
             if response.status_code == 200:
                 print('Recording started:', response.json())
@@ -142,7 +142,8 @@ class Pi_controller:
         try:
             response = requests.post(
                 self.get_url(dest) + '/stop',
-                verify=False
+                verify=False,
+                timeout=10
             )
             if response.status_code == 200:
                 print('Recording stopped:', response.json())

@@ -43,7 +43,6 @@ def record():
         port_controller.return_port(port)
         return 'failed to start recording'
 
-
 @app.route('/stop', methods=['POST'])
 def stop():
     data = request.get_json()

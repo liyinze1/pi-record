@@ -9,6 +9,7 @@ import time
 import atexit
 import datetime
 import threading
+from requests import get
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -43,6 +44,13 @@ class ATCommandInterface:
             print("Connection closed.")
         self.log = False
         self.thread.join()
+        
+    def get_ip(self):
+        try:
+            ip = get('https://api.ipify.org').content.decode('utf8')
+            return ip
+        except Exception as e:
+            return f'Error starting record: {e}'
 
     def start_logging(self, filename='log.txt', interval=30):
         while self.log:
@@ -50,9 +58,9 @@ class ATCommandInterface:
             CSQ = self.send_command(b'AT+CSQ\r')
             COPS = self.send_command(b'AT+COPS?\r')
             CPSI = self.send_command(b'AT+CPSI?\r')
+            ip = self.get_ip()
             with open(filename, 'a') as f:
-                f.write(t + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n')
-    
+                f.write(t + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n' + ip + '\n')
             time.sleep(interval)
 
 class Pi_recorder:

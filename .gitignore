@@ -8,5 +8,5 @@ vin*
 *.csv
 *.pem
 *venv/
-*.json
 *.txt
+*.json
