@@ -136,6 +136,24 @@ class Pi_controller:
         except requests.exceptions.RequestException as e:
             print(f'Error starting record: {e}')
             return {'error': str(e)}
+        
+    def test(self, dest, port):
+        try:
+            response = requests.post(
+                self.get_url(dest) + '/test',
+                json={'port': port},
+                verify=False,
+                timeout=5
+            )
+            if response.status_code == 200:
+                print('Recording started:', response.json())
+                return response.json()['status']
+            else:
+                print('Failed to start recording:', response.status_code)
+                return {'error': 'Failed to start recording', 'status_code': response.status_code}
+        except requests.exceptions.RequestException as e:
+            print(f'Error starting record: {e}')
+            return {'error': str(e)}
 
     def stop(self, dest):
         '''Send a POST request to the /stop endpoint.'''

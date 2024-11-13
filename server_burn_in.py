@@ -19,7 +19,7 @@ def record():
     port = port_controller.get_port()
     
     
-    if pi_controller.record(device_ip, port) == 'recording':
+    if pi_controller.test(device_ip, port) == 'recording':
         print('trying to start receiving...')
         receive = Receive(vin, port)
         receive_threads[vin] = receive
