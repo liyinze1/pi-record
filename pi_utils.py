@@ -59,8 +59,9 @@ class ATCommandInterface:
             COPS = self.send_command(b'AT+COPS?\r')
             CPSI = self.send_command(b'AT+CPSI?\r')
             ip = self.get_ip()
+            msg = t + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n' + ip + '\n'
             with open(filename, 'a') as f:
-                f.write(t + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n' + ip + '\n')
+                f.write(msg)
             time.sleep(interval)
 
 class Pi_recorder:

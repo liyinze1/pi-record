@@ -50,7 +50,7 @@ def log(msg):
 def record_cycle():
     while True:
         log(record())
-        time.sleep(120)
+        time.sleep(150)
         log(stop())
         time.sleep(180)
     
