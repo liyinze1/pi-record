@@ -103,6 +103,20 @@ class Pi_recorder:
         print(stream_cmd)
         return 'recording'
 
+    def record_test(self, ip, port):
+        
+        if self.check():
+            return 'recording'
+
+        stream_cmd = '/usr/bin/ffmpeg -re -i sin.wav -acodec pcm_s24be -f rtp rtp://%s:%d' % (self.timeout, ip, port)
+        
+        self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
+                                              stderr=subprocess.PIPE, start_new_session=True)
+        
+        print('Start to record')
+        print(stream_cmd)
+        return 'recording'
+    
     def stop(self):
 
         if self.check():

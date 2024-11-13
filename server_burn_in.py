@@ -10,7 +10,7 @@ port_controller = Port_controller()
 
 pi_controller = Pi_controller()
 
-device_ip = ''
+device_ip = '172.27.201.235'
 
 vin = 'test'
 
@@ -29,13 +29,13 @@ def record():
         return 'failed to start recording'
 
 def stop():
-    if pi_controller.stop(device_ip) == 'stpped':
+    if pi_controller.stop(device_ip) == 'stopped':
         print('trying to stop recording...')
         if vin in receive_threads:
             receive_threads[vin].stop()
             port = receive_threads.pop(vin).port
             port_controller.return_port(port)
-        return 'stopped, please select label'
+        return 'stopped'
     else:
         return 'failed to stop recording'
     
@@ -48,14 +48,17 @@ def log(msg):
 
 
 def record_cycle():
-    log(record())
-    time.sleep(120)
-    log(stop())
-    time.sleep(180)
+    while True:
+        log(record())
+        time.sleep(120)
+        log(stop())
+        time.sleep(180)
     
 def status_cycle():
-    status = pi_controller.status(device_ip)
-    log(status)
+    while True:
+        status = pi_controller.status(device_ip)
+        log('status: ' + status)
+        time.sleep(30)
     
 
 threading.Thread(target=status_cycle).start()

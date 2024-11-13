@@ -22,6 +22,17 @@ def record():
         'status': pi_recorder.record(ip, port),
     }), 200
     
+    
+@app.route('/test', methods=['POST'])
+def test():
+    '''Start recording with an integer parameter port.'''
+    ip = request.remote_addr
+    data = request.get_json()
+    port = data['port']
+    return jsonify({
+        'status': pi_recorder.record_test(ip, port),
+    }), 200
+    
 @app.route('/stop', methods=['POST'])
 def stop():
     '''Stop recording.'''
