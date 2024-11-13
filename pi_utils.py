@@ -48,18 +48,24 @@ class ATCommandInterface:
     def get_ip(self):
         try:
             ip = get('https://api.ipify.org').content.decode('utf8')
-            return ip
+            return True, ip
         except Exception as e:
-            return f'Error starting record: {e}'
+            return False, f'Error starting record: {e}'
 
     def start_logging(self, filename='log.txt', interval=30):
         while self.log:
             t = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            CSQ = self.send_command(b'AT+CSQ\r')
-            COPS = self.send_command(b'AT+COPS?\r')
-            CPSI = self.send_command(b'AT+CPSI?\r')
-            ip = self.get_ip()
-            msg = t + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n' + ip + '\n'
+            
+            connection, ip = self.get_ip()
+            
+            # if connection:
+            #     msg = t + '\n' + ip + '\n'
+            # else:
+            CREG = self.send_command(b'AT+CREG?\r').partition('\n')[0]
+            CSQ = self.send_command(b'AT+CSQ\r').partition('\n')[0]
+            COPS = self.send_command(b'AT+COPS?\r').partition('\n')[0]
+            CPSI = self.send_command(b'AT+CPSI?\r').partition('\n')[0]
+            msg = t + '\n' + ip + '\n' + CREG + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n'
             with open(filename, 'a') as f:
                 f.write(msg)
             time.sleep(interval)
