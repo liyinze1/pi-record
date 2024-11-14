@@ -18,15 +18,17 @@ def record():
         
     port = port_controller.get_port()
     
-    
-    if pi_controller.test(device_ip, port) == 'recording':
-        print('trying to start receiving...')
-        receive = Receive(vin, port)
-        receive_threads[vin] = receive
-        return 'recording...'
-    else:
-        port_controller.return_port(port)
-        return 'failed to start recording'
+    while True:
+        if pi_controller.test(device_ip, port) == 'recording':
+            print('trying to start receiving...')
+            receive = Receive(vin, port)
+            receive_threads[vin] = receive
+            return 'recording...'
+        else:
+            time.sleep(10)
+        # else:
+        #     port_controller.return_port(port)
+        #     return 'failed to start recording'
 
 def stop():
     if pi_controller.stop(device_ip) == 'stopped':

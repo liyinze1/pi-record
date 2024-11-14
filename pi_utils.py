@@ -62,8 +62,11 @@ class ATCommandInterface:
             #     msg = t + '\n' + ip + '\n'
             # else:
             CREG = self.send_command(b'AT+CREG?\r').partition('\n')[0]
+            time.sleep(0.2)
             CSQ = self.send_command(b'AT+CSQ\r').partition('\n')[0]
+            time.sleep(0.2)
             COPS = self.send_command(b'AT+COPS?\r').partition('\n')[0]
+            time.sleep(0.2)
             CPSI = self.send_command(b'AT+CPSI?\r').partition('\n')[0]
             msg = t + '\n' + ip + '\n' + CREG + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n'
             with open(filename, 'a') as f:
@@ -115,7 +118,7 @@ class Pi_recorder:
         if self.check():
             return 'recording'
 
-        stream_cmd = '/usr/bin/ffmpeg -re -i sine.wav -acodec pcm_s24be -f rtp rtp://%s:%d' % (ip, port)
+        stream_cmd = '/usr/bin/ffmpeg -re -i sine.wav -acodec pcm_s24be -f rtp rtp://3.123.215.67:9924'
         
         self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
                                               stderr=subprocess.PIPE, start_new_session=True)
