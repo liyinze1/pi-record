@@ -11,7 +11,7 @@ port_controller = Port_controller()
 
 pi_controller = Pi_controller()
 
-device_ip = '172.27.201.235'
+device_ip = '10.94.0.33'
 
 vin = 'test'
 
@@ -25,19 +25,20 @@ def record():
             receive = Receive(vin, port)
             receive_threads[vin] = receive
             return 'recording...'
-        else:
-            time.sleep(10)
         # else:
-        #     port_controller.return_port(port)
-        #     return 'failed to start recording'
+        #     time.sleep(10)
+        else:
+            port_controller.return_port(port)
+            return 'failed to start recording'
 
 def stop():
+    if vin in receive_threads:
+        receive_threads[vin].stop()
+        port = receive_threads.pop(vin).port
+        port_controller.return_port(port)
+        
     if pi_controller.stop(device_ip) == 'stopped':
         print('trying to stop recording...')
-        if vin in receive_threads:
-            receive_threads[vin].stop()
-            port = receive_threads.pop(vin).port
-            port_controller.return_port(port)
         return 'stopped'
     else:
         return 'failed to stop recording'
@@ -56,7 +57,7 @@ def record_cycle():
         if datetime.now().minute % 10 == 0:
             print('it is the time to start...')
             log(record())
-            time.sleep(150)
+            time.sleep(130)
             log(stop())
         else:
             time.sleep(1)

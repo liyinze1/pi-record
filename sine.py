@@ -3,7 +3,7 @@ import wave
 
 volume = 0.5  # range [0.0, 1.0]
 fs = 48000  # sampling rate, Hz
-duration = 130.0  # duration in seconds
+duration = 120.0  # duration in seconds
 f = 200.0  # sine frequency, Hz
 
 # Generate samples, note conversion to float32 array
