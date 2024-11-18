@@ -1,6 +1,7 @@
 from server_utils import *
 import time
 import threading
+from datetime import datetime
 
 receive_threads = {str: Receive}
 
@@ -43,7 +44,7 @@ def stop():
     
 
 def log(msg):
-    msg = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S') + '\t' + msg + '\n'
+    msg = datetime.now().strftime('%Y-%m-%d-%H:%M:%S') + '\t' + msg + '\n'
     print(msg)
     with open('log.txt', 'a') as f:
         f.write(msg)
@@ -51,10 +52,15 @@ def log(msg):
 
 def record_cycle():
     while True:
-        log(record())
-        time.sleep(150)
-        log(stop())
-        time.sleep(180)
+        
+        if datetime.now().minute % 10 == 0:
+            print('it is the time to start...')
+            log(record())
+            time.sleep(150)
+            log(stop())
+        else:
+            time.sleep(1)
+            # print('not yet started\r')
     
 def status_cycle():
     while True:
