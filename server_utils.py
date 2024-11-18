@@ -67,7 +67,7 @@ class Receive:
             'a=tool:libavformat 58.20.100\n' + \
             'm=audio %s RTP/AVP 97\n' % self.port + \
             'b=AS:4608\n' + \
-            'a=rtpmap:97 L24/48000/1\n'
+            'a=rtpmap:97 L24/48000/2\n'
 
         self.sdp_filename = self.get_sdp_filename(vin)
         f = open(self.sdp_filename, 'w')
