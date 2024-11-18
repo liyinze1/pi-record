@@ -7,7 +7,7 @@ receive_threads = {str: Receive}
 
 db = VehicleDatabase()
 
-port_controller = Port_controller()
+# port_controller = Port_controller()
 
 pi_controller = Pi_controller()
 
@@ -15,9 +15,11 @@ device_ip = '10.94.0.33'
 
 vin = 'test'
 
+port = 9924
+
 def record():
         
-    port = port_controller.get_port()
+    # port = port_controller.get_port()
     
     while True:
         if pi_controller.test(device_ip, port) == 'recording':
@@ -28,14 +30,14 @@ def record():
         # else:
         #     time.sleep(10)
         else:
-            port_controller.return_port(port)
+            # port_controller.return_port(port)
             return 'failed to start recording'
 
 def stop():
     if vin in receive_threads:
         receive_threads[vin].stop()
         port = receive_threads.pop(vin).port
-        port_controller.return_port(port)
+        # port_controller.return_port(port)
         
     if pi_controller.stop(device_ip) == 'stopped':
         print('trying to stop recording...')
@@ -57,7 +59,7 @@ def record_cycle():
         if datetime.now().minute % 10 == 0:
             print('it is the time to start...')
             log(record())
-            time.sleep(130)
+            time.sleep(140)
             log(stop())
         else:
             time.sleep(1)
