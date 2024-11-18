@@ -27,16 +27,16 @@ sudo apt-get install openvpn unzip
 ```
 
 ```
-sudo cp pi-vpn.service /etc/systemd/system/
-sudo systemctl enable pi-vpn.service
-sudo systemctl start pi-vpn.service
-sudo systemctl status pi-vpn.service
+sudo cp vpn.service /etc/systemd/system/
+sudo systemctl enable vpn.service
+sudo systemctl start vpn.service
+sudo systemctl status vpn.service
 
 sudo systemctl daemon-reload
-sudo systemctl restart pi-vpn.service
+sudo systemctl restart vpn.service
 
 
-sudo journalctl -f -u pi-vpn.service
+sudo journalctl -f -u vpn.service
 
 ```
 
