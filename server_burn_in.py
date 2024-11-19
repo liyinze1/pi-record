@@ -69,8 +69,7 @@ def status_cycle():
     while True:
         status = pi_controller.status(device_ip)
         log('status: ' + status)
-        time.sleep(30)
-    
+        time.sleep(5)
 
 threading.Thread(target=status_cycle).start()
-threading.Thread(target=record_cycle).start()
+# threading.Thread(target=record_cycle).start()

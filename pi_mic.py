@@ -552,12 +552,9 @@ class TLV320ADC:
         
         self.i2c_bits(base_addr[channel], 0, 6, val)
         self.i2c_update()
-        
-        return    
-        
     
-    
-
+        return
+        
 
     def set_output_type(self,protocol="I2S", word_length=32, compatibility= True):
         # protocol can be "I2", "LJ", or "TDM"
@@ -588,8 +585,6 @@ class TLV320ADC:
             
         self.i2c_update()
 
-        
-        
         return
 
 
