@@ -21,15 +21,17 @@ class ATCommandInterface:
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
-        self.ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
-        print(f"Connected to {port} at {baudrate} baud.")
+        try:
+            self.ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
+            print(f"Connected to {port} at {baudrate} baud.")
+            self.log = True
+            self.thread = threading.Thread(target=self.start_logging)
+            self.thread.start()
+            # Register the close method to be called on program exit
+            atexit.register(self.close)
+        except Exception as e:
+            print('error', e)
         
-        self.log = True
-        self.thread = threading.Thread(target=self.start_logging)
-        self.thread.start()
-        
-        # Register the close method to be called on program exit
-        atexit.register(self.close)
 
     def send_command(self, command):
         self.ser.write(command)
