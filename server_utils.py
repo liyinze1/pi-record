@@ -22,7 +22,7 @@ audio_folder = './audio'
 class Port_controller:
 
     def __init__(self):
-        self.port_list = [9924]
+        self.port_list = [i for i in range(23000, 23010, 2)]
 
     def get_port(self):
         logger.info("number of ports %s", len(self.port_list))
