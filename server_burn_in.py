@@ -13,7 +13,7 @@ pi_controller = Pi_controller()
 
 device_ip = '10.94.0.33'
 
-vin = 'test'
+vin = 'tcp_test'
 
 def record():
         
