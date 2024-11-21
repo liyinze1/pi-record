@@ -51,15 +51,21 @@ def log(msg):
 
 
 def record_cycle():
+    time.sleep(10)
     while True:
+        log(record())
+        time.sleep(130)
+        log(stop())
         
-        if datetime.now().minute % 10 == 0:
-            print('it is the time to start...')
-            log(record())
-            time.sleep(130)
-            log(stop())
-        else:
-            time.sleep(10)
+        time.sleep(400)
+        
+        # if datetime.now().minute % 10 == 0:
+        #     print('it is the time to start...')
+        #     log(record())
+        #     time.sleep(130)
+        #     log(stop())
+        # else:
+        #     time.sleep(10)
             # print('not yet started\r')
     
 def status_cycle():
