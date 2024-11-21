@@ -103,6 +103,8 @@ class Pi_recorder:
 
     def record(self, ip, port, protocol, test):
         
+        print('ip:', ip, 'port:', port, 'protocol:', protocol, 'test:', test)
+        
         if self.check():
             return 'recording'
         
