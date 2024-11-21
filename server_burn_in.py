@@ -20,7 +20,7 @@ def record():
     port = port_controller.get_port()
     
     while True:
-        if pi_controller.test(device_ip, port) == 'recording':
+        if pi_controller.record(device_ip, port, protocol='tcp', test=True) == 'recording':
             print('trying to start receiving...')
             receive = Receive(vin, port)
             receive_threads[vin] = receive
@@ -57,17 +57,17 @@ def record_cycle():
         if datetime.now().minute % 10 == 0:
             print('it is the time to start...')
             log(record())
-            time.sleep(140)
+            time.sleep(130)
             log(stop())
         else:
-            time.sleep(1)
+            time.sleep(10)
             # print('not yet started\r')
     
 def status_cycle():
     while True:
         status = pi_controller.status(device_ip)
         log('status: ' + status)
-        time.sleep(1)
+        time.sleep(30)
 
 threading.Thread(target=status_cycle).start()
-# threading.Thread(target=record_cycle).start()
+threading.Thread(target=record_cycle).start()

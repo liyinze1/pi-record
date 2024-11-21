@@ -50,35 +50,38 @@ class Port_controller:
 
 class Receive:
 
-    def __init__(self, vin, port):
+    def __init__(self, vin, port, protocol='rtp'):
 
         # port
         self.port = port
 
-        print('the selected port for %s is %s', vin, self.port)
-
-        # sdp
-        sdp = 'SDP:\n' + \
-            'v=0\n' + \
-            'o=- 0 0 IN IP4 127.0.0.1\n' + \
-            's=No Name\n' + \
-            'c=IN IP4 0.0.0.0\n' + \
-            't=0 0\n' + \
-            'a=tool:libavformat 58.20.100\n' + \
-            'm=audio %s RTP/AVP 97\n' % self.port + \
-            'b=AS:4608\n' + \
-            'a=rtpmap:97 L24/48000/2\n'
-
-        self.sdp_filename = self.get_sdp_filename(vin)
-        f = open(self.sdp_filename, 'w')
-        f.write(sdp)
-        f.close()
-        
-        print('port:%d'%self.port)
+        print('the port is', port)
 
         self.audio_filename = self.get_audio_filename(vin)
-        # thread for receiving
-        cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s' % (self.sdp_filename, self.audio_filename)
+
+        if protocol == 'rtp':
+            # sdp
+            sdp = 'SDP:\n' + \
+                'v=0\n' + \
+                'o=- 0 0 IN IP4 127.0.0.1\n' + \
+                's=No Name\n' + \
+                'c=IN IP4 0.0.0.0\n' + \
+                't=0 0\n' + \
+                'a=tool:libavformat 58.20.100\n' + \
+                'm=audio %s RTP/AVP 97\n' % self.port + \
+                'b=AS:4608\n' + \
+                'a=rtpmap:97 L24/48000/2\n'
+
+            self.sdp_filename = self.get_sdp_filename(vin)
+            f = open(self.sdp_filename, 'w')
+            f.write(sdp)
+            f.close()
+
+            # thread for receiving
+            cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s' % (self.sdp_filename, self.audio_filename)
+        else:
+            cmd = 'ffmpeg -f s32le -ac 2 -ar 48000 -i tcp://0.0.0.0:%d?listen=1 -acodec copy %s' % (port, self.audio_filename)
+        
         print(cmd)
         cmd = shlex.split(cmd)
         self.receive_thread = subprocess.Popen(cmd)
@@ -119,11 +122,11 @@ class Pi_controller:
             print(f'Error getting status: {e}')
             return 'offline'
 
-    def record(self, dest, port):
+    def record(self, dest, port, protocol, test=False):
         try:
             response = requests.post(
                 self.get_url(dest) + '/record',
-                json={'port': port},
+                json={'port': port, 'protocol': protocol, 'test': test},
                 verify=False,
                 timeout=5
             )
@@ -137,23 +140,6 @@ class Pi_controller:
             print(f'Error starting record: {e}')
             return {'error': str(e)}
         
-    def test(self, dest, port):
-        try:
-            response = requests.post(
-                self.get_url(dest) + '/test',
-                json={'port': port},
-                verify=False,
-                timeout=5
-            )
-            if response.status_code == 200:
-                print('Recording started:', response.json())
-                return response.json()['status']
-            else:
-                print('Failed to start recording:', response.status_code)
-                return {'error': 'Failed to start recording', 'status_code': response.status_code}
-        except requests.exceptions.RequestException as e:
-            print(f'Error starting record: {e}')
-            return {'error': str(e)}
 
     def stop(self, dest):
         '''Send a POST request to the /stop endpoint.'''

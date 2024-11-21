@@ -25,7 +25,6 @@ def get_devices():
         response[device] = status
     return jsonify(response)
 
-
 @app.route('/record', methods=['POST'])
 def record():
     data = request.get_json()

@@ -101,26 +101,22 @@ class Pi_recorder:
         else:
             return 'ready'
 
-    def record(self, ip, port):
+    def record(self, ip, port, protocol, test):
         
         if self.check():
             return 'recording'
-
-        stream_cmd = '/usr/bin/arecord -D plughw:CARD=ADCX140,DEV=0 -f S32_LE -r 48000 -c 1 -d %d | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s:%d' % (self.timeout, ip, port)
         
-        self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
-                                              stderr=subprocess.PIPE, start_new_session=True)
+        if protocol == 'rtp':
+            if test:
+                stream_cmd = '/usr/bin/ffmpeg -re -i sine.wav -acodec pcm_s24be -f rtp rtp://%s:%d' % (ip,port)
+            else:
+                stream_cmd = '/usr/bin/arecord -D plughw:CARD=ADCX140,DEV=0 -f S32_LE -r 48000 -c 2 -d %d | /usr/bin/ffmpeg -re -i - -acodec pcm_s24be -f rtp rtp://%s:%d' % (self.timeout, ip, port)
+        else:
+            if test:
+                stream_cmd = '/usr/bin/ffmpeg -re -i sine.wav -acodec copy -f s32le tcp://%s:%d' % (ip,port)
+            else:
+                stream_cmd = '/usr/bin/arecord -D plughw:CARD=ADCX140,DEV=0 -f S32_LE -r 48000 -c 2 -d %d | /usr/bin/ffmpeg -re -i - -acodec copy -f s32le tcp://%s:%d' % (self.timeout, ip, port)
         
-        print('Start to record')
-        print(stream_cmd)
-        return 'recording'
-
-    def record_test(self, ip, port):
-        
-        if self.check():
-            return 'recording'
-
-        stream_cmd = '/usr/bin/ffmpeg -re -i sine.wav -acodec pcm_s24be -f rtp rtp://%s:%d' % (ip,port)
         
         self.record_thread = subprocess.Popen(stream_cmd, shell=True, stdout=subprocess.PIPE,
                                               stderr=subprocess.PIPE, start_new_session=True)
