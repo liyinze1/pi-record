@@ -21,7 +21,7 @@ def record():
     
     if pi_controller.record(device_ip, port, protocol='tcp', test=True) == 'recording':
         print('trying to start receiving...')
-        receive = Receive(vin, port)
+        receive = Receive(vin, port, protocol='tcp')
         receive_threads[vin] = receive
         return 'recording...'
     # else:
