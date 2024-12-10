@@ -1,6 +1,7 @@
 // variables
 let vin = '';
 let selected_device = '';
+let protocol = 'rtp';
 
 // check
 function check_device_vin() {
@@ -35,10 +36,11 @@ function openTab(event, tabId) {
 
 // update message
 function update_message(data) {
+    let msg = 'Device = ' + selected_device + '<br>VIN =' + vin + '<br>protocol = ' + protocol;
     if (data) {
-        document.getElementById('message').innerHTML = 'selected device = ' + selected_device + '<br>selected VIN =' + vin + '<br>' + data;
+        document.getElementById('message').innerHTML = msg + '<br>' + data;
     } else {
-        document.getElementById('message').innerHTML = 'selected device = ' + selected_device + '<br>selected VIN =' + vin;
+        document.getElementById('message').innerHTML = msg;
     }
 }
 
@@ -140,7 +142,7 @@ function startRecording() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ vin: vin, device: selected_device })
+        body: JSON.stringify({ vin: vin, device: selected_device, protocol: selected_protocol})
     })
     .then(response => {
         if (response.ok) {
@@ -214,6 +216,17 @@ function label(option) {
     .catch(error => {
         console.error('Error:', error);
     });
+}
+
+// protocol
+
+function select_protocol(option) {
+    if (option == 0) {
+        protocol = 'rtp';
+    } else if (option == 1) {
+        protocol = 'tcp';
+    }
+    update_message('Protocol selected:'+ protocol);
 }
 
 // Default to tab Device on page load

@@ -20,6 +20,7 @@ def record():
     port = data['port']
     protocol = data['protocol']
     test = data['test']
+    print(data)
     return jsonify({
         'status': pi_recorder.record(ip, port, protocol, test),
     }), 200

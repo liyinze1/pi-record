@@ -30,6 +30,10 @@ def record():
     data = request.get_json()
     vin = data['vin']
     device = data['device']
+    if 'protocol' in data:
+        protocol = data['protocol']
+    else:
+        protocol = 'rtp'
     print('Request to start recording, device', device, 'vin', vin)
     port = port_controller.get_port()
     
