@@ -143,7 +143,7 @@ function startRecording() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ vin: vin, device: selected_device, protocol: selected_protocol})
+        body: JSON.stringify({ vin: vin, device: selected_device, protocol: protocol})
     })
     .then(response => {
         if (response.ok) {
