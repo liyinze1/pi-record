@@ -25,9 +25,9 @@ class Port_controller:
         self.port_list = [i for i in range(23000, 23010, 2)]
 
     def get_port(self):
-        logger.info("number of ports", len(self.port_list))
+        logger.info("number of ports %d" % len(self.port_list))
         for port in self.port_list:
-            logger.info("checking", port)
+            logger.info("checking %d" % port)
             if self.check_port(port):
                 self.port_list.remove(port)
                 return port
@@ -44,7 +44,7 @@ class Port_controller:
             sock.bind(('0.0.0.0', port))
             result = True
         except Exception as e:
-            logger.info("Port is in use", e)
+            logger.info("Port is in use: %d" % e)
         sock.close()
         return result
 
