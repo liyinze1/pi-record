@@ -122,8 +122,8 @@ const html5QrCode = new Html5Qrcode('qr-reader', { formatsToSupport: [ Html5Qrco
 const qrCodeSuccessCallback = (decodedText, decodedResult) => {
     console.log(`Code scanned = ${decodedText}`, decodedResult);
     if (decodedText.startsWith('WF') && decodedText.length == 17) {
-        update_message('VIN scanned, you can start recording')
         vin = decodedText;
+        update_message('VIN scanned, you can start recording');
         html5QrCode.stop().then((ignore) => {
             console.log('stopped')
         }).catch((err) => {});
@@ -137,6 +137,7 @@ function startRecording() {
     if (!check_device_vin()) {
         return;
     }
+    update_message('trying to start recording...');
     fetch('/record', {
         method: 'POST',
         headers: {
@@ -164,6 +165,7 @@ function stopRecording() {
     if (!check_device_vin()) {
         return;
     }
+    update_message('trying to stop recording');
     fetch('/stop', {
         method: 'POST',
         headers: {
