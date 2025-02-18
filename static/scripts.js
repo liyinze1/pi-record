@@ -304,16 +304,16 @@ function download() {
             }
             return response.blob();  // Convert the response to a Blob
         })
-        // .then(blob => {
-        //     const url = URL.createObjectURL(blob);  // Create a temporary URL
-        //     const link = document.createElement('a');
-        //     link.href = url;
-        //     link.download = audio_name;  // Set the downloaded filename
-        //     document.body.appendChild(link);
-        //     link.click();  // Trigger the download
-        //     document.body.removeChild(link);
-        //     URL.revokeObjectURL(url);  // Clean up
-        // })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);  // Create a temporary URL
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = audio_name;  // Set the downloaded filename
+            document.body.appendChild(link);
+            link.click();  // Trigger the download
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);  // Clean up
+        })
         .catch(error => {
             console.error('Download failed:', error);
             alert('Failed to download the file.');
