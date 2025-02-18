@@ -74,6 +74,10 @@ sudo systemctl restart server-record.service
 
 
 sudo journalctl -f -u server-record.service
+```
 
+```
+sudo nohup sudo python3 server.py &
+ps aux | grep server.py
 ```
 
