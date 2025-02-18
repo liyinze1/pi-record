@@ -17,28 +17,20 @@ header img {
     height: 30px;
     margin: 0 20px;
 }
-/* nav {
+nav {
     display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
     justify-content: space-around;
     background-color: #333;
     padding: 10px 0;
+    text-align: center;
 }
 nav a {
     color: white;
     text-decoration: none;
     padding: 10px;
     font-size: 1.2em;
-} */
-nav {
-    display: flex;
-    overflow-x: auto; /* Enables horizontal scrolling */
-    white-space: nowrap; /* Prevents wrapping */
-}
-
-nav a {
-    flex: 0 0 auto; /* Prevents tabs from resizing */
-    padding: 10px;
-    text-align: center;
 }
 nav a.active {
     background-color: #555;
