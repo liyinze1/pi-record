@@ -130,7 +130,7 @@ let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
 const html5QrCode = new Html5Qrcode('qr-reader', { formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE] });
 const qrCodeSuccessCallback = (decodedText, decodedResult) => {
     console.log(`Code scanned = ${decodedText}`, decodedResult);
-    if (decodedText.startsWith('WF') && decodedText.length == 17) {
+    if (decodedText.startsWith('test') || (decodedText.startsWith('WF') && decodedText.length == 17)) {
         vin = decodedText;
         update_message('VIN scanned, you can start recording');
         html5QrCode.stop().then((ignore) => {
