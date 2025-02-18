@@ -298,7 +298,7 @@ function download() {
         return;
     }
     const link = document.createElement('a');
-    link.href = `play/${audio_name}`;
+    link.href = '/play/' + audio_name;
     link.download = audio_name;
     document.body.appendChild(link);
     link.click();
