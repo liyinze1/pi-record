@@ -298,27 +298,33 @@ function download() {
         return;
     }
 
-    fetch('/play/' + audio_name)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Network response was not OK (${response.status})`);
-            }
-            return response.blob();  // Convert the response to a Blob
-        })
-        .then(blob => {
-            const url = URL.createObjectURL(blob);  // Create a temporary URL
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = audio_name;  // Set the downloaded filename
-            document.body.appendChild(link);
-            link.click();  // Trigger the download
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);  // Clean up
-        })
-        .catch(error => {
-            console.error('Download failed:', error);
-            alert('Failed to download the file.');
-        });
+    const link = document.createElement('a');
+    link.href = `/play/${audio_name}`;  // Ensure correct backend route
+    link.download = audio_name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    // fetch('/play/' + audio_name)
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error(`Network response was not OK (${response.status})`);
+    //         }
+    //         return response.blob();  // Convert the response to a Blob
+    //     })
+    //     .then(blob => {
+    //         const url = URL.createObjectURL(blob);  // Create a temporary URL
+    //         const link = document.createElement('a');
+    //         link.href = url;
+    //         link.download = audio_name;  // Set the downloaded filename
+    //         document.body.appendChild(link);
+    //         link.click();  // Trigger the download
+    //         document.body.removeChild(link);
+    //         URL.revokeObjectURL(url);  // Clean up
+    //     })
+    //     .catch(error => {
+    //         console.error('Download failed:', error);
+    //         alert('Failed to download the file.');
+    //     });
 }
 
 function delete_audio() {
