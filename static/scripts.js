@@ -269,6 +269,7 @@ function fetch_audio() {
         } else {
             console.log(data);
             update_message("found an audio, name: " + data);
+            audio_name = data;
         }
     })
     .catch(error => {
