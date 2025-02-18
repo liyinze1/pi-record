@@ -297,6 +297,11 @@ function delete_audio() {
         update_message('No audio to delete, please check at first');
         return;
     }
+
+    if (!confirm(`Are you sure you want to delete ${audio_name}?`)) {
+        return;
+    }
+
     fetch('/delete/' + audio_name, {
         method: 'GET',
         headers: {
