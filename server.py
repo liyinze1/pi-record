@@ -77,7 +77,7 @@ def play(audio):
     return send_file(os.path.join(audio_folder, audio), as_attachment=True)
 
 @app.route('/delete/<audio>', methods=['GET'])
-def get_audio(audio):
+def delete(audio):
     os.system('rm -f %s' % os.path.join(audio_folder, audio))
     return 'deleted'
 
