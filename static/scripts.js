@@ -2,8 +2,17 @@
 let vin = '';
 let selected_device = '';
 let protocol = 'rtp';
+let audio_name = '';
 
 // check
+function check_vin() {
+    if (vin.length == 0) {
+        update_message('Please scan a vin');
+        return false;
+    }
+    return true;
+}
+
 function check_device_vin() {
     if (selected_device.length == 0) {
         announce_message('Please select a device');
@@ -207,13 +216,14 @@ function label(option) {
         if (response.ok) {
             return response.text();
         } else {
+            update_message('connection to the server failed');
             throw new Error('connection to the server failed');
         }
     })
     .then(data => {
         console.log(data);
-        update_message(data);
-        
+        update_message('ok, please scan a new car');
+        document.getElementById('scan_tab_button').click();
     })
     .catch(error => {
         console.error('Error:', error);
@@ -230,6 +240,81 @@ function select_protocol(option) {
     }
     update_message('Protocol selected:'+ protocol);
 }
+
+
+// Check Audios
+function fetch_audio() {
+    if (!check_vin()) {
+        return;
+    }
+    update_message('trying to fetch the audio...');
+    fetch('/get-audio/' + vin, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.text();
+        } else {
+            throw new Error('connection to the server failed');
+        }
+    })
+    .then(data => {
+        if (data.length === 0) {
+            update_message('No audio found for this VIN');
+            document.getElementById('audio_source').src = '';
+            return;
+        } else {
+            console.log(data);
+            update_message("found an audio, name: " + data);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function play() {
+    if (!check_vin()) {
+        return;
+    }
+    if (audio_name.length == 0) {
+        update_message('No audio to play, please check at first');
+        return;
+    }
+    document.getElementById('audio_source').src = "play/" + audio_name;
+    document.getElementById('audio_box').load();
+}
+
+function delete_audio() {
+    if (!check_vin()) {
+        return;
+    }
+    if (audio_name.length == 0) {
+        update_message('No audio to delete, please check at first');
+        return;
+    }
+    fetch('/delete/' + audio_name, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            update_message(response.text());
+            document.getElementById('audio_source').src = '';
+        } else {
+            throw new Error('connection to the server failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 
 // Default to tab Device on page load
 //document.getElementById('tabDevice').style.display = 'block';

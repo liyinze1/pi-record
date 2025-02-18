@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_file
 import os
 from server_utils import *
 import time
@@ -66,6 +66,20 @@ def label():
     opt = data['label']
     db.update(vin, opt)
     return 'ok'
+
+
+@app.route('/get-audio/<vin>', methods=['GET'])
+def get_audio(vin):
+    return get_audio_filename(vin)
+
+@app.route('/play/<audio>', methods=['GET'])
+def play(audio):
+    return send_file(os.path.join(audio_folder, audio), as_attachment=True)
+
+@app.route('/delete/<audio>', methods=['GET'])
+def get_audio(audio):
+    os.system('rm -f %s' % os.path.join(audio_folder, audio))
+    return 'deleted'
 
 if __name__ == '__main__':
     app.run(host='10.94.0.16', debug=True, port=443, use_reloader=False, ssl_context=('cert.pem', 'key.pem'))

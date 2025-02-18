@@ -19,6 +19,15 @@ f.close()
 device_list = d
 audio_folder = './audio'
 
+def get_audio_filename(vin):
+    audiofiles = sorted(os.listdir(audio_folder), reverse=True)
+    for audiofile in audiofiles:
+        if audiofile.startswith(vin) and (audiofile.endswith('.wav') or audiofile.endswith('.aac')):
+            return audiofile
+    return ''
+
+
+
 class Port_controller:
 
     def __init__(self):

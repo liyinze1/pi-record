@@ -16,6 +16,7 @@
         <a id='scan_tab_button' href='#tabScan' onclick='openTab(event, "tabScan")'>Scan</a>
         <a id='record_tab_button' href='#tabRecord' onclick='openTab(event, "tabRecord")'>Record</a>
         <a id='label_tab_button' href='#tabLabel' onclick='openTab(event, "tabLabel")'>Label</a>
+        <a id='audio_tab_button' href='#tabAudio' onclick='openTab(event, "tabAudio")'>Audio</a>
         <a id='setting_tab_button' href='#tabSettings' onclick='openTab(event, "tabSettings")'>Settings</a>
     </nav>
     <div id='message' class='message'>no message</div>
@@ -46,6 +47,15 @@
             <button class='yellow' onclick='label(1)'>Squek</button>
             <button class='orange' onclick='label(2)'>Rattley</button>
             <button class='red' onclick='label(3)'>S & R</button>
+        </div>
+        <div id='tabAudio' class='tab-content'>
+            <audio id='audio_box' controls controlsList="noplaybackrate" autoplay>
+                <source id='audio_source' src=''>
+            </audio>
+            <hr>
+            <button class='blue' onclick='fetch_audio()'>Check Audio</button>
+            <button class='green' onclick='play()'>Play</button>
+            <button class='red' onclick='delete_audio()'>Delete</button>
         </div>
         <div id='tabSettings' class='tab-content'>
             <button class='blue' onclick='select_protocol(0)'>rtp</button>
