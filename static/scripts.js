@@ -309,7 +309,7 @@ function download() {
             const url = URL.createObjectURL(blob);  // Create a temporary URL
             const link = document.createElement('a');
             link.href = url;
-            link.download = filename;  // Set the downloaded filename
+            link.download = audio_name;  // Set the downloaded filename
             document.body.appendChild(link);
             link.click();  // Trigger the download
             document.body.removeChild(link);
