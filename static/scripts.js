@@ -310,9 +310,10 @@ function delete_audio() {
     })
     .then(response => {
         if (response.ok) {
-            update_message(response.text());
+            update_message('deleted!');
             document.getElementById('audio_source').src = '';
             document.getElementById('audio_box').load();
+            audio_name = '';
         } else {
             throw new Error('connection to the server failed');
         }
