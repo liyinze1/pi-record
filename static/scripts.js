@@ -312,6 +312,7 @@ function delete_audio() {
         if (response.ok) {
             update_message(response.text());
             document.getElementById('audio_source').src = '';
+            document.getElementById('audio_box').load();
         } else {
             throw new Error('connection to the server failed');
         }
