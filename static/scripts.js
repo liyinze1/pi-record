@@ -289,6 +289,22 @@ function play() {
     document.getElementById('audio_box').load();
 }
 
+function download() {
+    if (!check_vin()) {
+        return;
+    }
+    if (audio_name.length == 0) {
+        update_message('No audio to download, please check at first');
+        return;
+    }
+    const link = document.createElement('a');
+    link.href = `/play/${audio_name}`;
+    link.download = audio_name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 function delete_audio() {
     if (!check_vin()) {
         return;

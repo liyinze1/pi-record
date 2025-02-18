@@ -49,13 +49,15 @@
             <button class='red' onclick='label(3)'>S & R</button>
         </div>
         <div id='tabAudio' class='tab-content'>
-            <audio id='audio_box' controls controlsList="noplaybackrate" autoplay>
+            <audio id='audio_box' controls controlsList="nodownload noplaybackrate" autoplay>
                 <source id='audio_source' src=''>
             </audio>
             <hr>
             <button class='blue' onclick='fetch_audio()'>Check Audio</button>
             <button class='green' onclick='play()'>Play</button>
+            <button class='orange' onclick='download()'>Download</button>
             <button class='red' onclick='delete_audio()'>Delete</button>
+
         </div>
         <div id='tabSettings' class='tab-content'>
             <button class='blue' onclick='select_protocol(0)'>rtp</button>
