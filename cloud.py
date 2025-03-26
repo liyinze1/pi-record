@@ -37,28 +37,33 @@ def login():
     '''
 
 @app.route('/')
+@login_required
 def main():
     return render_template('index.html')
 
 
 
 @app.route('/devices', methods=['GET'])
+@login_required
 def get_devices():
     resp = requests.get(f'{SERVER_BASE_URL}/devices', verify=False)
     return jsonify(resp.json())
 
 @app.route('/record', methods=['POST'])
+@login_required
 def record():
     payload = request.get_json()
     resp = requests.post(f'{SERVER_BASE_URL}/record', json=payload, verify=False)
     return resp.text
 
 @app.route('/stop', methods=['POST'])
+@login_required
 def stop():
     payload = request.get_json()
     resp = requests.post(f'{SERVER_BASE_URL}/stop', json=payload, verify=False)
     return resp.text
 @app.route('/label', methods=['POST'])
+@login_required
 def label():
     payload = request.get_json()
     resp = requests.post(f'{SERVER_BASE_URL}/label', json=payload, verify=False)
@@ -66,11 +71,13 @@ def label():
 
 
 @app.route('/get-audio/<vin>', methods=['GET'])
+@login_required
 def get_audio(vin):
     resp = requests.get(f'{SERVER_BASE_URL}/get-audio/{vin}', verify=False)
     return resp.text
 
 @app.route('/play/<audio>', methods=['GET'])
+@login_required
 def play(audio):
     remote_url = f'{SERVER_BASE_URL}/play/{audio}'
     local_path = os.path.join(audio_folder, audio)
@@ -100,6 +107,7 @@ def play(audio):
         threading.Timer(600, clean_local).start()
 
 @app.route('/delete/<audio>', methods=['GET'])
+@login_required
 def delete(audio):
     local_path = os.path.join(audio_folder, audio)
     if os.path.exists(local_path):
