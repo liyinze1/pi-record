@@ -76,7 +76,7 @@ def delete(audio):
     local_path = os.path.join(audio_folder, audio)
     if os.path.exists(local_path):
         os.remove(local_path)
-    resp = requests.post(f'{SERVER_BASE_URL}/delete/{audio}', verify=False)
+    resp = requests.get(f'{SERVER_BASE_URL}/delete/{audio}', verify=False)
     return resp.text
 
 if __name__ == '__main__':
