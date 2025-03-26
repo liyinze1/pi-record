@@ -74,8 +74,11 @@ def play(audio):
 
 @app.route('/delete/<audio>', methods=['GET'])
 def delete(audio):
-    # os.remove(os.path.join(audio_folder, audio))
-    os.system('rm -f ' + os.path.join(audio_folder, audio))
+    try:
+        os.remove(os.path.join(audio_folder, audio))
+    except OSError as e:
+        print(f'Error deleting {audio}: {e}')
+    # os.system('rm -f ' + os.path.join(audio_folder, audio))
     return 'deleted'
 
 if __name__ == '__main__':
