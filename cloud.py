@@ -3,14 +3,22 @@ from functools import wraps
 import os
 import requests
 import threading
+import secrets
 
 app = Flask(__name__)
-app.secret_key = 'b2742f857a7e4f30a0c4cf7fa2e93cb65f2b74e1d9c5e6c56c94fbe21f0ec3f7'
+app.secret_key = secrets.token_hex(32) 
 
 audio_folder = './audio'
 os.makedirs(audio_folder, exist_ok=True)
 
 SERVER_BASE_URL = 'https://10.94.0.16:8443'
+
+if os.path.exists('password.txt'):
+    f = open('password.txt', 'r')
+    password = f.read().strip()
+    f.close()
+else:
+    password = 'password'
 
 def login_required(f):
     @wraps(f)
@@ -20,21 +28,16 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        if request.form['password'] == 'mypassword':  # 🔒 Replace with env var or better storage
+        if request.form['password'] == password:
             session['logged_in'] = True
             return redirect(url_for('main'))
         else:
             return 'Incorrect password', 401
-    return '''
-        <form method="post">
-            <h2>Login</h2>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="submit" value="Login">
-        </form>
-    '''
+    return render_template('login.html')
 
 @app.route('/')
 @login_required
