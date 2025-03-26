@@ -1,18 +1,46 @@
-from flask import Flask, render_template, jsonify, request, send_file
+from flask import Flask, render_template, jsonify, request, send_file, redirect, url_for, session
+from functools import wraps
 import os
 import requests
 import threading
 
 app = Flask(__name__)
+app.secret_key = 'b2742f857a7e4f30a0c4cf7fa2e93cb65f2b74e1d9c5e6c56c94fbe21f0ec3f7'
 
 audio_folder = './audio'
 os.makedirs(audio_folder, exist_ok=True)
+
+SERVER_BASE_URL = 'https://10.94.0.16:8443'
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if request.form['password'] == 'mypassword':  # 🔒 Replace with env var or better storage
+            session['logged_in'] = True
+            return redirect(url_for('main'))
+        else:
+            return 'Incorrect password', 401
+    return '''
+        <form method="post">
+            <h2>Login</h2>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="submit" value="Login">
+        </form>
+    '''
 
 @app.route('/')
 def main():
     return render_template('index.html')
 
-SERVER_BASE_URL = 'https://10.94.0.16:8443'
+
 
 @app.route('/devices', methods=['GET'])
 def get_devices():
