@@ -38,7 +38,7 @@ def label():
 
 @app.route('/get-audio/<vin>', methods=['GET'])
 def get_audio(vin):
-    resp = requests.post(f'{SERVER_BASE_URL}/get-audio/{vin}', verify=False)
+    resp = requests.get(f'{SERVER_BASE_URL}/get-audio/{vin}', verify=False)
     return resp.text
 
 @app.route('/play/<audio>', methods=['GET'])
