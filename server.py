@@ -13,10 +13,6 @@ port_controller = Port_controller()
 
 pi_controller = Pi_controller()
 
-@app.route('/')
-def main():
-    return render_template('index.html')
-
 @app.route('/devices', methods=['GET'])
 def get_devices():
     response = {}

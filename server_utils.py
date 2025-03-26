@@ -26,8 +26,6 @@ def get_audio_filename(vin):
             return audiofile
     return ''
 
-
-
 class Port_controller:
 
     def __init__(self):
