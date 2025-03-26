@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request, send_file
 import os
 import requests
+import threading
 
 app = Flask(__name__)
 
@@ -64,8 +65,10 @@ def play(audio):
 
     finally:
         # Clean up the local file
-        if os.path.exists(local_path):
-            os.remove(local_path)
+        def clean_local():
+            if os.path.exists(local_path):
+                os.remove(local_path)
+        threading.Timer(600, clean_local).start()
 
 @app.route('/delete/<audio>', methods=['GET'])
 def delete(audio):
