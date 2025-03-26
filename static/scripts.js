@@ -1,7 +1,7 @@
 // variables
 let vin = '';
 let selected_device = '';
-let protocol = 'rtp';
+let protocol = 'tcp';
 let audio_name = '';
 
 // check
