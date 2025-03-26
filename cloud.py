@@ -1,11 +1,11 @@
 from flask import Flask, render_template, jsonify, request, send_file
 import os
 import requests
-import tempfile
 
 app = Flask(__name__)
 
 audio_folder = './audio'
+os.makedirs(audio_folder, exist_ok=True)
 
 @app.route('/')
 def main():
@@ -44,29 +44,32 @@ def get_audio(vin):
 @app.route('/play/<audio>', methods=['GET'])
 def play(audio):
     remote_url = f'{SERVER_BASE_URL}/play/{audio}'
+    local_path = os.path.join(audio_folder, audio)
+    if os.path.exists(local_path):
+        return send_file(local_path, as_attachment=True, download_name=audio)
     try:
-        # Download remote audio to a temp file
+        # Download remote audio to local path
         with requests.get(remote_url, stream=True, verify=False) as r:
             r.raise_for_status()
-            suffix = os.path.splitext(audio)[-1]
-            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            with open(local_path, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=8192):
                     if chunk:
-                        tmp.write(chunk)
-                tmp_path = tmp.name
+                        f.write(chunk)
 
-        # Send the temp file to the client
-        return send_file(tmp_path, as_attachment=True, download_name=audio)
+        # Serve the local file
+        return send_file(local_path, as_attachment=True, download_name=audio)
 
     except Exception as e:
         return f'Error downloading file: {str(e)}', 500
+
     finally:
-        # Clean up temp file after sending
-        if 'tmp_path' in locals() and os.path.exists(tmp_path):
-            os.unlink(tmp_path)
+        # Clean up the local file
+        if os.path.exists(local_path):
+            os.remove(local_path)
 
 @app.route('/delete/<audio>', methods=['GET'])
 def delete(audio):
+    os.remove(os.path.join(audio_folder, audio))
     resp = requests.post(f'{SERVER_BASE_URL}/delete/{audio}', verify=False)
     return resp.text
 
