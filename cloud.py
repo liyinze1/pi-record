@@ -11,7 +11,7 @@ audio_folder = './audio'
 def main():
     return render_template('index.html')
 
-SERVER_BASE_URL = 'https://10.94.0.16'
+SERVER_BASE_URL = 'https://10.94.0.16:8443'
 
 @app.route('/devices', methods=['GET'])
 def get_devices():
