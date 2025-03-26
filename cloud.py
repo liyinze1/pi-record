@@ -47,6 +47,7 @@ def play(audio):
     remote_url = f'{SERVER_BASE_URL}/play/{audio}'
     local_path = os.path.join(audio_folder, audio)
     if os.path.exists(local_path):
+        print('Local path already exists')
         return send_file(local_path, as_attachment=True, download_name=audio)
     try:
         # Download remote audio to local path
