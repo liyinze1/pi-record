@@ -76,20 +76,19 @@ function fetchDevices() {
     url.searchParams.append('device', selected_device);
 
     fetch(url)
-        .then(devices => {
+        .then(data => {
             // announce_message('Please select a device')
             update_message('');
-            for (const [device, status] of Object.entries(devices)) {
-                const row = document.createElement('tr');
-                const deviceCell = document.createElement('td');
-                const statusCell = document.createElement('td');
+            const row = document.createElement('tr');
+            const deviceCell = document.createElement('td');
+            const statusCell = document.createElement('td');
 
-                deviceCell.textContent = device;
-                statusCell.textContent = status;
+            deviceCell.textContent = selected_device;
+            statusCell.textContent = data.selected_device;
 
-                row.appendChild(deviceCell);
-                row.appendChild(statusCell);
-                deviceTableBody.appendChild(row);
+            row.appendChild(deviceCell);
+            row.appendChild(statusCell);
+            deviceTableBody.appendChild(row);
 
                 // if (status != 'offline') {
                 //     const button = document.createElement('button');
@@ -102,7 +101,6 @@ function fetchDevices() {
                 //     };
                 //     deviceButtonsContainer.appendChild(button);
                 // }   
-            }
         })
         .catch(error => {
             announce_message('Error', error)
