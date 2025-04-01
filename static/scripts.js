@@ -72,20 +72,11 @@ function fetchDevices() {
     // announce_message('Getting device list, please wait...');
     update_message('Getting device status, please wait...');
 
-    fetch('/device', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({device: selected_device})
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('connection to the server failed');
-            }
-        })
+
+    const url = new URL('/devices', window.location.origin);
+    url.searchParams.append('device', selected_device);
+
+    fetch(url)
         .then(devices => {
             // announce_message('Please select a device')
             update_message('');

@@ -50,8 +50,9 @@ def main():
 @app.route('/devices', methods=['GET'])
 @login_required
 def get_devices():
-    payload = request.get_json()
-    resp = requests.get(f'{SERVER_BASE_URL}/devices', json=payload, verify=False)
+    selected_device = request.args.get('device', default='', type=str)
+    params = {'device': selected_device}
+    resp = requests.get(f'{SERVER_BASE_URL}/devices', params=params, verify=False)
     return jsonify(resp.json())
 
 @app.route('/record', methods=['POST'])

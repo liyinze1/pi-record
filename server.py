@@ -19,8 +19,7 @@ def get_devices():
     # for device, addr in device_list.items():
     #     status = pi_controller.status(addr)
     #     response[device] = status
-    data = request.get_json()
-    device = data['device']
+    device = request.args.get('device', default='', type=str)
     status = pi_controller.status(device)
     return jsonify({device: status})
 
