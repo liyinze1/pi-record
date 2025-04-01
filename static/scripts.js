@@ -76,6 +76,13 @@ function fetchDevices() {
     url.searchParams.append('device', selected_device);
 
     fetch(url)
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('connection to the server failed');
+            }
+        })
         .then(data => {
             // announce_message('Please select a device')
             update_message('');
@@ -84,7 +91,7 @@ function fetchDevices() {
             const statusCell = document.createElement('td');
 
             deviceCell.textContent = selected_device;
-            statusCell.textContent = data.selected_device;
+            statusCell.textContent = data;
 
             row.appendChild(deviceCell);
             row.appendChild(statusCell);

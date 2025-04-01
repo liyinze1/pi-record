@@ -20,9 +20,7 @@ def get_devices():
     #     status = pi_controller.status(addr)
     #     response[device] = status
     device = request.args.get('device', default='', type=str)
-    status = pi_controller.status(device)
-    print(device, status)
-    return jsonify({device: status})
+    return pi_controller.status(device)
 
 @app.route('/record', methods=['POST'])
 def record():
