@@ -1,45 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>QR Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            text-align: center;
-            padding: 30px;
-        }
-        #qr-reader {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        h2 {
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <h2>Scan QR Code to Login</h2>
-    <div id="qr-reader"></div>
+<script>
+    const qrScanner = new Html5Qrcode("qr-reader");
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-    <script>
-        const qrScanner = new Html5Qrcode("qr-reader");
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    function startScanner() {
+        Html5Qrcode.getCameras().then(cameras => {
+            if (cameras && cameras.length) {
+                qrScanner.start(
+                    { facingMode: 'environment' },
+                    config,
+                    onScanSuccess
+                ).catch(err => {
+                    console.error('Scanner start error:', err);
+                    alert('Failed to start QR scanner. Retrying...');
+                    setTimeout(() => {
+                        qrScanner.stop().finally(startScanner);
+                    }, 1000);
+                });
+            } else {
+                alert('No camera found');
+            }
+        }).catch(err => {
+            console.error('Camera fetch error:', err);
+            alert('No camera available. Retrying...');
+            setTimeout(startScanner, 1000);
+        });
+    }
 
-        function onScanSuccess(decodedText, decodedResult) {
-            console.log(`QR scanned: ${decodedText}`);
-            qrScanner.stop();
-
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log(`QR scanned: ${decodedText}`);
+        qrScanner.stop().then(() => {
             fetch('/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: decodedText })
             })
             .then(response => {
@@ -53,25 +45,20 @@
                     window.location.href = '/';
                 } else {
                     alert('Unauthorized');
-                    location.reload();
+                    startScanner();
                 }
             })
             .catch(err => {
-                console.error(err);
+                console.error('Login error:', err);
                 alert('Login error');
+                startScanner();
             });
-        }
-
-        Html5Qrcode.getCameras().then(cameras => {
-            if (cameras && cameras.length) {
-                qrScanner.start(
-                    { facingMode: 'environment' }, config, onScanSuccess
-                );
-            }
         }).catch(err => {
-            console.error(err);
-            alert('No camera found');
+            console.error('Scanner stop error:', err);
+            startScanner();
         });
-    </script>
-</body>
-</html>
+    }
+
+    // Initialize scanner on page load
+    document.addEventListener('DOMContentLoaded', startScanner);
+</script>
