@@ -4,6 +4,7 @@ import os
 import requests
 import threading
 import secrets
+import yaml
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32) 
@@ -13,12 +14,11 @@ os.makedirs(audio_folder, exist_ok=True)
 
 SERVER_BASE_URL = 'https://10.94.0.16:8443'
 
-if os.path.exists('password.txt'):
-    f = open('password.txt', 'r')
-    password = f.read().strip()
-    f.close()
-else:
-    password = 'password'
+f = open('devices.yaml', 'r')
+d = yaml.safe_load(f)
+f.close()
+device_list = d
+audio_folder = './audio'
 
 def login_required(f):
     @wraps(f)
@@ -32,24 +32,26 @@ def login_required(f):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        if request.form['password'] == password:
+        token = request.json.get('token')
+        if token in device_list:
             session['logged_in'] = True
-            return redirect(url_for('main'))
+            session['device'] = token
+            return jsonify({'status': 'ok'})
         else:
-            return 'Incorrect password', 401
+            return jsonify({'status': 'unauthorized'}), 401
     return render_template('login.html')
+
 
 @app.route('/')
 @login_required
 def main():
-    return render_template('index.html')
-
-
+    return render_template('index.html', device=session.get('device'))
 
 @app.route('/devices', methods=['GET'])
 @login_required
 def get_devices():
-    resp = requests.get(f'{SERVER_BASE_URL}/devices', verify=False)
+    payload = request.get_json()
+    resp = requests.get(f'{SERVER_BASE_URL}/devices', json=payload, verify=False)
     return jsonify(resp.json())
 
 @app.route('/record', methods=['POST'])
@@ -117,6 +119,12 @@ def delete(audio):
         os.remove(local_path)
     resp = requests.get(f'{SERVER_BASE_URL}/delete/{audio}', verify=False)
     return resp.text
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=9925, use_reloader=False, ssl_context=('cert.pem', 'key.pem'))

@@ -15,11 +15,14 @@ pi_controller = Pi_controller()
 
 @app.route('/devices', methods=['GET'])
 def get_devices():
-    response = {}
-    for device, addr in device_list.items():
-        status = pi_controller.status(addr)
-        response[device] = status
-    return jsonify(response)
+    # response = {}
+    # for device, addr in device_list.items():
+    #     status = pi_controller.status(addr)
+    #     response[device] = status
+    data = request.get_json()
+    device = data['device']
+    status = pi_controller.status(device)
+    return jsonify({device: status})
 
 @app.route('/record', methods=['POST'])
 def record():

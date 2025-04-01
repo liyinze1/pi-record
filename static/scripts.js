@@ -1,6 +1,6 @@
 // variables
 let vin = '';
-let selected_device = '';
+const selected_device = '{{ device }}';
 let protocol = 'tcp';
 let audio_name = '';
 
@@ -65,14 +65,21 @@ function device_tab_click(event, tabId) {
 
 function fetchDevices() {
     const deviceTableBody = document.getElementById('device-table-body');
-    const deviceButtonsContainer = document.getElementById('device-buttons');
+    // const deviceButtonsContainer = document.getElementById('device-buttons');
     deviceTableBody.innerHTML = ''; // Clear existing table rows
     deviceButtonsContainer.innerHTML = ''; // Clear existing buttons
     vin = '';
     selected_device = '';
-    announce_message('Getting device list, please wait...');
+    // announce_message('Getting device list, please wait...');
+    update_message('Getting device status, please wait...');
 
-    fetch('/devices')
+    fetch('/device', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({device: selected_device})
+    })
         .then(response => {
             if (response.ok) {
                 return response.json();
@@ -81,7 +88,8 @@ function fetchDevices() {
             }
         })
         .then(devices => {
-            announce_message('Please select a device')
+            // announce_message('Please select a device')
+            update_message('');
             for (const [device, status] of Object.entries(devices)) {
                 const row = document.createElement('tr');
                 const deviceCell = document.createElement('td');
@@ -94,17 +102,17 @@ function fetchDevices() {
                 row.appendChild(statusCell);
                 deviceTableBody.appendChild(row);
 
-                if (status != 'offline') {
-                    const button = document.createElement('button');
-                    button.className = 'blue';
-                    button.textContent = device;
-                    button.onclick = () => {
-                        selected_device = device;
-                        update_message('Please scan the VIN number');
-                        document.getElementById('scan_tab_button').click();
-                    };
-                    deviceButtonsContainer.appendChild(button);
-                }   
+                // if (status != 'offline') {
+                //     const button = document.createElement('button');
+                //     button.className = 'blue';
+                //     button.textContent = device;
+                //     button.onclick = () => {
+                //         selected_device = device;
+                //         update_message('Please scan the VIN number');
+                //         document.getElementById('scan_tab_button').click();
+                //     };
+                //     deviceButtonsContainer.appendChild(button);
+                // }   
             }
         })
         .catch(error => {

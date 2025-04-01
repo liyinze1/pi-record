@@ -2,59 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>QR Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        form {
-            background: white;
-            padding: 50px 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            background: #f4f4f4;
             text-align: center;
-            width: 90%;
-            max-width: 500px;
+            padding: 30px;
         }
-        input[type="password"] {
-            padding: 18px;
-            font-size: 1.5em;
+        #qr-reader {
             width: 100%;
-            margin-bottom: 30px;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-        }
-        input[type="submit"] {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 18px;
-            font-size: 1.5em;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
+            max-width: 400px;
+            margin: 0 auto;
         }
         h2 {
-            margin-bottom: 30px;
-            font-size: 2.2em;
+            font-size: 2em;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <form method="post">
-        <h2>🔐 Login</h2>
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <input type="submit" value="Login">
-    </form>
+    <h2>Scan QR Code to Login</h2>
+    <div id="qr-reader"></div>
+
+    <script>
+        const qrScanner = new Html5Qrcode("qr-reader");
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`QR scanned: ${decodedText}`);
+            qrScanner.stop();
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: decodedText })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Login failed');
+            })
+            .then(data => {
+                if (data.status === 'ok') {
+                    window.location.href = '/';
+                } else {
+                    alert('Unauthorized');
+                    location.reload();
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Login error');
+            });
+        }
+
+        Html5Qrcode.getCameras().then(cameras => {
+            if (cameras && cameras.length) {
+                qrScanner.start(
+                    { facingMode: 'environment' }, config, onScanSuccess
+                );
+            }
+        }).catch(err => {
+            console.error(err);
+            alert('No camera found');
+        });
+    </script>
 </body>
 </html>

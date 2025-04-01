@@ -32,7 +32,7 @@
                 <tbody id='device-table-body'>
                 </tbody>
             </table>
-            <div id="device-buttons"></div>
+            {% comment %} <div id="device-buttons"></div> {% endcomment %}
         </div>
         <div id='tabScan' class='tab-content'>
             <div id='qr-reader' style="width: 100%"></div>
@@ -62,6 +62,7 @@
         <div id='tabSettings' class='tab-content'>
             <button class='blue' onclick='select_protocol(0)'>rtp</button>
             <button class='blue' onclick='select_protocol(1)'>tcp</button>
+            <button type="submit" class='red' action="/logout" method="get">Log Out</button>
         </div>
     </div>
 
