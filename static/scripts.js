@@ -1,6 +1,5 @@
 // variables
 let vin = '';
-const selected_device = '{{ device }}';
 let protocol = 'tcp';
 let audio_name = '';
 
