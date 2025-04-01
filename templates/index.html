@@ -62,7 +62,9 @@
         <div id='tabSettings' class='tab-content'>
             <button class='blue' onclick='select_protocol(0)'>rtp</button>
             <button class='blue' onclick='select_protocol(1)'>tcp</button>
-            <button type="submit" class='red' action="/logout" method="get">Log Out</button>
+            <form action="/logout" method="get">
+                <button type="submit" class='red'>Log Out</button>
+            </form>            
         </div>
     </div>
 
