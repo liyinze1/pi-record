@@ -67,9 +67,8 @@ function fetchDevices() {
     const deviceTableBody = document.getElementById('device-table-body');
     // const deviceButtonsContainer = document.getElementById('device-buttons');
     deviceTableBody.innerHTML = ''; // Clear existing table rows
-    deviceButtonsContainer.innerHTML = ''; // Clear existing buttons
+    // deviceButtonsContainer.innerHTML = ''; // Clear existing buttons
     vin = '';
-    selected_device = '';
     // announce_message('Getting device list, please wait...');
     update_message('Getting device status, please wait...');
 
