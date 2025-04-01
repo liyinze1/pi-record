@@ -97,6 +97,10 @@ function fetchDevices() {
             row.appendChild(statusCell);
             deviceTableBody.appendChild(row);
 
+            if (data == 'offline') {
+                update_message('The device is offline, please wait for it to be online');
+            }
+
                 // if (status != 'offline') {
                 //     const button = document.createElement('button');
                 //     button.className = 'blue';
