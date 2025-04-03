@@ -53,7 +53,7 @@ def get_devices():
     selected_device = request.args.get('device', default='', type=str)
     params = {'device': selected_device}
     resp = requests.get(f'{SERVER_BASE_URL}/devices', params=params, verify=False)
-    return resp.text
+    return jsonify(resp.json())
 
 @app.route('/record', methods=['POST'])
 @login_required

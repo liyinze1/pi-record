@@ -10,6 +10,8 @@ at = ATCommandInterface()
 def status():
     return jsonify({
         'status': pi_recorder.status(),
+        'mode': at.mode,
+        'mode_verbose': at.mode_verbose,
     }), 200
 
 @app.route('/record', methods=['POST'])

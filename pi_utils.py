@@ -31,7 +31,9 @@ class ATCommandInterface:
             atexit.register(self.close)
         except Exception as e:
             print('error', e)
-        
+            
+        self.mode_verbose = ''
+        self.mode = ''
 
     def send_command(self, command):
         self.ser.write(command)
@@ -71,8 +73,10 @@ class ATCommandInterface:
             time.sleep(0.2)
             CPSI = self.send_command(b'AT+CPSI?\r').partition('\n')[0]
             msg = t + '\n' + ip + '\n' + CREG + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n'
-            with open(filename, 'a') as f:
-                f.write(msg)
+            self.mode_verbose = msg
+            self.mode = CPSI[6:].split(',')[0]
+            # with open(filename, 'a') as f:
+            #     f.write(msg)
             time.sleep(interval)
 
 class Pi_recorder:

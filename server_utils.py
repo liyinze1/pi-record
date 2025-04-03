@@ -7,6 +7,7 @@ import shlex
 import datetime
 from tinydb import TinyDB, Query
 import requests
+from flask import jsonify
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -121,8 +122,8 @@ class Pi_controller:
                 timeout=5
             )
             if response.status_code == 200:
-                print('Status:', response.json())
-                return response.json()['status']
+                print(response.json())
+                return jsonify(response.json())
             else:
                 print('Failed to get status:', response.status_code)
                 return 'offline'
