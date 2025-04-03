@@ -72,7 +72,10 @@ class ATCommandInterface:
             COPS = self.send_command(b'AT+COPS?\r').partition('\n')[0]
             time.sleep(0.2)
             CPSI = self.send_command(b'AT+CPSI?\r').partition('\n')[0]
-            msg = t + '\n' + ip + '\n' + CREG + '\n' + CSQ + '\n' + COPS + '\n' + CPSI + '\n'
+            
+            t = 'time: ' + t
+            ip = 'ip: ' + ip
+            msg = '<br>'.join([t, ip, CREG, CSQ, COPS, CPSI])
             self.mode_verbose = msg
             self.mode = CPSI[6:].split(',')[0]
             # with open(filename, 'a') as f:
