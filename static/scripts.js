@@ -89,7 +89,7 @@ function fetchDevices() {
             deviceCell.textContent = data.status;
             statusCell.textContent = data.mode;
 
-            document.getElementById('mode_message').innerHTML = data.mode_verbose;
+            document.getElementById('mode_message').innerHTML = 'Verbose:<br>' + data.mode_verbose;
 
             row.appendChild(deviceCell);
             row.appendChild(statusCell);
