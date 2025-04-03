@@ -112,7 +112,8 @@ class Pi_controller:
     def get_url(self, dest):
         return 'https://%s:22000' % dest
 
-    def status(self, dest):
+    def status(self, device):
+        dest = device_list[device]
         try:
             response = requests.get(
                 self.get_url(dest) + '/status',
