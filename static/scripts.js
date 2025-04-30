@@ -44,7 +44,7 @@ function openTab(event, tabId) {
 
 // update message
 function update_message(data) {
-    let msg = 'Device = ' + selected_device + '<br>VIN =' + vin + '<br>protocol = ' + protocol;
+    let msg = '<br>VIN =' + vin + '<br>protocol = ' + protocol;
     if (data) {
         document.getElementById('message').innerHTML = msg + '<br>' + data;
     } else {
@@ -70,7 +70,7 @@ function fetchDevices() {
 
 
     const url = new URL('/devices', window.location.origin);
-    url.searchParams.append('device', selected_device);
+
 
     fetch(url)
         .then(response => {
@@ -145,7 +145,7 @@ function startRecording() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ vin: vin, device: selected_device, protocol: protocol})
+        body: JSON.stringify({ vin: vin, protocol: protocol})
     })
     .then(response => {
         if (response.ok) {
@@ -173,7 +173,7 @@ function stopRecording() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ vin: vin, device: selected_device })
+        body: JSON.stringify({ vin: vin})
     })
     .then(response => {
         if (response.ok) {
@@ -203,7 +203,7 @@ function label(option) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ vin: vin, device: selected_device, label: option})
+        body: JSON.stringify({ vin: vin, label: option})
     })
     .then(response => {
         if (response.ok) {
