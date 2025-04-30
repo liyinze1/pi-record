@@ -15,9 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 f = open('devices.yaml', 'r')
-d = yaml.safe_load(f)
+device_list = yaml.safe_load(f)
 f.close()
-device_list = d
 audio_folder = './audio'
 
 def get_audio_filename(vin):
@@ -113,8 +112,7 @@ class Pi_controller:
     def get_url(self, dest):
         return 'https://%s:22000' % dest
 
-    def status(self, device):
-        dest = device_list[device]
+    def status(self, dest):
         try:
             response = requests.get(
                 self.get_url(dest) + '/status',
