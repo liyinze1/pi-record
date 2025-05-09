@@ -9,11 +9,32 @@ import time
 import atexit
 import datetime
 import threading
-from requests import get
+import requests
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+f = open('devices.yaml', 'r')
+device_list = yaml.safe_load(f)
+f.close()
+audio_folder = './audio'
+
+class Ink_screen_controller:
+    def __init__(self, port='/dev/ttyUSB0', baudrate=115200, timeout=1):
+        """Initialize the serial connection."""
+        self.port = port
+        self.baudrate = baudrate
+        self.timeout = timeout
+        try:
+            self.ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
+            print(f"Connected to {port} at {baudrate} baud.")
+        except Exception as e:
+            print('error', e)
+            
+    def update(self, msg):
+        """Update the ink screen with the given message."""
+        self.ser.write(msg.encode('ascii'))
 
 class ATCommandInterface:
     def __init__(self, port='/dev/ttyUSB2', baudrate=115200, timeout=1):
@@ -51,7 +72,7 @@ class ATCommandInterface:
         
     def get_ip(self):
         try:
-            ip = get('https://api.ipify.org').content.decode('utf8')
+            ip = requests.get('https://api.ipify.org').content.decode('utf8')
             return True, ip
         except Exception as e:
             return False, f'Error starting record: {e}'
@@ -86,11 +107,9 @@ class Pi_recorder:
 
     def __init__(self):
         self.record_thread = None
-        # self.record_filename = None
-        # self.timer = None
-        # self.kill_timer = False
-        
         pi_mic.initialize()
+        self.at = ATCommandInterface()
+        self.ink = Ink_screen_controller()
         
         os.system('ffmpeg') # warm up ffmpeg
         
@@ -109,6 +128,12 @@ class Pi_recorder:
             return 'recording'
         else:
             return 'ready'
+        
+    def mode(self):
+        return self.at.mode
+    
+    def mode_verbose(self):
+        return self.at.mode_verbose
 
     def record(self, ip, port, protocol, test):
         
@@ -134,6 +159,7 @@ class Pi_recorder:
         
         print('Start to record')
         print(stream_cmd)
+        self.ink.update('M' + 'Recording ... ' + self.at.mode)
         return 'recording'
     
     def stop(self):
@@ -143,7 +169,19 @@ class Pi_recorder:
             # self.record_thread.kill()
             # self.led.off()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
+        self.ink.update('M' + 'Stopped ...' + + self.at.mode)
         return 'stopped'
         
-
-    
+    def get_token(self):
+        self.ink.update('M' + 'Booting please wait...')
+        while True:
+            try:
+                token = requests.get('https://%s:9925'% (device_list['server']), verify=False, timeout=5).json()['token']
+                if token:
+                    break
+            except Exception as e:
+                print('error', e)
+            time.sleep(5)
+        self.ink.update('T' + token)
+        time.sleep(1)
+        self.ink.update('M' + 'Ready ...' + self.at.mode)

@@ -4,14 +4,14 @@ from pi_utils import *
 app = Flask(__name__)
 
 pi_recorder = Pi_recorder()
-at = ATCommandInterface()
+
 
 @app.route('/status', methods=['GET'])
 def status():
     return jsonify({
         'status': pi_recorder.status(),
-        'mode': at.mode,
-        'mode_verbose': at.mode_verbose,
+        'mode': pi_recorder.mode(),
+        'mode_verbose': pi_recorder.mode_verbose(),
     }), 200
 
 @app.route('/record', methods=['POST'])
@@ -26,7 +26,6 @@ def record():
     return jsonify({
         'status': pi_recorder.record(ip, port, protocol, test),
     }), 200
-    
     
 @app.route('/stop', methods=['POST'])
 def stop():
