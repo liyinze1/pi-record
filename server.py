@@ -19,22 +19,21 @@ def get_devices():
     # for device, addr in device_list.items():
     #     status = pi_controller.status(addr)
     #     response[device] = status
-    device_ip = request.args.get('device_ip', default='', type=str)
-    return pi_controller.status(device_ip)
+    device = request.args.get('device', default='', type=str)
+    return pi_controller.status(device)
 
 @app.route('/record', methods=['POST'])
 def record():
     data = request.get_json()
     vin = data['vin']
-    device_ip = data['device_ip']
+    device = data['device']
     if 'protocol' in data:
         protocol = data['protocol']
     else:
         protocol = 'rtp'
-    print('Request to start recording, device', device_ip, 'vin', vin)
+    print('Request to start recording, device', device, 'vin', vin)
     port = port_controller.get_port()
     
-
     if protocol == 'rtp':
         # start recording before the receving thread
         if pi_controller.record(device_list[device], port, protocol) == 'recording':
@@ -61,9 +60,9 @@ def record():
 def stop():
     data = request.get_json()
     vin = data['vin']
-    device_ip = data['device_ip']
-    print('Request to stop recording, device', device_ip, 'vin', vin)
-    pi_controller.stop(device_list[device_ip])
+    device = data['device']
+    print('Request to stop recording, device', device, 'vin', vin)
+    pi_controller.stop(device_list[device])
     if vin in receive_threads:
         receive_threads[vin].stop()
         port = receive_threads.pop(vin).port

@@ -5,7 +5,6 @@ import requests
 import threading
 import secrets
 import yaml
-import string
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32) 
@@ -13,16 +12,13 @@ app.secret_key = secrets.token_hex(32)
 audio_folder = './audio'
 os.makedirs(audio_folder, exist_ok=True)
 
-
+SERVER_BASE_URL = 'https://10.94.0.16:8443'
 
 f = open('devices.yaml', 'r')
-device_list = yaml.safe_load(f)
+d = yaml.safe_load(f)
 f.close()
+device_list = d
 audio_folder = './audio'
-
-SERVER_BASE_URL = 'https://%s:8443'% (device_list['server'])
-
-tokens = {}
 
 def login_required(f):
     @wraps(f)
@@ -32,38 +28,30 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@app.route('/token', methods=['GET'])
-def token():
-    ip_addr = request.remote_addr
-    if ip_addr in device_list.values():
-        alphabet = string.ascii_letters + string.digits
-        token = ''.join(secrets.choice(alphabet) for i in range(8))
-        tokens[token] = ip_addr
-        return jsonify({'token': token}), 200
-    else:
-        return jsonify({'error': 'Unauthorized'}), 401
-        
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         token = request.json.get('token')
-        if token in tokens:
+        if token in device_list:
             session['logged_in'] = True
-            session['device_ip'] = tokens[token]
+            session['device'] = token
             return jsonify({'status': 'ok'})
         else:
             return jsonify({'status': 'unauthorized'}), 401
     return render_template('login.html')
 
+
 @app.route('/')
 @login_required
 def main():
-    return render_template('index.html')
+    return render_template('index.html', device=session.get('device'))
 
 @app.route('/devices', methods=['GET'])
 @login_required
 def get_devices():
-    params = {'device_ip': session.get('device_ip')}
+    selected_device = request.args.get('device', default='', type=str)
+    params = {'device': selected_device}
     resp = requests.get(f'{SERVER_BASE_URL}/devices', params=params, verify=False)
     return jsonify(resp.json())
 
@@ -71,7 +59,6 @@ def get_devices():
 @login_required
 def record():
     payload = request.get_json()
-    payload['ip'] = session.get('device_ip')
     resp = requests.post(f'{SERVER_BASE_URL}/record', json=payload, verify=False)
     return resp.text
 
@@ -79,10 +66,8 @@ def record():
 @login_required
 def stop():
     payload = request.get_json()
-    payload['ip'] = session.get('device_ip')
     resp = requests.post(f'{SERVER_BASE_URL}/stop', json=payload, verify=False)
     return resp.text
-
 @app.route('/label', methods=['POST'])
 @login_required
 def label():
