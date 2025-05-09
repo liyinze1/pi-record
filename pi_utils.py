@@ -106,6 +106,9 @@ class ATCommandInterface:
 class Pi_recorder:
 
     def __init__(self):
+        
+        os.system('ffmpeg') # warm up ffmpeg
+        
         self.record_thread = None
         pi_mic.initialize()
         self.at = ATCommandInterface()
