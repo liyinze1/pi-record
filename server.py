@@ -34,14 +34,27 @@ def record():
     print('Request to start recording, device', device, 'vin', vin)
     port = port_controller.get_port()
     
-    if pi_controller.record(device_list[device], port, protocol) == 'recording':
-        print('trying to start receiving...')
+    if protocol == 'rtp':
+        # start recording before the receving thread
+        if pi_controller.record(device_list[device], port, protocol) == 'recording':
+            print('trying to start receiving...')
+            receive = Receive(vin, port, protocol)
+            receive_threads[vin] = receive
+            return 'recording...'
+        else:
+            port_controller.return_port(port)
+            return 'failed to start recording'
+    elif protocol == 'tcp':
+        # start the receving thread before recording
         receive = Receive(vin, port, protocol)
-        receive_threads[vin] = receive
-        return 'recording...'
-    else:
-        port_controller.return_port(port)
-        return 'failed to start recording'
+        if pi_controller.record(device_list[device], port, protocol) == 'recording':
+            print('trying to start receiving...')
+            receive_threads[vin] = receive
+            return 'recording...'
+        else:
+            receive.stop()
+            port_controller.return_port(port)
+            return 'failed to start recording'
 
 @app.route('/stop', methods=['POST'])
 def stop():
