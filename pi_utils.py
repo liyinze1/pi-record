@@ -111,6 +111,8 @@ class Pi_recorder:
         self.at = ATCommandInterface()
         self.ink = Ink_screen_controller()
         
+        os.system('ffmpeg') # warm up ffmpeg
+        
         with open('pi.yaml', 'r') as f:
             data = yaml.safe_load(f)
             self.timeout = data['timeout']
