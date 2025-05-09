@@ -92,6 +92,8 @@ class Pi_recorder:
         
         pi_mic.initialize()
         
+        os.system('ffmpeg') # warm up ffmpeg
+        
         with open('pi.yaml', 'r') as f:
             data = yaml.safe_load(f)
             self.timeout = data['timeout']
