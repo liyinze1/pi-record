@@ -23,7 +23,7 @@ f.close()
 audio_folder = './audio'
 
 class Ink_screen_controller:
-    def __init__(self, port='/dev/ttyUSB0', baudrate=115200, timeout=1):
+    def __init__(self, port='/dev/ttyACM0', baudrate=115200, timeout=1):
         """Initialize the serial connection."""
         self.port = port
         self.baudrate = baudrate
