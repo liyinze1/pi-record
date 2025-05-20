@@ -36,8 +36,8 @@ String token = "";
 QRCode qrcode;
 uint8_t *qrcodeData; // Version 3 can fit 8 chars easily
 int pixelSize = 3; // Size of each QR module (dot) in pixels
-int offsetX = 10;
-int offsetY = 10;
+int offsetX = 5;
+int offsetY = 5;
 
 
 void setup() {
@@ -103,8 +103,10 @@ void render() {
       temp += c;
     }
   }
+  // update time stamp
   if (temp.length() > 0) {
-    display.setCursor(110, y);
+    display.setCursor(10, 110);
+    display.setTextSize(1);
     display.print(temp);
   }
   

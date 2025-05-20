@@ -10,6 +10,8 @@ import atexit
 import datetime
 import threading
 import requests
+import RPi.GPIO as GPIO
+from datetime import datetime
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -34,6 +36,7 @@ class Ink_screen_controller:
             
     def update(self, msg):
         """Update the ink screen with the given message."""
+        msg += datetime.now().strftime(' updated_at:%Y-%m-%d-%H:%M:%S')
         self.ser.write(msg.encode('ascii'))
 
 class ATCommandInterface:
@@ -103,6 +106,27 @@ class ATCommandInterface:
             #     f.write(msg)
             time.sleep(interval)
 
+class LED_controller:
+    def __init__(self, pin_red=13, pin_green=15):
+        self.pin_red = pin_red
+        self.pin_green = pin_green
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.pin_red, GPIO.OUT)
+        GPIO.setup(self.pin_green, GPIO.OUT)
+        
+    def ready(self):
+        GPIO.output(self.pin_red, GPIO.HIGH)
+        GPIO.output(self.pin_green, GPIO.LOW)
+        
+    def record(self):
+        GPIO.output(self.pin_red, GPIO.LOW)
+        GPIO.output(self.pin_green, GPIO.HIGH)
+        
+    def off(self):
+        GPIO.output(self.pin_red, GPIO.LOW)
+        GPIO.output(self.pin_green, GPIO.LOW)
+        
+        
 class Pi_recorder:
 
     def __init__(self):
@@ -114,9 +138,14 @@ class Pi_recorder:
         self.at = ATCommandInterface()
         self.ink = Ink_screen_controller()
         
+        self.led = LED_controller()
+        
         with open('pi.yaml', 'r') as f:
             data = yaml.safe_load(f)
             self.timeout = data['timeout']
+            
+        self.get_token()
+        self.led.ready()
             
     def check(self):
         '''
@@ -161,6 +190,7 @@ class Pi_recorder:
         print('Start to record')
         print(stream_cmd)
         self.ink.update('M' + 'Recording ... ' + self.at.mode)
+        self.led.record()
         return 'recording'
     
     def stop(self):
@@ -171,6 +201,7 @@ class Pi_recorder:
             # self.led.off()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
         self.ink.update('M' + 'Stopped ...' + + self.at.mode)
+        self.led.ready()
         return 'stopped'
         
     def get_token(self):
@@ -186,3 +217,4 @@ class Pi_recorder:
         self.ink.update('T' + token)
         time.sleep(1)
         self.ink.update('M' + 'Ready ...' + self.at.mode)
+
