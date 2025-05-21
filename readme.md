@@ -56,9 +56,6 @@ dtoverlay=gpio-shutdown,gpio_pin=24,active_low=1,gpio_pull=up
 # output pin to enable power source
 dtoverlay=gpio-poweroff,gpiopin=26,active_low=1
 
-#Shut off bluetooth to save power
-dtoverlay=disable-bt
-
 # Turn on 1-wire for temp sensors
 dtoverlay=w1-gpio,gpiopin=27
 
