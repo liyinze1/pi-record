@@ -137,6 +137,7 @@ class LED_controller:
         print('turn on red LED')
         GPIO.output(self.pin_red, GPIO.HIGH)
         GPIO.output(self.pin_green, GPIO.LOW)
+        time.sleep(1)
         
     def record(self):
         print('turn on green LED')
