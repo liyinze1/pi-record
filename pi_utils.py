@@ -31,6 +31,7 @@ class Ink_screen_controller:
         try:
             self.ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
             print(f"Connected to {port} at {baudrate} baud.")
+            atexit.register(self.close)
         except Exception as e:
             print('error', e)
             
@@ -47,6 +48,16 @@ class Ink_screen_controller:
         print('writing to E-INK:', msg)
         self.ser.write(msg.encode('ascii'))
         # time.sleep(0.2)
+        
+    def close(self):
+        """Close the serial connection."""
+        if self.ser.is_open:
+            msg = 'T ' + '\n'
+            self.ser.write(msg.encode('ascii'))
+            msg = 'M ' + '\n'
+            self.ser.write(msg.encode('ascii'))
+            self.ser.close()
+            print("Connection closed.")
 
 class ATCommandInterface:
     def __init__(self, port='/dev/ttyUSB2', baudrate=115200, timeout=1):
@@ -58,7 +69,7 @@ class ATCommandInterface:
             self.ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
             print(f"Connected to {port} at {baudrate} baud.")
             self.log = True
-            self.thread = threading.Thread(target=self.start_logging)
+            self.thread = threading.Thread(target=self.update)
             self.thread.start()
             # Register the close method to be called on program exit
             atexit.register(self.close)
@@ -84,7 +95,7 @@ class ATCommandInterface:
         self.log = False
         self.thread.join()
 
-    def start_logging(self, filename='log.txt', interval=10):
+    def update(self, filename='log.txt'):
         time.sleep(30) # wait for the modem to be ready
         while self.log:
             t = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
@@ -104,11 +115,15 @@ class ATCommandInterface:
             t = 'time: ' + t
             msg = '<br>'.join([t, CREG, CSQ, COPS, CPSI])
             self.mode_verbose = msg
-            self.mode = CPSI.split(':')[1].split(',')[0].strip()
-            self.op = COPS.split(':')[1].split(',')[2][1:-1].replace(' ', '_')
-            with open(filename, 'a') as f:
-                f.write(msg)
-            time.sleep(interval)
+            try:
+                self.mode = CPSI.split(':')[1].split(',')[0].strip()
+                self.op = COPS.split(':')[1].split(',')[2][1:-1].replace(' ', '_')
+            except:
+                self.mode = ''
+                self.op = ''
+            # with open(filename, 'a') as f:
+            #     f.write(msg)
+
 
 class LED_controller:
     
@@ -125,6 +140,8 @@ class LED_controller:
             self.pin_green = 15
         GPIO.setup(self.pin_red, GPIO.OUT)
         GPIO.setup(self.pin_green, GPIO.OUT)
+        
+        atexit.register(self.off)
         
     def ready(self):
         print('turn on red LED')
