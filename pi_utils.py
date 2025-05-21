@@ -68,7 +68,7 @@ class ATCommandInterface:
 
     def send_command(self, command):
         self.ser.write(command)
-        time.sleep(1)
+        time.sleep(0.2)
         response = self.ser.read_all().decode('ascii', errors='ignore').strip()
         return response
 
@@ -101,12 +101,10 @@ class ATCommandInterface:
             time.sleep(0.2)
             CPSI = self.send_command(b'AT+CPSI?\r').partition('\n')[0]
             
-            print('CREG:', CREG)
-            print('CSQ:', CSQ)
-            print('COPS:', COPS)
-            print('CPSI:', CPSI)
-                
-            
+            # print('CREG:', CREG)
+            # print('CSQ:', CSQ)
+            # print('COPS:', COPS)
+            # print('CPSI:', CPSI)        
             t = 'time: ' + t
             ip = 'ip: ' + ip
             msg = '<br>'.join([t, ip, CREG, CSQ, COPS, CPSI])
@@ -155,13 +153,14 @@ class Pi_recorder:
         pi_mic.initialize()
         self.at = ATCommandInterface()
         self.ink = Ink_screen_controller()
-        
         self.led = LED_controller()
         
         with open('pi.yaml', 'r') as f:
             data = yaml.safe_load(f)
             self.timeout = data['timeout']
             
+        # time.sleep(1)
+        
         self.get_token()
         self.led.ready()
             
