@@ -3,8 +3,7 @@ Description=Sound Collection Service
 After=network.target
 
 [Service]
-AmbientCapabilities=CAP_NET_BIND_SERVICE
-ExecStart=/usr/bin/python3 pi.py
+ExecStart=/home/pi/pi-record/venv/bin/python /home/pi/pi-record/pi.py
 WorkingDirectory=/home/pi/pi-record
 StandardOutput=inherit
 StandardError=inherit
