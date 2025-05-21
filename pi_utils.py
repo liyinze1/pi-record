@@ -169,7 +169,6 @@ class Pi_recorder:
         # time.sleep(1)
         
         self.get_token()
-        self.led.ready()
             
     def check(self):
         '''
@@ -224,7 +223,7 @@ class Pi_recorder:
             # self.record_thread.kill()
             # self.led.off()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
-        self.ink.update_message('Stopped Ready' + self.at.mode)
+        self.ink.update_message('Stopped Ready ' + self.at.mode)
         self.led.ready()
         return 'stopped'
         
@@ -243,4 +242,5 @@ class Pi_recorder:
         self.ink.update_token(token)
         time.sleep(5) # waiting for the modem info
         self.ink.update_message('Ready ' + self.at.mode + ' ' + self.at.op)
-
+        time.sleep(5)
+        self.led.ready()
