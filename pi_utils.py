@@ -39,14 +39,14 @@ class Ink_screen_controller:
         msg = 'M' + msg + datetime.now().strftime(' updated_at:%Y-%m-%d-%H:%M:%S') + '\n'
         print('writing to E-INK:', msg)
         self.ser.write(msg.encode('ascii'))
-        time.sleep(0.2)
+        # time.sleep(0.2)
         
     def update_token(self, token):
         """Update the ink screen with the given token."""
         msg = 'T' + token + '\n'
         print('writing to E-INK:', msg)
         self.ser.write(msg.encode('ascii'))
-        time.sleep(0.2)
+        # time.sleep(0.2)
 
 class ATCommandInterface:
     def __init__(self, port='/dev/ttyUSB2', baudrate=115200, timeout=1):
@@ -238,5 +238,5 @@ class Pi_recorder:
         print('token:', token)
         self.ink.update_token(token)
         time.sleep(1)
-        self.ink.update_message('Ready ...' + self.at.mode)
+        self.ink.update_message('Ready ... ' + self.at.mode)
 
