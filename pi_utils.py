@@ -227,7 +227,7 @@ class Pi_recorder:
             print('Retrying to get token in 5s...')
             time.sleep(5)
         print('token:', token)
-        self.ink.update_token('T' + token)
+        self.ink.update_token(token)
         time.sleep(5)
         self.ink.update_message('Ready ...' + self.at.mode)
 
