@@ -67,6 +67,7 @@ class ATCommandInterface:
             
         self.mode_verbose = ''
         self.mode = ''
+        self.op = ''
         self.ser.write(b'ATE0\r') # disable echo
 
     def send_command(self, command):
@@ -240,6 +241,6 @@ class Pi_recorder:
             time.sleep(5)
         print('token:', token)
         self.ink.update_token(token)
-        time.sleep(1) # waiting for the modem info
+        time.sleep(5) # waiting for the modem info
         self.ink.update_message('Ready ' + self.at.mode + ' ' + self.at.op)
 
