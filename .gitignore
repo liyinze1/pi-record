@@ -11,3 +11,4 @@ vin*
 *.txt
 *.json
 !requirements.txt
+venv/
