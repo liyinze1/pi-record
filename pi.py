@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from pi_utils import *
 
 pi_recorder = Pi_recorder()
+pi_recorder.led.ready()
 
 app = Flask(__name__)
 

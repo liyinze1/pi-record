@@ -168,7 +168,6 @@ class Pi_recorder:
         # time.sleep(1)
         
         self.get_token()
-        self.led.ready()
             
     def check(self):
         '''
