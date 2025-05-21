@@ -168,8 +168,10 @@ class Pi_recorder:
             
     def status(self):
         if self.check():
+            self.ink.update_message('Recording ' + self.at.mode + ' ' + self.at.op)
             return 'recording'
         else:
+            self.ink.update_message('Ready ' + self.at.mode + ' ' + self.at.op)
             return 'ready'
         
     def mode(self):

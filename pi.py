@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 @app.route('/status', methods=['GET'])
 def status():
+    
     return jsonify({
         'status': pi_recorder.status(),
         'mode': pi_recorder.mode(),
