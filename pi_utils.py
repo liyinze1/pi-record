@@ -67,7 +67,7 @@ class ATCommandInterface:
 
     def send_command(self, command):
         self.ser.write(command)
-        time.sleep(0.5)
+        time.sleep(1)
         response = self.ser.read_all().decode('ascii', errors='ignore').strip()
         return response
 
@@ -104,7 +104,7 @@ class ATCommandInterface:
             ip = 'ip: ' + ip
             msg = '<br>'.join([t, ip, CREG, CSQ, COPS, CPSI])
             self.mode_verbose = msg
-            self.mode = CPSI[6:].split(',')[0]
+            self.mode = CPSI.split(':')[1].split(',')[0].strip()
             # with open(filename, 'a') as f:
             #     f.write(msg)
             time.sleep(interval)
@@ -228,6 +228,6 @@ class Pi_recorder:
             time.sleep(5)
         print('token:', token)
         self.ink.update_token(token)
-        time.sleep(5)
+        time.sleep(1)
         self.ink.update_message('Ready ...' + self.at.mode)
 
