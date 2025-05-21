@@ -651,3 +651,6 @@ def initialize():
     adc.set_communication(samplerate=48)
 
     print("ADC is ready")
+    
+if __name__ == "__main__":
+    initialize()
