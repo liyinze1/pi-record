@@ -100,6 +100,12 @@ class ATCommandInterface:
             time.sleep(0.2)
             CPSI = self.send_command(b'AT+CPSI?\r').partition('\n')[0]
             
+            print('CREG:', CREG)
+            print('CSQ:', CSQ)
+            print('COPS:', COPS)
+            print('CPSI:', CPSI)
+                
+            
             t = 'time: ' + t
             ip = 'ip: ' + ip
             msg = '<br>'.join([t, ip, CREG, CSQ, COPS, CPSI])
