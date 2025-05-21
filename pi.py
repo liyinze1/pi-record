@@ -1,10 +1,9 @@
 from flask import Flask, jsonify, request
 from pi_utils import *
 
-app = Flask(__name__)
-
 pi_recorder = Pi_recorder()
 
+app = Flask(__name__)
 
 @app.route('/status', methods=['GET'])
 def status():
