@@ -13,10 +13,6 @@ function check_vin() {
 }
 
 function check_device_vin() {
-    if (selected_device.length == 0) {
-        announce_message('Please select a device');
-        return false;
-    }
     if (vin.length == 0) {
         update_message('Please scan a vin');
         return false;
