@@ -85,6 +85,7 @@ class ATCommandInterface:
         self.thread.join()
 
     def start_logging(self, filename='log.txt', interval=10):
+        time.sleep(30) # wait for the modem to be ready
         while self.log:
             t = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             
@@ -105,8 +106,8 @@ class ATCommandInterface:
             self.mode_verbose = msg
             self.mode = CPSI.split(':')[1].split(',')[0].strip()
             self.op = COPS.split(':')[1].split(',')[2][1:-1].replace(' ', '_')
-            # with open(filename, 'a') as f:
-            #     f.write(msg)
+            with open(filename, 'a') as f:
+                f.write(msg)
             time.sleep(interval)
 
 class LED_controller:
