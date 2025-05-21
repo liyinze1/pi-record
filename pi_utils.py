@@ -113,6 +113,7 @@ class ATCommandInterface:
             msg = '<br>'.join([t, ip, CREG, CSQ, COPS, CPSI])
             self.mode_verbose = msg
             self.mode = CPSI.split(':')[1].split(',')[0].strip()
+            self.op = COPS.split(':')[1].split(',')[2][1:-1]
             # with open(filename, 'a') as f:
             #     f.write(msg)
             time.sleep(interval)
@@ -137,7 +138,6 @@ class LED_controller:
         print('turn on red LED')
         GPIO.output(self.pin_red, GPIO.HIGH)
         GPIO.output(self.pin_green, GPIO.LOW)
-        time.sleep(1)
         
     def record(self):
         print('turn on green LED')
@@ -168,6 +168,7 @@ class Pi_recorder:
         # time.sleep(1)
         
         self.get_token()
+        self.led.ready()
             
     def check(self):
         '''
@@ -211,7 +212,7 @@ class Pi_recorder:
         
         print('Start to record')
         print(stream_cmd)
-        self.ink.update_message('Recording ... ' + self.at.mode)
+        self.ink.update_message('Recording ' + self.at.mode + ' ' + self.at.op)
         self.led.record()
         return 'recording'
     
@@ -222,7 +223,7 @@ class Pi_recorder:
             # self.record_thread.kill()
             # self.led.off()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
-        self.ink.update_message('Stopped ...' + self.at.mode)
+        self.ink.update_message('Stopped Ready' + self.at.mode)
         self.led.ready()
         return 'stopped'
         
@@ -239,5 +240,6 @@ class Pi_recorder:
             time.sleep(5)
         print('token:', token)
         self.ink.update_token(token)
-        self.ink.update_message('Ready ... ' + self.at.mode)
+        time.sleep(1) # waiting for the modem info
+        self.ink.update_message('Ready ' + self.at.mode + ' ' + self.at.op)
 
