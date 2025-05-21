@@ -9,19 +9,34 @@ put
 in
 ```sudo nano /etc/rc.local```
 
-## VPN
+
+
+## Setup on Pi
+
+### Install
+
+```
+sudo apt update
+sudo apt upgrade -y
+sudo apt install python3-pip ffmpeg git openvpn -y
+
+sudo systemctl stop ModemManager
+sudo systemctl disable ModemManager
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements/pi/requirements.txt
+```
+
+and turn on i2c
+```
+sudo raspi-config
+```
+
 ### Zerotier
-For the vpn between phone, pi and server, here I recommend [zerotier](https://www.zerotier.com/download/), and here is the [instruction](https://linuxhint.com/install-use-zerotier-raspberry-pi-virtual-network/) on
-how to install it on a raspberry pi.
-
-Make sure they can ping to each other.
-
-Revise the ip address of the server and the network address on [config.yaml](./config.yaml)
+https://www.zerotier.com/download/
 
 ### OpenVPN
-```
-sudo apt-get install openvpn unzip
-```
 
 ```
 sudo cp vpn.service /etc/systemd/system/
