@@ -2,3 +2,6 @@ Flask
 requests
 PyYAML
 pyopenssl
+RPi.GPIO
+smbus
+pyserial
