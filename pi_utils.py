@@ -211,7 +211,7 @@ class Pi_recorder:
             # self.record_thread.kill()
             # self.led.off()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
-        self.ink.update_message('Stopped ...' + + self.at.mode)
+        self.ink.update_message('Stopped ...' + self.at.mode)
         self.led.ready()
         return 'stopped'
         
