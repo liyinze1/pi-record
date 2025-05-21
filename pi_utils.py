@@ -114,7 +114,7 @@ class ATCommandInterface:
             msg = '<br>'.join([t, ip, CREG, CSQ, COPS, CPSI])
             self.mode_verbose = msg
             self.mode = CPSI.split(':')[1].split(',')[0].strip()
-            self.op = COPS.split(':')[1].split(',')[2][1:-1]
+            self.op = COPS.split(':')[1].split(',')[2][1:-1].replace(' ', '_')
             # with open(filename, 'a') as f:
             #     f.write(msg)
             time.sleep(interval)
