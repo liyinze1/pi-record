@@ -36,14 +36,14 @@ class Ink_screen_controller:
             
     def update_message(self, msg):
         """Update the ink screen with the given message."""
-        msg = 'M' + msg + datetime.now().strftime(' updated_at:%Y-%m-%d-%H:%M:%S')
+        msg = 'M' + msg + datetime.now().strftime(' updated_at:%Y-%m-%d-%H:%M:%S') + '\n'
         print('writing to E-INK:', msg)
         self.ser.write(msg.encode('ascii'))
         time.sleep(0.2)
         
     def update_token(self, token):
         """Update the ink screen with the given token."""
-        msg = 'T' + token
+        msg = 'T' + token + '\n'
         print('writing to E-INK:', msg)
         self.ser.write(msg.encode('ascii'))
         time.sleep(0.2)
