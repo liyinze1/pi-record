@@ -34,9 +34,14 @@ class Ink_screen_controller:
         except Exception as e:
             print('error', e)
             
-    def update(self, msg):
+    def update_message(self, msg):
         """Update the ink screen with the given message."""
-        msg += datetime.now().strftime(' updated_at:%Y-%m-%d-%H:%M:%S')
+        msg = 'M' + msg + datetime.now().strftime(' updated_at:%Y-%m-%d-%H:%M:%S')
+        self.ser.write(msg.encode('ascii'))
+        
+    def update_token(self, token):
+        """Update the ink screen with the given token."""
+        msg = 'T' + token
         print('writing to E-INK:', msg)
         self.ser.write(msg.encode('ascii'))
 
@@ -195,7 +200,7 @@ class Pi_recorder:
         
         print('Start to record')
         print(stream_cmd)
-        self.ink.update('M' + 'Recording ... ' + self.at.mode)
+        self.ink.update_message('Recording ... ' + self.at.mode)
         self.led.record()
         return 'recording'
     
@@ -206,12 +211,12 @@ class Pi_recorder:
             # self.record_thread.kill()
             # self.led.off()
             os.killpg(os.getpgid(self.record_thread.pid), signal.SIGTERM)
-        self.ink.update('M' + 'Stopped ...' + + self.at.mode)
+        self.ink.update_message('Stopped ...' + + self.at.mode)
         self.led.ready()
         return 'stopped'
         
     def get_token(self):
-        self.ink.update('M' + 'Booting please wait...')
+        self.ink.update_message('Booting please wait...')
         while True:
             try:
                 token = requests.get('https://%s:9925/token'% (device_list['cloud']), verify=False, timeout=5).json()['token']
@@ -222,7 +227,7 @@ class Pi_recorder:
             print('Retrying to get token in 5s...')
             time.sleep(5)
         print('token:', token)
-        self.ink.update('T' + token)
-        time.sleep(1)
-        self.ink.update('M' + 'Ready ...' + self.at.mode)
+        self.ink.update_token('T' + token)
+        time.sleep(5)
+        self.ink.update_message('Ready ...' + self.at.mode)
 
