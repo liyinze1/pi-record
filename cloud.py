@@ -37,7 +37,12 @@ def token():
     ip_addr = request.remote_addr
     if ip_addr in device_list.values():
         alphabet = string.ascii_letters + string.digits
-        token = ''.join(secrets.choice(alphabet) for i in range(8))
+        while True:
+            # Generate a random token
+            token = ''.join(secrets.choice(alphabet) for i in range(8))
+            # Check if the token already exists
+            if token not in tokens:
+                break
         tokens[token] = ip_addr
         print('request from', ip_addr, 'token', token)
         return jsonify({'token': token}), 200
