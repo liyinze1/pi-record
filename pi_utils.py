@@ -37,6 +37,7 @@ class Ink_screen_controller:
     def update(self, msg):
         """Update the ink screen with the given message."""
         msg += datetime.now().strftime(' updated_at:%Y-%m-%d-%H:%M:%S')
+        print('writing to E-INK:', msg)
         self.ser.write(msg.encode('ascii'))
 
 class ATCommandInterface:
