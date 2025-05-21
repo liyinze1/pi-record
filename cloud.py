@@ -39,6 +39,7 @@ def token():
         alphabet = string.ascii_letters + string.digits
         token = ''.join(secrets.choice(alphabet) for i in range(8))
         tokens[token] = ip_addr
+        print('request from', ip_addr, 'token', token)
         return jsonify({'token': token}), 200
     else:
         return jsonify({'error': 'Unauthorized'}), 401

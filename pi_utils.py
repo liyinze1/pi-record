@@ -86,9 +86,6 @@ class ATCommandInterface:
             
             connection, ip = self.get_ip()
             
-            # if connection:
-            #     msg = t + '\n' + ip + '\n'
-            # else:
             CREG = self.send_command(b'AT+CREG?\r').partition('\n')[0]
             time.sleep(0.2)
             CSQ = self.send_command(b'AT+CSQ\r').partition('\n')[0]
@@ -208,7 +205,7 @@ class Pi_recorder:
         self.ink.update('M' + 'Booting please wait...')
         while True:
             try:
-                token = requests.get('https://%s:9925'% (device_list['server']), verify=False, timeout=5).json()['token']
+                token = requests.get('https://%s:9925/token'% (device_list['cloud']), verify=False, timeout=5).json()['token']
                 if token:
                     break
             except Exception as e:
