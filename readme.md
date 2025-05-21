@@ -47,20 +47,12 @@ dtparam=i2c_arm=on
 dtparam=i2s=on
 #dtparam=spi=on
 dtoverlay=tlv320adcx140-overlay
-# turn on IR sensor input
-dtoverlay=gpio-ir,gpio_pin=17
 
 # input pin to start the shut down sequence
 dtoverlay=gpio-shutdown,gpio_pin=24,active_low=1,gpio_pull=up
 
 # output pin to enable power source
 dtoverlay=gpio-poweroff,gpiopin=26,active_low=1
-
-# Turn on 1-wire for temp sensors
-dtoverlay=w1-gpio,gpiopin=27
-
-#reduce GPU mem
-gpu_mem=32
 
 ```
 

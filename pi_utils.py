@@ -242,5 +242,4 @@ class Pi_recorder:
         self.ink.update_token(token)
         time.sleep(5) # waiting for the modem info
         self.ink.update_message('Ready ' + self.at.mode + ' ' + self.at.op)
-        time.sleep(5)
         self.led.ready()
