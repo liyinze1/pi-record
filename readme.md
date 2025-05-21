@@ -38,6 +38,8 @@ https://www.zerotier.com/download/
 
 ### Mic
 
+Copy from https://github.com/filipmu/audio-recording-firmware-raspi-tlv320adc6140
+
 in /boot/config.txt
 
 ```
