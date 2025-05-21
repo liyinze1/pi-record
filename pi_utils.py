@@ -83,19 +83,10 @@ class ATCommandInterface:
             print("Connection closed.")
         self.log = False
         self.thread.join()
-        
-    def get_ip(self):
-        try:
-            ip = requests.get('https://api.ipify.org').content.decode('utf8')
-            return True, ip
-        except Exception as e:
-            return False, f'Error starting record: {e}'
 
-    def start_logging(self, filename='log.txt', interval=30):
+    def start_logging(self, filename='log.txt', interval=10):
         while self.log:
             t = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-            
-            connection, ip = self.get_ip()
             
             CREG = self.send_command(b'AT+CREG?\r').partition('\n')[0]
             time.sleep(0.2)
@@ -110,8 +101,7 @@ class ATCommandInterface:
             # print('COPS:', COPS)
             # print('CPSI:', CPSI)        
             t = 'time: ' + t
-            ip = 'ip: ' + ip
-            msg = '<br>'.join([t, ip, CREG, CSQ, COPS, CPSI])
+            msg = '<br>'.join([t, CREG, CSQ, COPS, CPSI])
             self.mode_verbose = msg
             self.mode = CPSI.split(':')[1].split(',')[0].strip()
             self.op = COPS.split(':')[1].split(',')[2][1:-1].replace(' ', '_')
