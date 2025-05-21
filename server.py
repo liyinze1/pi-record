@@ -31,7 +31,7 @@ def record():
         protocol = data['protocol']
     else:
         protocol = 'rtp'
-    print('Request to start recording, device', dest), 'vin', vin)
+    print('Request to start recording, device', dest, 'vin', vin)
     port = port_controller.get_port()
     
     if protocol == 'rtp':
