@@ -104,10 +104,18 @@ class ATCommandInterface:
             time.sleep(interval)
 
 class LED_controller:
-    def __init__(self, pin_red=13, pin_green=15):
-        self.pin_red = pin_red
-        self.pin_green = pin_green
-        GPIO.setmode(GPIO.BOARD)
+    
+    def __init__(self):
+        if GPIO.getmode() is None:
+            GPIO.setmode(GPIO.BOARD)
+            self.pin_red = 13
+            self.pin_green = 15 
+        elif GPIO.getmode() == GPIO.BCM:
+            self.pin_red = 27
+            self.pin_green = 22
+        elif GPIO.getmode() == GPIO.BOARD:
+            self.pin_red = 13
+            self.pin_green = 15
         GPIO.setup(self.pin_red, GPIO.OUT)
         GPIO.setup(self.pin_green, GPIO.OUT)
         
