@@ -226,7 +226,7 @@ class Pi_recorder:
         self.ink.update_message('Booting please wait...')
         while True:
             try:
-                token = requests.get('https://%s:9925/token'% (device_list['cloud']), verify=False, timeout=5).json()['token']
+                token = requests.get('https://%s:9925/token'% (device_list['cloud']), verify=False).json()['token']
                 if token:
                     break
             except Exception as e:

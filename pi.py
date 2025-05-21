@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from pi_utils import *
 
-pi_recorder = Pi_recorder()
 
 app = Flask(__name__)
 
@@ -35,3 +34,4 @@ def stop():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=22000, debug=True, ssl_context=('cert.pem', 'key.pem'))
+    pi_recorder = Pi_recorder()
