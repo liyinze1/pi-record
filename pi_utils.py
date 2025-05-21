@@ -134,10 +134,12 @@ class LED_controller:
         GPIO.setup(self.pin_green, GPIO.OUT)
         
     def ready(self):
+        print('turn on red LED')
         GPIO.output(self.pin_red, GPIO.HIGH)
         GPIO.output(self.pin_green, GPIO.LOW)
         
     def record(self):
+        print('turn on green LED')
         GPIO.output(self.pin_red, GPIO.LOW)
         GPIO.output(self.pin_green, GPIO.HIGH)
         
@@ -237,6 +239,5 @@ class Pi_recorder:
             time.sleep(5)
         print('token:', token)
         self.ink.update_token(token)
-        time.sleep(1)
         self.ink.update_message('Ready ... ' + self.at.mode)
 
