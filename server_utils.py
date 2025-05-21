@@ -87,7 +87,7 @@ class Receive:
             # thread for receiving
             cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s' % (self.sdp_filename, self.audio_filename)
         else:
-            cmd = 'ffmpeg -f s32le -ac 2 -ar 48000 -i tcp://0.0.0.0:%d?listen=1 -acodec copy %s' % (port, self.audio_filename)
+            cmd = 'ffmpeg -f s32le -ac 2 -ar 48000 -i \'tcp://0.0.0.0:%d?listen=1\' -acodec copy %s' % (port, self.audio_filename)
         
         print(cmd)
         cmd = shlex.split(cmd)
