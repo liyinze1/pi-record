@@ -4,11 +4,11 @@ After=network.target
 
 [Service]
 AmbientCapabilities=CAP_NET_BIND_SERVICE
-ExecStart=sudo /usr/sbin/openvpn --config /home/yinze/pi2.ovpn
+ExecStart=sudo /usr/sbin/openvpn --config /home/pi/pi2.ovpn
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=yinze
+User=pi
 
 [Install]
 WantedBy=multi-user.target

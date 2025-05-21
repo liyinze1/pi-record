@@ -82,7 +82,7 @@ class ATCommandInterface:
 
     def start_logging(self, filename='log.txt', interval=30):
         while self.log:
-            t = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
+            t = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             
             connection, ip = self.get_ip()
             
@@ -218,7 +218,9 @@ class Pi_recorder:
                     break
             except Exception as e:
                 print('error', e)
+            print('Retrying to get token in 5s...')
             time.sleep(5)
+        print('token:', token)
         self.ink.update('T' + token)
         time.sleep(1)
         self.ink.update('M' + 'Ready ...' + self.at.mode)
