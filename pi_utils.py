@@ -64,6 +64,7 @@ class ATCommandInterface:
             
         self.mode_verbose = ''
         self.mode = ''
+        self.ser.write(b'ATE0\r') # disable echo
 
     def send_command(self, command):
         self.ser.write(command)
