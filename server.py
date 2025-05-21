@@ -62,7 +62,7 @@ def stop():
     vin = data['vin']
     dest = data['ip']
     print('Request to stop recording, device', dest, 'vin', vin)
-    pi_controller.stop(device_list[dest])
+    pi_controller.stop(dest)
     if vin in receive_threads:
         receive_threads[vin].stop()
         port = receive_threads.pop(vin).port
