@@ -18,6 +18,8 @@ f = open('devices.yaml', 'r')
 device_list = yaml.safe_load(f)
 f.close()
 audio_folder = './audio'
+if not os.path.exists(audio_folder):
+    os.makedirs(audio_folder)
 
 def get_audio_filename(vin):
     audiofiles = sorted(os.listdir(audio_folder), reverse=True)
