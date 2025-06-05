@@ -53,6 +53,7 @@ void setup() {
   }
   
   display.begin(THINKINK_MONO);
+  display.setRotation(2);
 }
 
 void loop() {
