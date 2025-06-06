@@ -30,7 +30,7 @@ def get_audio_filename(vin):
 class Port_controller:
 
     def __init__(self):
-        self.port_list = [i for i in range(23000, 24000, 2)]
+        self.port_list = [i for i in range(23000, 30000, 2)]
 
     def get_port(self):
         logger.info("number of ports %d" % len(self.port_list))
