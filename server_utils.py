@@ -31,19 +31,24 @@ def get_audio_filename(vin):
 class Port_controller:
 
     def __init__(self):
-        self.port_list = [i for i in range(23000, 23010, 2)]
+        self.next_port = 23000
 
     def get_port(self):
-        logger.info("number of ports %d" % len(self.port_list))
-        for port in self.port_list:
-            logger.info("checking %d" % port)
+        print('Getting port...')
+        for _ in range(100):
+            port = self.next_port
+            self.next_port += 2
+            if self.next_port > 25000:
+                self.next_port = 23000
+            
             if self.check_port(port):
-                self.port_list.remove(port)
+                print('Port found:', port)
                 return port
-        raise Exception('port not found')
-
-    def return_port(self, port):
-        self.port_list.append(port)
+            else:
+                print("Port %d is in use, trying next port..." % port)
+            
+        raise Exception("No available port found")
+            
 
     def check_port(self, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

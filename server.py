@@ -65,8 +65,7 @@ def stop():
     pi_controller.stop(dest)
     if vin in receive_threads:
         receive_threads[vin].stop()
-        port = receive_threads.pop(vin).port
-        port_controller.return_port(port)
+        receive_threads.pop(vin)
     return 'stopped, please select label'
 
 @app.route('/label', methods=['POST'])
