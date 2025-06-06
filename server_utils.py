@@ -52,7 +52,7 @@ class Port_controller:
             sock.bind(('0.0.0.0', port))
             result = True
         except Exception as e:
-            logger.info("Port is in use: %d" % e)
+            logger.info("Port is in use: %d" % port)
         sock.close()
         return result
 
