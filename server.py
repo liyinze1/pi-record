@@ -42,7 +42,7 @@ def record():
             receive_threads[vin] = receive
             return 'recording...'
         else:
-            port_controller.return_port(port)
+            # port_controller.return_port(port)
             return 'failed to start recording'
     elif protocol == 'tcp':
         # start the receving thread before recording
@@ -53,7 +53,7 @@ def record():
             return 'recording...'
         else:
             receive.stop()
-            port_controller.return_port(port)
+            # port_controller.return_port(port)
             return 'failed to start recording'
 
 @app.route('/stop', methods=['POST'])
@@ -66,7 +66,7 @@ def stop():
     if vin in receive_threads:
         receive_threads[vin].stop()
         port = receive_threads.pop(vin).port
-        port_controller.return_port(port)
+        # port_controller.return_port(port)
     return 'stopped, please select label'
 
 @app.route('/label', methods=['POST'])

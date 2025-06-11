@@ -30,19 +30,25 @@ def get_audio_filename(vin):
 class Port_controller:
 
     def __init__(self):
-        self.port_list = [i for i in range(23000, 30000, 2)]
+        self.next_port = 23000
 
     def get_port(self):
-        print("number of ports %d" % len(self.port_list))
-        for port in self.port_list:
-            print("checking %d" % port)
-            if self.check_port(port):
-                self.port_list.remove(port)
+        # print("number of ports %d" % len(self.port_list))
+        for _ in range(1000):
+            port = self.next_port
+            self.next_port += 2
+            if self.next_port > 30000:
+                self.next_port = 23000
+            print("checking", self.next_port)
+            if self.check_port(self.next_port):
+                # valid port found
+                print("Found valid port:", port)
                 return port
-        raise Exception('port not found')
+        print("No valid port found in range 23000-30000")
+        return 30002
 
     def return_port(self, port):
-        self.port_list.append(port)
+        pass
 
     def check_port(self, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -88,7 +94,7 @@ class Receive:
             # thread for receiving
             cmd = 'ffmpeg -protocol_whitelist file,http,rtp,tcp,udp -i %s -acodec pcm_s24le %s' % (self.sdp_filename, self.audio_filename)
         else:
-            cmd = 'ffmpeg -f s32le -ac 2 -ar 48000 -i tcp://0.0.0.0:%d?listen=1 -acodec copy %s' % (port, self.audio_filename)
+            cmd = 'timeout 180 ffmpeg -f s32le -ac 2 -ar 48000 -i tcp://0.0.0.0:%d?listen=1 -acodec copy %s' % (port, self.audio_filename)
         
         print(cmd)
         cmd = shlex.split(cmd)
