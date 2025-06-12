@@ -3,7 +3,7 @@ from collections import defaultdict
 from datetime import datetime
 
 # Path to the directory containing the .wav files
-AUDIO_DIR = './'  # Replace with actual path
+AUDIO_DIR = './'
 
 # Dictionary to hold lists of file sizes per day
 sizes_per_day = defaultdict(list)
