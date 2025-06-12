@@ -3,7 +3,7 @@ from collections import defaultdict
 from datetime import datetime
 
 # Path to the directory containing the .wav files
-AUDIO_DIR = './'
+AUDIO_DIR = './audio'
 
 # Dictionary to hold lists of file sizes per day
 sizes_per_day = defaultdict(list)
@@ -32,3 +32,23 @@ for date in sorted(sizes_per_day):
     min_size = min(sizes)
     max_size = max(sizes)
     print(f'{date} {count:<6} {avg_size:15.2f} {min_size:10.2f} {max_size:10.2f}')
+
+
+import json
+from collections import Counter
+
+# Load your JSON string (replace this with loading from file if needed)
+
+# Parse the JSON string
+with open('label.json', 'r') as f:
+    data = json.load(f)
+
+# Extract the relevant dictionary
+records = data['_default']
+
+# Count statuses
+status_counter = Counter(entry['status'] for entry in records.values())
+
+# Print counts for statuses 0 to 3
+for status in range(4):
+    print(f'Status {status}: {status_counter.get(status, 0)}')
