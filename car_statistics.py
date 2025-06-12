@@ -50,5 +50,8 @@ records = data['_default']
 status_counter = Counter(entry['status'] for entry in records.values())
 
 # Print counts for statuses 0 to 3
-for status in range(4):
-    print(f'Status {status}: {status_counter.get(status, 0)}')
+
+states = ['normal', 'squeak', 'rattle', 's&r']
+
+for i in range(4):
+    print(f'{states[i]}: {status_counter.get(i, 0)}')
