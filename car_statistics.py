@@ -33,6 +33,8 @@ for date in sorted(sizes_per_day):
     max_size = max(sizes)
     print(f'{date}\t{count:<6} {avg_size:8.2f} {min_size:11.2f} {max_size:11.2f}')
 
+# print total audio files
+print(f'\nTotal audio files: {sum(len(sizes) for sizes in sizes_per_day.values())}')
 
 import json
 from collections import Counter
@@ -51,7 +53,13 @@ status_counter = Counter(entry['status'] for entry in records.values())
 
 # Print counts for statuses 0 to 3
 
+print('\n----------- Lablel Counts -----------')
+
 states = ['normal', 'squeak', 'rattle', 's&r']
 
 for i in range(4):
     print(f'{states[i]}: {status_counter.get(i, 0)}')
+    
+# Print total count
+total_count = sum(status_counter.values())
+print(f'Total: {total_count}')
