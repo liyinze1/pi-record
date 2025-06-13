@@ -31,7 +31,7 @@ for date in sorted(sizes_per_day):
     avg_size = sum(sizes) / count
     min_size = min(sizes)
     max_size = max(sizes)
-    print(f'{date} \t {count:<6} {avg_size:8.2f} {min_size:10.2f} {max_size:10.2f}')
+    print(f'{date}\t{count:<6} {avg_size:8.2f} {min_size:11.2f} {max_size:11.2f}')
 
 
 import json
