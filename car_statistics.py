@@ -8,6 +8,8 @@ AUDIO_DIR = './audio'
 # Dictionary to hold lists of file sizes per day
 sizes_per_day = defaultdict(list)
 
+total = 0
+
 for filename in os.listdir(AUDIO_DIR):
     if filename.endswith('.wav'):
         try:
@@ -19,6 +21,8 @@ for filename in os.listdir(AUDIO_DIR):
                 size_bytes = os.path.getsize(filepath)
                 size_mb = size_bytes / (1024 * 1024)
                 sizes_per_day[date].append(size_mb)
+                
+                total += 1
         except Exception as e:
             print(f'Skipping file due to error: {filename} ({e})')
 
@@ -34,7 +38,7 @@ for date in sorted(sizes_per_day):
     print(f'{date}\t{count:<6} {avg_size:8.2f} {min_size:11.2f} {max_size:11.2f}')
 
 # print total audio files
-print(f'\nTotal audio files: {sum(len(sizes) for sizes in sizes_per_day.values())}')
+print(f'\nTotal audio files: {total}')
 
 import json
 from collections import Counter
