@@ -20,6 +20,11 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt install python3-pip ffmpeg git openvpn -y
 
+git clone https://github.com/liyinze1/pi-record.git
+
+cd pi-record
+git switch v2.3
+
 sudo systemctl stop ModemManager
 sudo systemctl disable ModemManager
 
