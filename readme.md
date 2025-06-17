@@ -18,7 +18,7 @@ in
 ```
 sudo apt update
 sudo apt upgrade -y
-sudo apt install python3-pip ffmpeg git openvpn -y
+sudo apt install python3-pip ffmpeg git openvpn minicom -y
 
 git clone https://github.com/liyinze1/pi-record.git
 
@@ -41,11 +41,25 @@ sudo raspi-config
 ### Zerotier
 https://www.zerotier.com/download/
 
+### Modem
+
+```
+sudo minicom -D /dev/ttyUSB2
+
+ATE1
+AT+CUSBPIDSWITCH=9011,1,1
+AT+CNMP=38
+AT+CGDCONT=1,"IP","publicip.m2mmobi.be"
+
+```
+
 ### Mic
 
 Copy from https://github.com/filipmu/audio-recording-firmware-raspi-tlv320adc6140
 
 in /boot/config.txt
+
+`sudo nano /boot/firmware/config.txt`
 
 ```
 dtparam=i2c_arm=on
@@ -63,10 +77,12 @@ dtoverlay=gpio-poweroff,gpiopin=26,active_low=1
 
 then put ``tlv320adcx140-overlay.dtbo`` in /overlays/overlay
 
+`sudo cp tlv320adcx140-overlay.dtbo /boot/overlays`
+
 ### OpenVPN
 
 ```
-sudo cp vpn.service /etc/systemd/system/
+sudo cp service/vpn.service /etc/systemd/system/
 sudo systemctl enable vpn.service
 sudo systemctl start vpn.service
 sudo systemctl status vpn.service
@@ -88,7 +104,7 @@ openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 36
 
 ## Service on pi
 ```
-sudo cp pi_record.service /etc/systemd/system/
+sudo cp service/pi_record.service /etc/systemd/system/
 sudo systemctl enable pi_record.service
 sudo systemctl start pi_record.service
 sudo systemctl status pi_record.service
