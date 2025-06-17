@@ -96,7 +96,7 @@ class ATCommandInterface:
         self.thread.join()
 
     def update(self, filename='log.txt'):
-        time.sleep(30) # wait for the modem to be ready
+        time.sleep(10) # wait for the modem to be ready
         while self.log:
             t = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             
@@ -123,7 +123,7 @@ class ATCommandInterface:
                 self.op = ''
             # with open(filename, 'a') as f:
             #     f.write(msg)
-
+            time.sleep(10)
 
 class LED_controller:
     
