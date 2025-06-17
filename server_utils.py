@@ -8,6 +8,7 @@ import datetime
 from tinydb import TinyDB, Query
 import requests
 from flask import jsonify
+import threading
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -99,6 +100,9 @@ class Receive:
         print(cmd)
         cmd = shlex.split(cmd)
         self.receive_thread = subprocess.Popen(cmd)
+        
+        timer = threading.Timer(180, self.receive_thread.kill)
+        timer.start()
 
     def stop(self):
         self.receive_thread.kill()
