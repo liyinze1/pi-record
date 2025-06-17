@@ -1,5 +1,5 @@
 ## Setup
-Run 
+<!-- Run 
 ```
 openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
 ``` 
@@ -8,14 +8,14 @@ put
 ```sudo /usr/sbin/alsactl --file /home/pi/pi-record/asound.state restore```
 in
 ```sudo nano /etc/rc.local```
-
+ -->
 
 
 ## Setup on Pi
 
 ### Install
 
-```
+```bash
 sudo apt update
 sudo apt upgrade -y
 sudo apt install python3-pip ffmpeg git openvpn minicom -y
@@ -41,9 +41,13 @@ sudo raspi-config
 ### Zerotier
 https://www.zerotier.com/download/
 
+```bash
+curl -s https://install.zerotier.com | sudo bash
+```
+
 ### Modem
 
-```
+```bash
 sudo minicom -D /dev/ttyUSB2
 
 ATE1
@@ -81,7 +85,7 @@ then put ``tlv320adcx140-overlay.dtbo`` in /overlays/overlay
 
 ### OpenVPN
 
-```
+```bash
 sudo cp service/vpn.service /etc/systemd/system/
 sudo systemctl enable vpn.service
 sudo systemctl start vpn.service
@@ -103,7 +107,7 @@ openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 36
 ```
 
 ## Service on pi
-```
+```bash
 sudo cp service/pi_record.service /etc/systemd/system/
 sudo systemctl enable pi_record.service
 sudo systemctl start pi_record.service
