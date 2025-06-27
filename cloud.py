@@ -68,7 +68,7 @@ def login():
         if request.method == 'POST':
             return jsonify({'status': 'unauthorized'}), 401
         else:
-            return make_response('Unauthorized', 401)
+            return render_template('login.html')
 
 
 @app.route('/')
