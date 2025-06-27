@@ -53,7 +53,7 @@ def token():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        token = request.json.get('token')
+        token = request.json.get('token')[-8:]
     else:
         token = request.args.get('token')
 
