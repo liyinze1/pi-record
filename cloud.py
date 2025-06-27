@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, send_file, redirect, url_for, session
+from flask import Flask, render_template, jsonify, request, send_file, redirect, url_for, session, make_response
 from functools import wraps
 import os
 import requests
@@ -53,16 +53,22 @@ def token():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        token = request.json.get('token')[-8:]
+        token = request.json.get('token')
     else:
         token = request.args.get('token')
 
     if token in tokens:
         session['logged_in'] = True
         session['device_ip'] = tokens[token]
-        return jsonify({'status': 'ok'}) if request.method == 'POST' else redirect('/')
+        if request.method == 'POST':
+            return jsonify({'status': 'ok'})
+        else:
+            return redirect('/')
     else:
-        return jsonify({'status': 'unauthorized'}), 401 if request.method == 'POST' else 'Unauthorized', 401
+        if request.method == 'POST':
+            return jsonify({'status': 'unauthorized'}), 401
+        else:
+            return make_response('Unauthorized', 401)
 
 
 @app.route('/')
