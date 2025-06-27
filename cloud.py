@@ -45,21 +45,25 @@ def token():
                 break
         tokens[token] = ip_addr
         print('request from', ip_addr, 'token', token)
-        return jsonify({'token': token}), 200
+        url = 'https://3.123.215.67:9925/login?token=' + token
+        return jsonify({'token': url}), 200
     else:
         return jsonify({'error': 'Unauthorized'}), 401
         
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        token = request.json.get('token')
-        if token in tokens:
-            session['logged_in'] = True
-            session['device_ip'] = tokens[token]
-            return jsonify({'status': 'ok'})
-        else:
-            return jsonify({'status': 'unauthorized'}), 401
-    return render_template('login.html')
+        token = request.json.get('token')[-8:]
+    else:
+        token = request.args.get('token')
+
+    if token in tokens:
+        session['logged_in'] = True
+        session['device_ip'] = tokens[token]
+        return jsonify({'status': 'ok'}) if request.method == 'POST' else redirect('/')
+    else:
+        return jsonify({'status': 'unauthorized'}), 401 if request.method == 'POST' else 'Unauthorized', 401
+
 
 @app.route('/')
 @login_required
