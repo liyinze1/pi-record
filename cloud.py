@@ -36,6 +36,7 @@ def login_required(f):
 def token():
     ip_addr = request.remote_addr
     if ip_addr in device_list.values():
+        
         alphabet = string.ascii_letters + string.digits
         while True:
             # Generate a random token
@@ -59,7 +60,11 @@ def login():
 
     if token in tokens:
         session['logged_in'] = True
-        session['device_ip'] = tokens[token]
+        device_ip = tokens[token]
+        session['device_ip'] = device_ip
+        device_id = [id for id, ip in device_list.items() if ip == device_ip][0]
+        session['device_id'] = device_id
+        
         if request.method == 'POST':
             return jsonify({'status': 'ok'})
         else:
@@ -74,7 +79,7 @@ def login():
 @app.route('/')
 @login_required
 def main():
-    return render_template('index.html')
+    return render_template('index.html',  device_id=session.get('device_id'))
 
 @app.route('/devices', methods=['GET'])
 @login_required

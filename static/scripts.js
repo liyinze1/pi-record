@@ -40,7 +40,7 @@ function openTab(event, tabId) {
 
 // update message
 function update_message(data) {
-    let msg = '<br>VIN =' + vin + '<br>protocol = ' + protocol;
+    let msg = 'device = ' + device_id + '<br>VIN =' + vin + '<br>protocol = ' + protocol;
     if (data) {
         document.getElementById('message').innerHTML = msg + '<br>' + data;
     } else {
