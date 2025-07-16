@@ -65,7 +65,7 @@ vin_set = load_labels()
 for filename in os.listdir(AUDIO_DIR):
     if filename.endswith('.wav'):
         rate, data = load_audio(os.path.join(AUDIO_DIR, filename))
-        vin = filename.split[:17]
+        vin = filename[:17]
         if get_duration(rate, data) < 60:
             print(f'Skipping {filename} due to short duration')
             continue
