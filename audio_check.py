@@ -41,12 +41,12 @@ def apply_fft(data, rate):
     freq = np.fft.fftfreq(n, d=1/rate)
     magnitude = np.abs(fft_result)
 
-    plt.plot(freq[:n//2], magnitude[:n//2])
-    plt.xlabel('Frequency (Hz)')
-    plt.ylabel('Magnitude')
-    plt.title('FFT Spectrum')
-    plt.grid()
-    plt.show()
+    # plt.plot(freq[:n//2], magnitude[:n//2])
+    # plt.xlabel('Frequency (Hz)')
+    # plt.ylabel('Magnitude')
+    # plt.title('FFT Spectrum')
+    # plt.grid()
+    # plt.show()
     
 def load_labels():
     with open('label.json', 'r') as f:
@@ -82,7 +82,7 @@ for filename in os.listdir(AUDIO_DIR):
         if not check_zero_sequences(data):
             print(f'Skipping {filename} due to long zero sequence')
             continue
-        # apply_fft(data, rate)
+        apply_fft(data, rate)
         if vin not in vin_set:
             print(f'Skipping {filename} due to missing VIN in labels')
             continue
