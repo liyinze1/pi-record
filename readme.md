@@ -54,7 +54,6 @@ ATE1
 AT+CUSBPIDSWITCH=9011,1,1
 AT+CNMP=38
 AT+CGDCONT=1,"IP","publicip.m2mmobi.be"
-
 ```
 
 ### Mic
@@ -78,6 +77,8 @@ dtoverlay=gpio-shutdown,gpio_pin=24,active_low=1,gpio_pull=up
 dtoverlay=gpio-poweroff,gpiopin=26,active_low=1
 
 ```
+
+`sudo raspi-config` to enble I2C
 
 then put ``tlv320adcx140-overlay.dtbo`` in /overlays/overlay
 
