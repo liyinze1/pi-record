@@ -74,8 +74,9 @@ for filename in os.listdir(AUDIO_DIR):
             print(f'Skipping file due to error when loading: {filename} ({e})')
             continue
         vin = filename[:17]
-        if get_duration(rate, data) < 60:
-            print(f'Skipping {filename} due to short duration')
+        duration = get_duration(rate, data)
+        if duration < 60:
+            print(f'Skipping {filename} due to short duration, duration: {duration:.2f} seconds')
             continue
         data = peak_normalize(data)
         if not check_zero_sequences(data):
