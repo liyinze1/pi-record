@@ -1,18 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.io import wavfile
+import soundfile as sf
 import os
 import json
 
+
 def load_audio(path):
-    rate, data = wavfile.read(path)
+    data, rate = sf.read(path)
     if data.ndim > 1:
         data = data.mean(axis=1)  # Convert to mono
-    return rate, data.astype(np.float32)
+    return rate, data
 
 def get_duration(rate, data):
     duration = len(data) / rate
-    print(f'Audio duration: {duration:.2f} seconds')
+    # print(f'Audio duration: {duration:.2f} seconds')
     return duration
 
 def peak_normalize(data):
@@ -21,7 +22,7 @@ def peak_normalize(data):
         print('Audio is silent.')
         return data
     normalized = data / peak
-    print(f'Peak normalization applied. Max amplitude: {np.max(np.abs(normalized)):.3f}')
+    # print(f'Peak normalization applied. Max amplitude: {np.max(np.abs(normalized)):.3f}')
     return normalized
 
 def check_zero_sequences(data, min_length=100):
@@ -60,11 +61,18 @@ def load_labels():
 
 AUDIO_DIR = './audio'  # Directory containing audio files
 count = 0
+total = 0
 vin_set = load_labels()
 
 for filename in os.listdir(AUDIO_DIR):
     if filename.endswith('.wav'):
-        rate, data = load_audio(os.path.join(AUDIO_DIR, filename))
+        total += 1
+        try:
+            # Load audio file
+            rate, data = load_audio(os.path.join(AUDIO_DIR, filename))
+        except Exception as e:
+            print(f'Skipping file due to error when loading: {filename} ({e})')
+            continue
         vin = filename[:17]
         if get_duration(rate, data) < 60:
             print(f'Skipping {filename} due to short duration')
@@ -79,4 +87,4 @@ for filename in os.listdir(AUDIO_DIR):
             continue
         count += 1
 
-print(f'Total valid audio files: {count}')
+print(f'Total valid audio files: {count}, out of {total} checked.')
