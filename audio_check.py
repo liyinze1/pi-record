@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import soundfile as sf
 import os
 import json
+from tqdm import tqdm
 
 
 def load_audio(path):
@@ -64,7 +65,7 @@ count = 0
 total = 0
 vin_set = load_labels()
 
-for filename in os.listdir(AUDIO_DIR):
+for filename in tqdm(os.listdir(AUDIO_DIR)):
     if filename.endswith('.wav'):
         total += 1
         try:
@@ -82,7 +83,7 @@ for filename in os.listdir(AUDIO_DIR):
         if not check_zero_sequences(data):
             print(f'Skipping {filename} due to long zero sequence')
             continue
-        apply_fft(data, rate)
+        # apply_fft(data, rate)
         if vin not in vin_set:
             print(f'Skipping {filename} due to missing VIN in labels')
             continue
