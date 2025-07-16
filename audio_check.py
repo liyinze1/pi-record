@@ -75,7 +75,7 @@ for filename in os.listdir(AUDIO_DIR):
             continue
         vin = filename[:17]
         duration = get_duration(rate, data)
-        if duration < 60:
+        if duration < 50:
             print(f'Skipping {filename} due to short duration, duration: {duration:.2f} seconds')
             continue
         data = peak_normalize(data)
