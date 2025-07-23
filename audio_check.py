@@ -68,7 +68,7 @@ def apply_fft(data, rate):
 def load_labels(label_path='label.json'):
     with open(label_path, 'r') as f:
         data = json.load(f)
-        vin_set = {entry['vin'].strip() for entry in data['_default'].values()}
+        vin_set = {entry['vin']:entry['status'] for entry in data['_default'].values()}
         return vin_set
 
 
@@ -79,6 +79,10 @@ count = 0
 total = 0
 vin_set = load_labels()
 
+DATA_DIR = './data'
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
+    
 for filename in tqdm(os.listdir(AUDIO_DIR)):
     if filename.endswith('.wav'):
         total += 1
@@ -108,7 +112,12 @@ for filename in tqdm(os.listdir(AUDIO_DIR)):
         if vin not in vin_set:
             print(f'Skipping {filename} due to missing VIN in labels')
             continue
+        
+        status = vin_set[vin]
 
+        filename = os.path.join(DATA_DIR, f'{status}-{vin}.npy')
+        np.save(filename, data)
+        # print(f'Saved processed audio to {filename}')
         count += 1
 
 print(f'Total valid audio files: {count}, out of {total} checked.')
