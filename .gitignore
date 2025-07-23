@@ -12,3 +12,4 @@ vin*
 *.json
 !requirements.txt
 venv/
+data/
