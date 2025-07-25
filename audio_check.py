@@ -17,20 +17,26 @@ def get_duration(rate, data):
 
 def crop_audio(rate, data):
     start = 0
-    for i in range(0, len(data) // rate):
-        y = (data[i*rate:(i + 1)*rate] > 0.01).sum()
-        if y > 2000:
-           start = i * rate
-           break
+    duration = len(data) // rate
+    mask = [False] * duration
+    for i in range(0, duration + 1):
+        y = (data[i*rate:min((i + 1)*rate,len(data))] > 0.01).sum()
+        if y > 4000:
+            # this second has enough signal
+            start = i * rate
+            mask[i] = True
     
-    end = -1
-    for i in range(0, len(data) // rate):
-        y = (data[-(i + 1)*rate:-i*rate] > 0.01).sum()
-        if y > 2000:
-            end = -i * rate
+    for i in range(0, duration - 10):
+        if all(mask[i:i + 10]):
+            start = i * rate
             break
-        
-    return data[start:end] if len(data) + end > start else data
+    
+    for i in range(0, duration - 10):
+        if all(mask[-(i + 10):-i]):
+            end = (duration - i) * rate
+            break
+    
+    return data[start:end] if end > start else data
     
 
 def peak_normalize(data):
