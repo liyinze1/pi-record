@@ -22,7 +22,8 @@ def crop_audio(rate, data):
         if y > 2000:
            start = i * rate
            break
-       
+    
+    end = -1
     for i in range(0, len(data) // rate):
         y = (data[-(i + 1)*rate:-i*rate] > 0.01).sum()
         if y > 2000:
