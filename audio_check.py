@@ -22,9 +22,10 @@ def crop_audio(rate, data):
     for i in range(0, duration + 1):
         y = (data[i*rate:min((i + 1)*rate,len(data))] > 0.01).sum()
         if y > 4000:
-            # this second has enough signal
-            start = i * rate
             mask[i] = True
+            # print(i, ':', y)
+            
+    # print('mask', mask)
     
     for i in range(0, duration - 10):
         if all(mask[i:i + 10]):
@@ -32,9 +33,13 @@ def crop_audio(rate, data):
             break
     
     for i in range(0, duration - 10):
-        if all(mask[-(i + 10):-i]):
+        if all(mask[duration - i - 10:duration - i]):
+            print('end', i)
             end = (duration - i) * rate
             break
+    
+    # print('----------------')
+    # print(start/rate, end/rate)
     
     return data[start:end] if end > start else data
     
