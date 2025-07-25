@@ -17,7 +17,6 @@ def get_duration(rate, data):
 
 def crop_audio(rate, data):
     start = 0
-    print(data.shape)
     for i in range(0, len(data) // rate):
         y = (data[i*rate:(i + 1)*rate] > 0.01).sum()
         if y > 2000:
