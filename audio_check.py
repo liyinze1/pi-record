@@ -17,9 +17,9 @@ def get_duration(rate, data):
 
 def crop_audio(rate, data):
     start = 0
-    duration = len(data) // rate
-    mask = [False] * duration
-    for i in range(0, duration + 1):
+    duration = len(data) // rate + 1
+    mask = [False] * (duration)
+    for i in range(0, duration):
         y = (data[i*rate:min((i + 1)*rate,len(data))] > 0.01).sum()
         if y > 4000:
             mask[i] = True
@@ -34,7 +34,7 @@ def crop_audio(rate, data):
     
     for i in range(0, duration - 10):
         if all(mask[duration - i - 10:duration - i]):
-            print('end', i)
+            # print('end', i)
             end = (duration - i) * rate
             break
     
