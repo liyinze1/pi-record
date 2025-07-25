@@ -99,6 +99,8 @@ DATA_DIR = './data'
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
     
+crop_length = {}
+    
 for filename in tqdm(os.listdir(AUDIO_DIR)):
     if filename.endswith('.wav'):
         total += 1
@@ -120,7 +122,11 @@ for filename in tqdm(os.listdir(AUDIO_DIR)):
         
         # crop audio
         data = crop_audio(rate, data)
-        print(f'Processing {filename}, duration after crop: {get_duration(rate, data):.2f}s')
+        legth = len(data) // rate
+        if legth not in crop_length:
+            crop_length[legth] = 1
+        else:
+            crop_length[legth] += 1
 
         # data = peak_normalize(data)
 
@@ -143,3 +149,4 @@ for filename in tqdm(os.listdir(AUDIO_DIR)):
         count += 1
 
 print(f'Total valid audio files: {count}, out of {total} checked.')
+print('Crop length distribution:', crop_length)
