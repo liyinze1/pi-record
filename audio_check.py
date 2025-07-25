@@ -19,14 +19,14 @@ def crop_audio(rate, data):
     start = 0
     print(data.shape)
     for i in range(0, len(data) // rate):
-        y = sum(data[i*rate:(i + 1)*rate] > 0.01).mean()
-        if y > 1000:
+        y = (data[i*rate:(i + 1)*rate] > 0.01).sum()
+        if y > 2000:
            start = i * rate
            break
        
     for i in range(0, len(data) // rate):
-        y = sum(data[-(i + 1)*rate:-i*rate] > 0.01).mean()
-        if y > 1000:
+        y = (data[-(i + 1)*rate:-i*rate] > 0.01).sum()
+        if y > 2000:
             end = -i * rate
             break
         
