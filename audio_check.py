@@ -15,6 +15,22 @@ def get_duration(rate, data):
     duration = len(data) / rate
     return duration
 
+def crop_audio(rate, data):
+    start = 0
+    for i in range(0, len(data) // rate):
+        y = sum(data[i*rate:(i + 1)*rate] > 0.01).mean()
+        if y > 1000:
+           start = i * rate
+           break
+       
+    for i in range(0, len(data) // rate):
+        y = sum(data[-(i + 1)*rate:-i*rate] > 0.01).mean()
+        if y > 1000:
+            end = -i * rate
+            break
+        
+    return data[start:end] if len(data) + end > start else data
+    
 
 def peak_normalize(data):
     if data.ndim == 1:
@@ -88,35 +104,41 @@ for filename in tqdm(os.listdir(AUDIO_DIR)):
         total += 1
         path = os.path.join(AUDIO_DIR, filename)
 
+        # load audio file
         try:
             rate, data = load_audio(path)
         except Exception as e:
             print(f'Skipping file due to error when loading: {filename} ({e})')
             continue
 
+        # get VIN and check duration
         vin = filename[:17]
         duration = get_duration(rate, data)
         if duration < 50:
             print(f'Skipping {filename} due to short duration ({duration:.2f}s)')
             continue
-
-        data = peak_normalize(data)
-
-        if not check_zero_sequences(data):
-            print(f'Skipping {filename} due to long zero sequence')
-            continue
-
-        # Uncomment this to visualize FFT:
-        # apply_fft(data, rate)
-
-        if vin not in vin_set:
-            print(f'Skipping {filename} due to missing VIN in labels')
-            continue
         
-        status = vin_set[vin]
+        # crop audio
+        data = crop_audio(rate, data)
+        print(f'Processing {filename}, duration after crop: {get_duration(rate, data):.2f}s')
 
-        filename = os.path.join(DATA_DIR, f'{status}-{vin}.npy')
-        np.save(filename, data)
+        # data = peak_normalize(data)
+
+        # if not check_zero_sequences(data):
+        #     print(f'Skipping {filename} due to long zero sequence')
+        #     continue
+
+        # # Uncomment this to visualize FFT:
+        # # apply_fft(data, rate)
+
+        # if vin not in vin_set:
+        #     print(f'Skipping {filename} due to missing VIN in labels')
+        #     continue
+        
+        # status = vin_set[vin]
+
+        # filename = os.path.join(DATA_DIR, f'{status}-{vin}.npy')
+        # np.save(filename, data)
         # print(f'Saved processed audio to {filename}')
         count += 1
 
