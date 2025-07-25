@@ -17,6 +17,7 @@ def get_duration(rate, data):
 
 def crop_audio(rate, data):
     start = 0
+    end = len(data)
     duration = len(data) // rate + 1
     mask = [False] * (duration)
     for i in range(0, duration):
