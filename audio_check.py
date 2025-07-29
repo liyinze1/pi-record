@@ -145,7 +145,7 @@ if __name__ == '__main__':
     vin_set = load_labels()
     
     target_length = 50
-    target_rate = 22500
+    target_rate = 22050
     target_dir = './data'
     
     target_label = {}
