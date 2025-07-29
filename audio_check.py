@@ -4,6 +4,7 @@ import librosa
 import os
 import json
 from tqdm import tqdm
+import soundfile as sf
 
 
 def load_audio(path):
@@ -189,7 +190,7 @@ if __name__ == '__main__':
             
             # save processed audio
             target_path = os.path.join(target_dir, vin + '.wav')
-            librosa.output.write_wav(target_path, data, sr=rate)
+            sf.write(target_path, data, rate, 'PCM_32')
             
             target_label[vin] = vin_set[vin]
             

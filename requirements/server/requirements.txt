@@ -4,3 +4,4 @@ PyYAML
 pyopenssl
 numpy
 tinydb
+librosa
