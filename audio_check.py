@@ -153,7 +153,7 @@ if __name__ == '__main__':
         
     target_label = {}
         
-    f = open(os.path.join(target_dir, 'index.txt'), 'w')
+    f = open(os.path.join(target_dir, 'index.csv'), 'w')
     f.write('VIN,recording_setup,date,audio_file,annotations_file,segmentation_file,manual_annotation,anomaly,no-noise,split\n')    
     
     for filename in tqdm(os.listdir(AUDIO_DIR)):
@@ -206,6 +206,6 @@ if __name__ == '__main__':
     f.close()
     
     with open(os.path.join(target_dir, 'label.json'), 'w') as f:
-        json.dump({'_default': target_label}, f, indent=4)
+        json.dump(target_label, f)
     
     print(f'Total valid audio files: {count}, out of {total} checked.')
