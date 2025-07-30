@@ -151,7 +151,9 @@ if __name__ == '__main__':
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
         
-    f = open(os.path.join(target_dir, 'label.json'), 'w')
+    target_label = {}
+        
+    f = open(os.path.join(target_dir, 'index.txt'), 'w')
     f.write('VIN,recording_setup,date,audio_file,annotations_file,segmentation_file,manual_annotation,anomaly,no-noise,split\n')    
     
     for filename in tqdm(os.listdir(AUDIO_DIR)):
@@ -191,11 +193,17 @@ if __name__ == '__main__':
             data = peak_normalize(data)
             
             # save processed audio
-            target_path = os.path.join(target_dir, vin + '.wav')
+            target_path = os.path.join(target_dir, filename)
             sf.write(target_path, data, rate, 'PCM_32')
             
             # VIN,recording_setup,date,audio_file,annotations_file,segmentation_file,manual_annotation,anomaly,no-noise,split
             f.write(f'{vin},pi,{date},{filename},,,FALSE,{vin_set[vin] != 0},FALSE,te\n')
             
+            target_label[vin] = vin_set[vin]
+            
     f.close()
+    
+    with open(os.path.join(target_dir, 'label.json'), 'w') as f:
+        json.dump({'_default': target_label}, f, indent=4)
+    
     print(f'Total valid audio files: {count}, out of {total} checked.')
