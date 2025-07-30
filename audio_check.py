@@ -148,11 +148,12 @@ if __name__ == '__main__':
     target_rate = 16000
     target_dir = './data'
     
-    target_label = {}
-    
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
         
+    f = open(os.path.join(target_dir, 'label.json'), 'w')
+    f.write('VIN,recording_setup,date,audio_file,annotations_file,segmentation_file,manual_annotation,anomaly,no-noise,split\n')    
+    
     for filename in tqdm(os.listdir(AUDIO_DIR)):
         if filename.endswith('.wav'):
             total += 1
@@ -170,6 +171,7 @@ if __name__ == '__main__':
             if vin not in vin_set:
                 print(f'Skipping {filename} due to unknown VIN: {vin}')
                 continue
+            date = filename[18:28]
             
             # check duration
             duration = get_duration(rate, data)
@@ -192,8 +194,8 @@ if __name__ == '__main__':
             target_path = os.path.join(target_dir, vin + '.wav')
             sf.write(target_path, data, rate, 'PCM_32')
             
-            target_label[vin] = vin_set[vin]
+            # VIN,recording_setup,date,audio_file,annotations_file,segmentation_file,manual_annotation,anomaly,no-noise,split
+            f.write(f'{vin},pi,{date},{filename},,,FALSE,{vin_set[vin] != 0},FALSE,te\n')
             
-    with open(os.path.join(target_dir, 'label.json'), 'w') as f:
-        json.dump(target_label, f, indent=4)
+    f.close()
     print(f'Total valid audio files: {count}, out of {total} checked.')
