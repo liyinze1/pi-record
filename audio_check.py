@@ -199,9 +199,9 @@ if __name__ == '__main__':
             
             # VIN,recording_setup,date,audio_file,annotations_file,segmentation_file,manual_annotation,anomaly,no-noise,split
             if random.random() < 0.5:
-                f.write(f'{vin},pi,{date},{filename},,,FALSE,{vin_set[vin] != 0},FALSE,te\n')
+                f.write(f'{vin},pi,{date},{filename},annotaion.csv,,FALSE,{vin_set[vin] != 0},FALSE,te\n')
             else:
-                f.write(f'{vin},pi,{date},{filename},,,FALSE,{vin_set[vin] != 0},FALSE,tr\n')
+                f.write(f'{vin},pi,{date},{filename},annotaion.csv,,FALSE,{vin_set[vin] != 0},FALSE,tr\n')
             
             target_label[vin] = vin_set[vin]
             
@@ -211,5 +211,8 @@ if __name__ == '__main__':
     
     with open(os.path.join(target_dir, 'label.json'), 'w') as f:
         json.dump(target_label, f)
+        
+    with open(os.path.join(target_dir, 'annotaion.csv'), 'w') as f:
+        f.write('0\t50\troad')
     
     print(f'Total valid audio files: {count}, out of {total} checked.')
