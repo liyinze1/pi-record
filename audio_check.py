@@ -199,9 +199,10 @@ if __name__ == '__main__':
             
             # VIN,recording_setup,date,audio_file,annotations_file,segmentation_file,manual_annotation,anomaly,no-noise,split
             # if random.random() < 0.5:
-            f.write(f'{vin},pi,{date},{filename},annotaion.csv,,FALSE,{vin_set[vin] != 0},FALSE,te\n')
-            # else:
-            f.write(f'{vin},pi,{date},{filename},annotaion.csv,,FALSE,{vin_set[vin] != 0},FALSE,tr\n')
+            if vin_set[vin] == 0:
+                f.write(f'{vin},pi,{date},{filename},annotaion.csv,,FALSE,{vin_set[vin] != 0},FALSE,te\n')
+            else:
+                f.write(f'{vin},pi,{date},{filename},annotaion.csv,,FALSE,{vin_set[vin] != 0},FALSE,tr\n')
             
             target_label[vin] = vin_set[vin]
             
