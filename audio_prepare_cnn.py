@@ -72,7 +72,6 @@ if __name__ == '__main__':
             
             count += 1
             
-    f.close()
     
     with open(os.path.join(target_dir, 'label.json'), 'w') as f:
         json.dump(target_label, f)
