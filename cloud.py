@@ -75,6 +75,9 @@ def login():
         else:
             return render_template('login.html')
 
+@app.route('/ping', methods=['GET'])
+def ping():
+    return 'pong', 200
 
 @app.route('/')
 @login_required

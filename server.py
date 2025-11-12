@@ -13,6 +13,10 @@ port_controller = Port_controller()
 
 pi_controller = Pi_controller()
 
+@app.route('/ping', methods=['GET'])
+def ping():
+    return 'pong', 200
+
 @app.route('/devices', methods=['GET'])
 def get_devices():
     # response = {}
