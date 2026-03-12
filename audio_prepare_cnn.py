@@ -9,6 +9,7 @@ import random
 from audio_prepare import *
 
 
+
 # === Main processing ===
 
 if __name__ == '__main__':
@@ -20,6 +21,11 @@ if __name__ == '__main__':
     
     target_length = 50
     target_rate = 32000
+    
+    # data_start = '2025-11-19'
+    # data_end = '2025-11-19'
+    
+    # target_dir = '-'.join(['./data-cnn', data_start])
     target_dir = './data-cnn'
     
     if not os.path.exists(target_dir):
@@ -29,7 +35,7 @@ if __name__ == '__main__':
            
     
     for filename in tqdm(os.listdir(AUDIO_DIR)):
-        if filename.endswith('.wav'):
+        if filename.endswith('.wav'): # and data_start <= filename[18:28] <= data_end:
             total += 1
             path = os.path.join(AUDIO_DIR, filename)
 

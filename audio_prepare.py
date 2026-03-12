@@ -8,14 +8,14 @@ import soundfile as sf
 import random
 
 
-def load_audio(path):
-    data, rate = librosa.load(path)
-    data = librosa.to_mono(data)  # Convert to mono if stereo
-    return rate, data  # Keep stereo if present
+def load_audio(path, mono=True):
+    data, rate = librosa.load(path, sr=None, mono=mono)
+    return rate, data
 
 
 def get_duration(rate, data):
-    duration = len(data) / rate
+    length = data.shape[-1]
+    duration = length / rate
     return duration
 
 # def crop_audio(rate, data):
